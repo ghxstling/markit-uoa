@@ -10,4 +10,4 @@ compsci 399 capstone project
 * Jacky Zhu
 * Martin Zhang
 * Sai Balaji (sbal695@aucklanduni.ac.nz)
-* Shane Mao
+* Shane Mao (smao606@aucklanduni.ac.nz)
