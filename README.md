@@ -5,7 +5,7 @@ compsci 399 capstone project
 #### AUTHOR: OCE UNICORN (TEAM 6)
 
 ##### Members:
-* Alex Reid
+* Alex Reid (arei209@aucklanduni.ac.nz)
 * Dylan Choy
 * Jacky Zhu
 * Martin Zhang
