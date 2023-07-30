@@ -8,6 +8,6 @@ compsci 399 capstone project
 * Alex Reid (arei209@aucklanduni.ac.nz)
 * Dylan Choy
 * Jacky Zhu
-* Martin Zhang
+* Martin Zhang (hzha684@aucklanduni.ac.nz)
 * Sai Balaji (sbal695@aucklanduni.ac.nz)
 * Shane Mao (smao606@aucklanduni.ac.nz)
