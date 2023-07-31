@@ -6,7 +6,7 @@ compsci 399 capstone project
 
 ##### Members:
 * Alex Reid (arei209@aucklanduni.ac.nz)
-* Dylan Choy
+* Dylan Choy (dcho282@aucklanduni.ac.nz)
 * Jacky Zhu
 * Martin Zhang (hzha684@aucklanduni.ac.nz)
 * Sai Balaji (sbal695@aucklanduni.ac.nz)
