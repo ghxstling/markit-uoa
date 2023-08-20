@@ -13,6 +13,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.3",
     "@mui/material": "^5.14.5",
+    "@prisma/client": "^5.1.1",
     "@types/node": "20.4.5",
     "@types/react": "18.2.17",
     "@types/react-dom": "18.2.7",
@@ -22,5 +23,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.1.6"
+  },
+  "devDependencies": {
+    "prisma": "^5.1.1"
   }
 }
