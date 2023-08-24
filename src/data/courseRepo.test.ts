@@ -12,7 +12,7 @@ const courseInputHelper = (
         numOfEstimatedStudents: 5,
         numOfEnrolledStudents: 6,
         markerHours: 7,
-        needMarkers: 8,
+        needMarkers: true,
         markersNeeded: 9,
     };
 };
@@ -56,5 +56,29 @@ describe("CourseRepo", () => {
         await CourseRepo.addCourse(courseInput2);
         const result = await CourseRepo.getAllCourses();
         expect(result).toMatchObject([courseInput, courseInput2]);
+    });
+    it("can update a course", async () => {
+        const courseName = "Compsci101";
+        const courseDescription = "Intro to computer science";
+        const courseInput = courseInputHelper(courseName, courseDescription);
+        const course = await CourseRepo.addCourse(courseInput);
+        const updatedCourse = await CourseRepo.updateCourse(course.id, {
+            courseCode: "Compsci102",
+            courseDescription: "Intro to computer science 2",
+        });
+        expect(updatedCourse).toMatchObject({
+            ...courseInput,
+            courseCode: "Compsci102",
+            courseDescription: "Intro to computer science 2",
+        });
+    });
+    it("can delete a course", async () => {
+        const courseName = "Compsci101";
+        const courseDescription = "Intro to computer science";
+        const courseInput = courseInputHelper(courseName, courseDescription);
+        const course = await CourseRepo.addCourse(courseInput);
+        await CourseRepo.deleteCourse(course.id);
+        const result = await CourseRepo.getCourseById(course.id);
+        expect(result).toBeNull();
     });
 });
