@@ -11,8 +11,29 @@ import Divider from '@mui/material/Divider';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import Tooltip from '@mui/material/Tooltip';
+import React, { useState, useEffect } from 'react';
+import { fetchData } from 'next-auth/client/_utils';
+import { AlignStart } from 'react-bootstrap-icons';
+import { start } from 'repl';
 
 export default function CSHomepage(){
+    const [data,setData] = useState([]);;
+
+    useEffect(() => {
+        fetchData
+    }, []);
+
+    const fetchData = async () => {
+        try {
+          const response = await fetch('https://64edee691f87218271420833.mockapi.io/Courses/Course');
+          const jsonData = await response.json();
+          setData(jsonData);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
+
+
     return(
         <div>
             <div>
@@ -31,17 +52,17 @@ export default function CSHomepage(){
                 </div>
                 <h1 style={{paddingTop:30, paddingBottom:50}}>Welcome, Supervisor</h1>
                 <Button variant="contained">CREATE NEW COURSE</Button>
-                <Container style={{paddingTop:40}}>
-                    <Row>
-                        <Col>Course <ArrowDownwardIcon></ArrowDownwardIcon></Col>
-                        <Col>Semester <ArrowDownwardIcon/></Col>
-                        <Col>Edit Course Details</Col>
-                        <Col md="auto">Markers Needed <Tooltip title="Markers"><InfoOutlinedIcon/></Tooltip> <ArrowDownwardIcon/></Col>
-                        <Col md="auto">Number of Applicants <Tooltip title="Applicants"><InfoOutlinedIcon/></Tooltip> <ArrowDownwardIcon/></Col>
-                        <Col>Status <Tooltip title="status"><InfoOutlinedIcon/></Tooltip> </Col>
+                <div style={{paddingTop:40, margin:0}}>
+                    <Row style={{width:'100%'}}>
+                        <Col style={{textAlign:'center'}}>Course <ArrowDownwardIcon></ArrowDownwardIcon></Col>
+                        <Col style={{textAlign:'center'}}>Semester <ArrowDownwardIcon/></Col>
+                        <Col style={{textAlign:'center'}}>Edit Course Details</Col>
+                        <Col style={{textAlign:'center'}} md="auto">Markers Needed <Tooltip title="Markers"><InfoOutlinedIcon/></Tooltip> <ArrowDownwardIcon/></Col>
+                        <Col style={{textAlign:'center'}} md="auto">Number of Applicants <Tooltip title="Applicants"><InfoOutlinedIcon/></Tooltip> <ArrowDownwardIcon/></Col>
+                        <Col style={{textAlign:'center'}}>Status <Tooltip title="status"><InfoOutlinedIcon/></Tooltip> </Col>
                     </Row>
-                    <Divider style={{backgroundColor:'#000000'}}/>
-                </Container>
+                    <Divider variant='fullWidth' style={{backgroundColor:'#000000', textAlign:'left'}}/>
+                </div>
             </div>
         </div>
     )
