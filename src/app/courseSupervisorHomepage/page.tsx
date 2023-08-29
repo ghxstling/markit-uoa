@@ -33,7 +33,7 @@ export default function CSHomepage(){
                 <Button variant="contained">CREATE NEW COURSE</Button>
                 <Container style={{paddingTop:40}}>
                     <Row>
-                        <Col>Course <ArrowDownwardIcon/></Col>
+                        <Col>Course <ArrowDownwardIcon></ArrowDownwardIcon></Col>
                         <Col>Semester <ArrowDownwardIcon/></Col>
                         <Col>Edit Course Details</Col>
                         <Col md="auto">Markers Needed <Tooltip title="Markers"><InfoOutlinedIcon/></Tooltip> <ArrowDownwardIcon/></Col>
