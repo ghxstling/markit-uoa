@@ -209,7 +209,6 @@ export default function CourseDetails() {
                   <Grid item xs={6}>
                     <Box display="flex" justifyContent="center">
                       {" "}
-                      {/* This Box centers the TextField */}
                       <TextField
                         type="number"
                         value={markerHoursManualInputValue}
@@ -253,7 +252,6 @@ export default function CourseDetails() {
                   <Grid item xs={6}>
                     <Box display="flex" justifyContent="center">
                       {" "}
-                      {/* This Box centers the TextField */}
                       <TextField
                         type="number"
                         value={markerManualInputValue}
