@@ -33,7 +33,6 @@ export default function CourseDetails() {
   const [description, setDescription] = useState<string>("");
   const [wordCount, setWordCount] = useState<number>(0);
 
-  // Event handler to update the slider value from manual input
   const handleManualInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -44,7 +43,6 @@ export default function CourseDetails() {
     }
   };
 
-  // Event handler to update the manual input when the slider changes
   const handleSliderChange = (event: Event, newValue: number | number[]) => {
     if (typeof newValue === "number") {
       setSliderValue(newValue);
@@ -95,7 +93,7 @@ export default function CourseDetails() {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const newDescription = event.target.value;
-    const newWordCount = newDescription.split(/\s+/).filter(Boolean).length; // Splits by spaces and counts non-empty strings
+    const newWordCount = newDescription.split(/\s+/).filter(Boolean).length;
 
     setDescription(newDescription);
     setWordCount(newWordCount);
@@ -160,26 +158,27 @@ export default function CourseDetails() {
                     { value: 800, label: "800" },
                   ]}
                   min={0}
-                  max={800} // Set the maximum value to 800
+                  max={800}
                   value={sliderValue}
                   onChange={handleSliderChange}
                 />
                 <Grid container justifyContent="center">
-                  {" "}
-                  {/* Centering the TextField */}
                   <Grid item xs={6}>
-                    <TextField
-                      type="number"
-                      value={manualInputValue}
-                      onChange={handleManualInputChange}
-                      style={{ width: "120px" }}
-                      InputProps={{
-                        inputProps: {
-                          min: 0,
-                          max: 800,
-                        },
-                      }}
-                    />
+                    <Box display="flex" justifyContent="center">
+                      {" "}
+                      <TextField
+                        type="number"
+                        value={manualInputValue}
+                        onChange={handleManualInputChange}
+                        style={{ width: "90px" }}
+                        InputProps={{
+                          inputProps: {
+                            min: 0,
+                            max: 800,
+                          },
+                        }}
+                      />
+                    </Box>
                   </Grid>
                 </Grid>
               </Box>
@@ -202,26 +201,28 @@ export default function CourseDetails() {
                     { value: 200, label: "200" },
                   ]}
                   min={0}
-                  max={200} // Set the maximum value to 800
+                  max={200}
                   value={markerHoursSliderValue}
                   onChange={handleMarkerHoursSliderChange}
                 />
                 <Grid container justifyContent="center">
-                  {" "}
-                  {/* Centering the TextField */}
                   <Grid item xs={6}>
-                    <TextField
-                      type="number"
-                      value={markerHoursManualInputValue}
-                      onChange={handleMarkerHoursManualInputChange}
-                      style={{ width: "120px" }}
-                      InputProps={{
-                        inputProps: {
-                          min: 0,
-                          max: 200,
-                        },
-                      }}
-                    />
+                    <Box display="flex" justifyContent="center">
+                      {" "}
+                      {/* This Box centers the TextField */}
+                      <TextField
+                        type="number"
+                        value={markerHoursManualInputValue}
+                        onChange={handleMarkerHoursManualInputChange}
+                        style={{ width: "90px" }}
+                        InputProps={{
+                          inputProps: {
+                            min: 0,
+                            max: 200,
+                          },
+                        }}
+                      />
+                    </Box>
                   </Grid>
                 </Grid>
               </Box>
@@ -244,26 +245,28 @@ export default function CourseDetails() {
                     { value: 20, label: "20" },
                   ]}
                   min={0}
-                  max={20} // Set the maximum value to 800
+                  max={20}
                   value={markerSliderValue}
                   onChange={handleMarkerSliderChange}
                 />
                 <Grid container justifyContent="center">
-                  {" "}
-                  {/* Centering the TextField */}
                   <Grid item xs={6}>
-                    <TextField
-                      type="number"
-                      value={markerManualInputValue}
-                      onChange={handleMarkerManualInputChange}
-                      style={{ width: "120px" }}
-                      InputProps={{
-                        inputProps: {
-                          min: 0,
-                          max: 20,
-                        },
-                      }}
-                    />
+                    <Box display="flex" justifyContent="center">
+                      {" "}
+                      {/* This Box centers the TextField */}
+                      <TextField
+                        type="number"
+                        value={markerManualInputValue}
+                        onChange={handleMarkerManualInputChange}
+                        style={{ width: "90px" }}
+                        InputProps={{
+                          inputProps: {
+                            min: 0,
+                            max: 20,
+                          },
+                        }}
+                      />
+                    </Box>
                   </Grid>
                 </Grid>
               </Box>
