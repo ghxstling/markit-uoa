@@ -17,21 +17,34 @@ import { AlignStart } from 'react-bootstrap-icons';
 import { start } from 'repl';
 
 export default function CSHomepage(){
+
+    interface Course {
+        id: number
+        course: string
+        semester: string
+        markers: number
+        applicants: number
+    }
+    
     const [data,setData] = useState([]);;
+    const api = String(process.env.ApiToken);
 
     useEffect(() => {
-        fetchData
+        fetchData();
     }, []);
 
     const fetchData = async () => {
         try {
-          const response = await fetch('https://64edee691f87218271420833.mockapi.io/Courses/Course');
+          const response = await fetch(api);
           const jsonData = await response.json();
+          
           setData(jsonData);
         } catch (error) {
           console.error('Error fetching data:', error);
         }
       };
+
+    
 
 
     return(
@@ -62,6 +75,15 @@ export default function CSHomepage(){
                         <Col style={{textAlign:'center'}}>Status <Tooltip title="status"><InfoOutlinedIcon/></Tooltip> </Col>
                     </Row>
                     <Divider variant='fullWidth' style={{backgroundColor:'#000000', textAlign:'left'}}/>
+                    <Row>
+                        <Col> course </Col>
+                        <Col> semester</Col>
+                        <Col> edit </Col>
+                        <Col>markers</Col>
+                        <Col>applicants </Col>
+                        <Col> status </Col>
+                    </Row>
+                    
                 </div>
             </div>
         </div>
