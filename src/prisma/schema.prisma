@@ -17,8 +17,10 @@ model Course {
   numOfEstimatedStudents Int
   numOfEnrolledStudents  Int
   markerHours            Int
+  markerResponsibilities String
   needMarkers            Boolean @default(true)
   markersNeeded          Int
+  semester               String
   // TODO: add course coordinator (name, email)
   // TODO: add course director (name, email)
 }
