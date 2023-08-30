@@ -56,7 +56,11 @@ let content = (
                     <b>{username}</b>
                 </ListSubheader>
                 <ListSubheader
-                    sx={{ color: 'white', backgroundColor: '#00467F' }}
+                    sx={{
+                        color: 'white',
+                        backgroundColor: '#00467F',
+                        lineHeight: '0',
+                    }}
                 >
                     {email}
                 </ListSubheader>
