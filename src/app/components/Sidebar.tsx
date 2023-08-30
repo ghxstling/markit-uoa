@@ -31,10 +31,7 @@ const IconStyle = {
 }
 
 //Create Sidebar Content
-let content = (
-    username: string | null | undefined,
-    email: string | null | undefined
-) => {
+let content = (username: string, email: string) => {
     return (
         <Box
             sx={{
