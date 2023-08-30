@@ -35,7 +35,7 @@ export default function CSHomepage(){
 
     const fetchData = async () => {
         try {
-          const response = await fetch('https://64edee691f87218271420833.mockapi.io/Courses/Course');
+          const response = await fetch(api);
           const jsonData = await response.json();
           setData(jsonData);
         } catch (error) {
