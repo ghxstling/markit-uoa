@@ -126,17 +126,17 @@ export default function CourseDetails() {
         const formData = {
             courseCode,
             courseDescription,
-            semester,
+            //semester,
             numOfEstimatedStudents: sliderValue,
             numOfEnrolledStudents: enrolledSliderValue,
             markerHours: markerHoursSliderValue,
             needMarkers: markerSliderValue > 0,
             markersNeeded: markerSliderValue,
-            markerResponsibilitiesDescription: description,
+            //markerResponsibilitiesDescription: description,
         };
         console.log("Submitting form with data:", formData);
         try {
-            const response = await fetch("/api/add-course", {
+            const response = await fetch("./api/courses", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
