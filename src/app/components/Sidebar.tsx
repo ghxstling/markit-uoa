@@ -19,6 +19,7 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 
+//Styling
 const linkStyle = {
     textDecoration: 'none',
     color: 'white',
@@ -29,6 +30,7 @@ const IconStyle = {
     fill: 'white',
 }
 
+//Create Sidebar Content
 let content = (
     username: string | null | undefined,
     email: string | null | undefined
@@ -124,6 +126,7 @@ const Sidebar = () => {
 
     let sidebarContent = content('', '')
 
+    //Get users name and email from session
     if (session && session.user && session.user.name && session.user.email) {
         const name: string =
             session.user.name.slice(0, session.user.name.lastIndexOf(' ') + 1) +
