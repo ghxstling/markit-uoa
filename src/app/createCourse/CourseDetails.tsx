@@ -23,7 +23,6 @@ import React, { useState } from 'react'
 export default function CourseDetails() {
     const [courseCode, setCourseCode] = useState('')
     const [courseDescription, setCourseDescription] = useState('')
-    const [semester, setSemester] = useState('')
     const [selectedYear, setSelectedYear] = useState<number>(
         new Date().getFullYear()
     )
@@ -189,7 +188,8 @@ export default function CourseDetails() {
     function clearForm() {
         setCourseCode('')
         setCourseDescription('')
-        setSemester('')
+        setSelectedYear(new Date().getFullYear())
+        setSelectedSemester('SS')
         setSliderValue(0)
         setManualInputValue('0')
         setEnrolledSliderValue(0)
