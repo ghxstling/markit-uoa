@@ -26,7 +26,7 @@ export default function CSHomepage(){
         applicants: number
     }
     
-    const [data,setData] = useState([]);;
+    const [data,setData] = useState<Course[]>([]);;
     const api = String(process.env.ApiToken);
 
     useEffect(() => {
@@ -35,9 +35,8 @@ export default function CSHomepage(){
 
     const fetchData = async () => {
         try {
-          const response = await fetch(api);
+          const response = await fetch('https://64edee691f87218271420833.mockapi.io/Courses/Course');
           const jsonData = await response.json();
-          
           setData(jsonData);
         } catch (error) {
           console.error('Error fetching data:', error);
@@ -73,17 +72,19 @@ export default function CSHomepage(){
                         <Col style={{textAlign:'center'}} md="auto">Markers Needed <Tooltip title="Markers"><InfoOutlinedIcon/></Tooltip> <ArrowDownwardIcon/></Col>
                         <Col style={{textAlign:'center'}} md="auto">Number of Applicants <Tooltip title="Applicants"><InfoOutlinedIcon/></Tooltip> <ArrowDownwardIcon/></Col>
                         <Col style={{textAlign:'center'}}>Status <Tooltip title="status"><InfoOutlinedIcon/></Tooltip> </Col>
+                        <Divider variant='fullWidth' style={{backgroundColor:'#000000', textAlign:'left'}}/>
                     </Row>
-                    <Divider variant='fullWidth' style={{backgroundColor:'#000000', textAlign:'left'}}/>
-                    <Row>
-                        <Col> course </Col>
-                        <Col> semester</Col>
-                        <Col> edit </Col>
-                        <Col>markers</Col>
-                        <Col>applicants </Col>
-                        <Col> status </Col>
-                    </Row>
-                    
+                    {data.map((course, index) => (
+                        <Row key={index} style={{paddingTop:10, paddingBottom:10}}>
+                            <Col>{course.course}</Col>
+                            <Col>{course.semester}</Col>
+                            <Col><Button>Edit</Button></Col>
+                            <Col>{course.markers}</Col>
+                            <Col>{course.applicants}</Col>
+                            <Col><Button>Status</Button></Col>
+                            <Divider variant='fullWidth' style={{backgroundColor:'#000000', textAlign:'left'}}/>
+                        </Row>
+                    ))}
                 </div>
             </div>
         </div>
