@@ -19,7 +19,7 @@ export default function Home() {
                     marginTop: '20px',
                 }}
             >
-                <Link href="/createCourse">Create a New Course</Link>
+                <Link href="/dashboard/courses">Create a New Course</Link>
             </div>
         </>
     )
