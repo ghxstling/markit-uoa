@@ -24,7 +24,9 @@ export async function POST(req: NextRequest) {
         !numOfEnrolledStudents ||
         !markerHours ||
         !needMarkers ||
-        !markersNeeded
+        !markersNeeded ||
+        !semester || 
+        !markerResponsibilities
     ) {
         return NextResponse.json({
             status: 400,
