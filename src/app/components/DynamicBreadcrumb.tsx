@@ -35,7 +35,7 @@ const DynamicBreadcrumb = () => {
                                 component={NextLink}
                                 href={breadcrumb.href}
                                 underline="none"
-                                fontFamily={'Roboto'}
+                                // fontFamily={'Roboto'}
                                 fontSize={'15px'}
                                 color={'#000000'}
                             >
