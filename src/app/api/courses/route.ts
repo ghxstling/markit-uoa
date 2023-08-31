@@ -1,6 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
 import CourseRepo from '@/data/courseRepo'
 
+// GET /api/courses/{id}
+export async function GET(req: NextRequest) {
+    // Get course ID from supervisor
+    const { courseId } = await req.json()
+
+    // Try get the course from the database by ID
+    const course = await CourseRepo.getCourseById(courseId)
+
+    // If it doesn't exist, return status code 404 NOT FOUND
+    if (course == null) {
+        return NextResponse.json({
+            status: 404,
+            statusText: 'Course not found',
+        })
+    }
+
+    // Return the course with status code 200 OK
+    return NextResponse.json(course, {
+        status: 200,
+        statusText: 'Course found',
+    })
+}
+
 export async function POST(req: NextRequest) {
     // Wait for supervisor to send course information
     const {
