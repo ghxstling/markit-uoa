@@ -1,6 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
 import CourseRepo from '@/data/courseRepo'
 
+// GET /api/courses/{id}
+export async function GET(req: NextRequest) {
+    // Get course ID from supervisor
+    const { courseId } = await req.json()
+
+    // Try get the course from the database by ID
+    const course = await CourseRepo.getCourseById(courseId)
+
+    // If it doesn't exist, return status code 404 NOT FOUND
+    if (course == null) {
+        return NextResponse.json({
+            status: 404,
+            statusText: 'Course not found',
+        })
+    }
+
+    // Return the course with status code 200 OK
+    return NextResponse.json(course, {
+        status: 200,
+        statusText: 'Course found',
+    })
+}
+
 export async function POST(req: NextRequest) {
     // Wait for supervisor to send course information
     const {
@@ -51,5 +74,52 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(newCourse, {
         status: 201,
         statusText: 'Created',
+    })
+}
+
+// PATCH /api/courses/{id}
+export async function PATCH(req: NextRequest) {
+    // Get Course ID and information to update from supervisor
+    const {
+        courseId,
+        courseCode,
+        courseDescription,
+        numOfEstimatedStudents,
+        numOfEnrolledStudents,
+        markerHours,
+        needMarkers,
+        markersNeeded,
+        semester,
+        markerResponsibilities,
+    } = await req.json();
+
+    // Try get the course from the database by ID
+    const course = await CourseRepo.getCourseById(courseId);
+
+    // If it doesn't exist, return status code 404 NOT FOUND
+    if (course == null) {
+        return NextResponse.json({
+            status: 404,
+            statusText: ' Course not found'
+        });
+    }
+
+    // Update the course information
+    const updatedCourse = await CourseRepo.updateCourse(courseId, {
+        courseCode,
+        courseDescription,
+        numOfEstimatedStudents,
+        numOfEnrolledStudents,
+        markerHours,
+        needMarkers,
+        markersNeeded,
+        semester,
+        markerResponsibilities,
+    })
+
+    // Return the updated course with status code 204 NO CONTENT
+    return NextResponse.json(updatedCourse, {
+        status: 204,
+        statusText: 'Updated course information'
     })
 }
