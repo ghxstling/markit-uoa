@@ -26,7 +26,7 @@ const studentHomepage = () => {
     const [rowPerPage, setRowPerPage] = useState(5)
 
     //handle pagination
-    const handPageChange = (event: unknown, newpage: unknown) => {
+    const handPageChange = (event: unknown, newpage: any) => {
         setPage(newpage)
     }
 
