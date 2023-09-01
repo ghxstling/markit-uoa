@@ -6,16 +6,15 @@ export async function PATCH(req: NextRequest, { params }: { params: { courseId: 
  
     // Store params.id into courseId for readability
     const courseId = parseInt(params.courseId);
-    
+
     // Get the course from the database by ID
     const course = await CourseRepo.getCourseById(courseId);
 
     // If it doesn't exist, return status code 404 NOT FOUND
     if (course == null) {
         return NextResponse.json({
-            status: 404,
             statusText: ' Course not found'
-        });
+        }, { status: 404 });
     }
 
     // Get updated course information from supervisor
