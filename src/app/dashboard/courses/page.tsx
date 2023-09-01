@@ -1,7 +1,7 @@
 'use client'
 import CourseDetails from '../../components/courses/CourseDetails'
 import Sidebar from '../../components/Sidebar'
-import DynamicBreadcrumb from '../../components/DynamicBreadcrumb' // Importing the DynamicBreadcrumb component
+import DynamicBreadcrumb from '../../components/DynamicBreadcrumb'
 
 export default function CreateCoursePage() {
     return (
@@ -10,7 +10,6 @@ export default function CreateCoursePage() {
             <div>
                 <div style={{ marginLeft: '300px' }}>
                     {' '}
-                    {/* Add some left margin */}
                     <DynamicBreadcrumb />
                 </div>
                 <CourseDetails />

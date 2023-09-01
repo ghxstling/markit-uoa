@@ -13,13 +13,21 @@ export default function Home() {
             <div
                 style={{
                     display: 'flex',
+                    flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
                     height: 'calc(100vh - /* Height of your other content */)',
                     marginTop: '20px',
                 }}
             >
-                <Link href="/dashboard/courses">Create a New Course</Link>
+                <div style={{ marginBottom: '10px' }}>
+                    {' '}
+                    <Link href="/dashboard/courses">Create a New Course</Link>
+                </div>
+                <div>
+                    {' '}
+                    <Link href={`/dashboard/courses/123`}>Edit Course</Link>
+                </div>
             </div>
         </>
     )
