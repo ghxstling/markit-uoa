@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import CourseRepo from '@/data/courseRepo'
 
-// PATCH /api/courses/{course.id}
-export async function PATCH(req: NextRequest) {
-
-    // Get Course ID from URL
-    console.log("url: " + req.url)
-    var courseId = parseInt(req.url.split('/')[-1])
-    console.log("number: " + courseId)
+// PATCH /api/courses/{courseId}
+export async function PATCH(req: NextRequest, { params }: { params: { courseId: string } }) {
+ 
+    // Store params.id into courseId for readability
+    const courseId = parseInt(params.courseId);
     
     // Get the course from the database by ID
     const course = await CourseRepo.getCourseById(courseId);
@@ -46,9 +44,9 @@ export async function PATCH(req: NextRequest) {
         semester,
     })
 
-    // Return the updated course with status code 204 NO CONTENT
+    // Return the updated course with status code 200 OK
     return NextResponse.json(updatedCourse, {
-        status: 204,
+        status: 200,
         statusText: 'Updated course information'
     })
 }
