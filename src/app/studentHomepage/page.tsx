@@ -17,6 +17,7 @@ import {
 } from '@mui/material'
 import { useSession } from 'next-auth/react'
 import DynamicBreadcrumb from '../components/DynamicBreadcrumb'
+import Link from 'next/link'
 
 const studentHomepage = () => {
     //initialise use states
@@ -84,16 +85,18 @@ const studentHomepage = () => {
                     >
                         Welcome, {firstName}
                     </Typography>
-                    <Button
-                        variant="contained"
-                        sx={{
-                            backgroundColor: '#00467F',
-                            mt: '53px',
-                            mb: '58px',
-                        }}
-                    >
-                        Apply Now
-                    </Button>
+                    <Link href="./" passHref>
+                        <Button
+                            variant="contained"
+                            sx={{
+                                backgroundColor: '#00467F',
+                                mt: '53px',
+                                mb: '58px',
+                            }}
+                        >
+                            Apply Now
+                        </Button>
+                    </Link>
                     {/* create table */}
                     <Card sx={{ p: '20px' }}>
                         <Typography variant="h5" fontWeight="bold">
