@@ -1,16 +1,26 @@
 import Typography from '@mui/material/Typography'
+import Link from 'next/link'
 import { UserStatus } from './components/UserStatus'
 import Sidebar from './components/Sidebar'
-import Container from '@mui/material/Container'
 
 export default function Home() {
     return (
         <>
             <Typography variant="h1">Hello World</Typography>
-            <Container maxWidth="xs">
-                <UserStatus />
-                <Sidebar />
-            </Container>
+            <UserStatus />
+            <Sidebar />
+
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: 'calc(100vh - /* Height of your other content */)',
+                    marginTop: '20px',
+                }}
+            >
+                <Link href="/dashboard/courses">Create a New Course</Link>
+            </div>
         </>
     )
 }
