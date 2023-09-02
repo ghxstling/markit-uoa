@@ -76,6 +76,6 @@ export async function POST(req: NextRequest) {
     // Return the newly created course with status code 201 CREATED
     return NextResponse.json(newCourse, {
         status: 201,
-        statusText: 'Created',
+        statusText: 'Course successfully created!',
     })
 }
