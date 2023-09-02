@@ -6,6 +6,7 @@ import Sidebar from './components/Sidebar'
 export default function Home() {
     return (
         <>
+            <Typography variant="h1">Hello World</Typography>
             <Sidebar />
 
             <div
@@ -18,7 +19,6 @@ export default function Home() {
                     marginTop: '20px',
                 }}
             >
-                <Typography variant="h1">Hello World</Typography>
                 <UserStatus />
                 <Link href="/dashboard/courses">Create a New Course</Link>
             </div>
