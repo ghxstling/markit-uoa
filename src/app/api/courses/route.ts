@@ -1,5 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import CourseRepo from '@/data/courseRepo'
+import { z } from "zod"
+
+const courseSchema = z.object({
+    courseCode: z.string(),
+    courseDescription: z.string(),
+    numOfEstimatedStudents: z.number(),
+    numOfEnrolledStudents: z.number(),
+    markerHours: z.number(),
+    markerResponsibilities: z.string(),
+    needMarkers: z.boolean(),
+    markersNeeded: z.number(),
+    semester: z.string(),
+})
 
 // POST /api/courses/
 export async function POST(req: NextRequest) {
