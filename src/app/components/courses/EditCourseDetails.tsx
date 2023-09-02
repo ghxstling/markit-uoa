@@ -18,9 +18,16 @@ import {
 import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
 import TextField from '@mui/material/TextField'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 
-export default function EditCourseDetails({ courseId }) {
+type EditCourseDetailsProps = {
+    courseId: string // Assuming courseId is a string
+}
+
+export default function EditCourseDetails({
+    courseId,
+}: EditCourseDetailsProps) {
     const [courseCode, setCourseCode] = useState('')
     const [courseDescription, setCourseDescription] = useState('')
     const [selectedYear, setSelectedYear] = useState<number>(
@@ -47,11 +54,83 @@ export default function EditCourseDetails({ courseId }) {
     const currentYear = new Date().getFullYear()
     const yearOptions = [currentYear, currentYear + 1]
     const semesterOptions = ['SS', 'S1', 'S2']
-    const [openSnackbar, setOpenSnackbar] = React.useState(false)
-    const [snackbarMessage, setSnackbarMessage] = React.useState('')
-    const [snackbarSeverity, setSnackbarSeverity] = React.useState<
+    const [openSnackbar, setOpenSnackbar] = useState(false)
+    const [snackbarMessage, setSnackbarMessage] = useState('')
+    const [snackbarSeverity, setSnackbarSeverity] = useState<
         'success' | 'error'
     >('success')
+    const router = useRouter()
+
+    type Course = {
+        courseCode: string
+        courseDescription: string
+        semester: string
+        numOfEstimatedStudents: number
+        numOfEnrolledStudents: number
+        markerHours: number
+        markersNeeded: number
+        markerResponsibilities: string
+    }
+
+    async function populateForm(course: Course) {
+        try {
+            setCourseCode(course.courseCode)
+            setCourseDescription(course.courseDescription)
+
+            const year = parseInt(course.semester.substring(0, 4))
+            const semester = course.semester.substring(4)
+
+            setSelectedYear(year)
+            setSelectedSemester(semester)
+            setSliderValue(course.numOfEstimatedStudents)
+            setManualInputValue(course.numOfEstimatedStudents.toString())
+            setEnrolledSliderValue(course.numOfEnrolledStudents)
+            setEnrolledManualInputValue(course.numOfEnrolledStudents.toString())
+            setMarkerHoursSliderValue(course.markerHours)
+            setMarkerHoursManualInputValue(course.markerHours.toString())
+            setMarkerSliderValue(course.markersNeeded)
+            setMarkerManualInputValue(course.markersNeeded.toString())
+            setDescription(course.markerResponsibilities)
+
+            const wordCount = course.markerResponsibilities
+                .split(/\s+/)
+                .filter(Boolean).length
+            setWordCount(wordCount)
+        } catch (error) {
+            console.error('Error fetching course data:', error)
+            setSnackbarMessage('Failed to fetch course data.')
+            setSnackbarSeverity('error')
+            setOpenSnackbar(true)
+        }
+    }
+
+    useEffect(() => {
+        async function fetchCourseDetails() {
+            try {
+                const response = await fetch(`/api/courses/${courseId}`)
+                const data = await response.json()
+
+                if (response.status !== 200) {
+                    console.error('Error:', data.statusText)
+                    setSnackbarMessage(
+                        data.statusText || 'Failed to fetch course details.'
+                    )
+                    setSnackbarSeverity('error')
+                    setOpenSnackbar(true)
+                    return
+                }
+
+                populateForm(data)
+            } catch (error) {
+                console.error('Error:', error)
+                setSnackbarMessage('Failed to fetch course details.')
+                setSnackbarSeverity('error')
+                setOpenSnackbar(true)
+            }
+        }
+
+        fetchCourseDetails()
+    }, [courseId])
 
     const handleManualInputChange = (
         event: React.ChangeEvent<HTMLInputElement>
@@ -149,10 +228,11 @@ export default function EditCourseDetails({ courseId }) {
             semester: `${selectedYear}${selectedSemester}`,
             markerResponsibilities: description,
         }
-        console.log('Submitting form with data:', formData)
+
+        console.log('Submitting form with updated data:', formData)
         try {
-            const response = await fetch('/api/courses', {
-                method: 'POST',
+            const response = await fetch(`/api/courses/${courseId}`, {
+                method: 'PATCH', // Use PATCH since your endpoint is using PATCH
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -161,45 +241,33 @@ export default function EditCourseDetails({ courseId }) {
 
             const data = await response.json()
 
-            if (response.status !== 201) {
-                // Assuming 201 is the status code for successful creation
+            if (!response.ok) {
                 // Handle server-side error
                 console.error('Error:', data.statusText)
-                setSnackbarMessage(data.statusText || 'Failed to add course.')
+                setSnackbarMessage(
+                    data.statusText || 'Failed to update course.'
+                )
                 setSnackbarSeverity('error')
                 setOpenSnackbar(true)
                 return
             }
 
             // Handle success
-            console.log('Course added:', data)
-            setSnackbarMessage('Course successfully added!')
+            console.log('Course updated:', data)
+            setSnackbarMessage('Course successfully updated!')
             setSnackbarSeverity('success')
             setOpenSnackbar(true)
         } catch (error) {
             // Handle network or other unknown errors
             console.error('Error:', error)
-            setSnackbarMessage('Failed to add course.')
+            setSnackbarMessage('Failed to update course.')
             setSnackbarSeverity('error')
             setOpenSnackbar(true)
         }
     }
 
-    function clearForm() {
-        setCourseCode('')
-        setCourseDescription('')
-        setSelectedYear(new Date().getFullYear())
-        setSelectedSemester('SS')
-        setSliderValue(0)
-        setManualInputValue('0')
-        setEnrolledSliderValue(0)
-        setEnrolledManualInputValue('0')
-        setMarkerHoursSliderValue(0)
-        setMarkerHoursManualInputValue('0')
-        setMarkerSliderValue(0)
-        setMarkerManualInputValue('0')
-        setDescription('')
-        setWordCount(0)
+    function handleCancel() {
+        router.back() // this navigates the user to the previous page in history
     }
 
     return (
@@ -548,9 +616,9 @@ export default function EditCourseDetails({ courseId }) {
                             <Button
                                 variant="outlined"
                                 color="primary"
-                                onClick={clearForm}
+                                onClick={handleCancel}
                             >
-                                DISCARD
+                                CANCEL
                             </Button>
                         </Grid>
                     </Grid>
