@@ -2,13 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import CourseRepo from '@/data/courseRepo'
 import { z } from "zod"
 
-const DEFAULT_ERROR_MSG = "Missing required information"
 const courseSchema = z.object({
     courseCode: z.string()
         .toUpperCase()
         .nonempty({ message: "Please provide the Course Code" }),
     courseDescription: z.string()
-        .nonempty({ message: "PLease provide the Course Description" }),
+        .nonempty({ message: "Please provide the Course Description" }),
     numOfEstimatedStudents: z.number()
         .int().nonnegative(),
     numOfEnrolledStudents: z.number()
@@ -16,12 +15,12 @@ const courseSchema = z.object({
     markerHours: z.number()
         .int().nonnegative(),
     markerResponsibilities: z.string()
-        .nonempty({ message: "Please add a description of Marker Resposibilities" }),
+        .nonempty({ message: "Please add a Marker Resposibilities Description" }),
     needMarkers: z.boolean(),
     markersNeeded: z.number()
         .int().nonnegative(),
     semester: z.string(),
-})
+}).required()
 
 // POST /api/courses/ 
 export async function POST(req: NextRequest) {
@@ -39,21 +38,25 @@ export async function POST(req: NextRequest) {
     } = await req.json()
 
     // If some information is missing, return code 400 BAD REQUEST
-    // TODO: Add more validation using Zod
-    if (
-        !courseCode ||
-        !courseDescription ||
-        !numOfEstimatedStudents ||
-        !numOfEnrolledStudents ||
-        !markerHours ||
-        !markerResponsibilities ||
-        !needMarkers ||
-        !markersNeeded ||
-        !semester
-    ) {
-        return NextResponse.json({
+    const result = courseSchema.safeParse({
+        courseCode,
+        courseDescription,
+        numOfEstimatedStudents,
+        numOfEnrolledStudents,
+        markerHours,
+        markerResponsibilities,
+        needMarkers,
+        markersNeeded,
+        semester,
+    })
+
+    console.log("validating")
+    if (!result.success) {
+
+        console.log(result.error.issues[0].message)
+        return NextResponse.json(result.error, {
             status: 400,
-            statusText: DEFAULT_ERROR_MSG,
+            statusText: result.error.issues[0].message,
         })
     }
 
