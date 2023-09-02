@@ -2,29 +2,19 @@ import { NextRequest, NextResponse } from 'next/server'
 import CourseRepo from '@/data/courseRepo'
 import { z } from "zod"
 
-const DEFAULT_ERROR_MSG = "Missing required information"
 const courseSchema = z.object({
-    courseCode: z.string()
-        .toUpperCase()
-        .nonempty({ message: "Please provide the Course Code" }),
-    courseDescription: z.string()
-        .nonempty({ message: "PLease provide the Course Description" }),
-    numOfEstimatedStudents: z.number()
-        .int()
-        .nonnegative(),
-    numOfEnrolledStudents: z.number()
-        .int().nonnegative(),
-    markerHours: z.number()
-        .int().nonnegative(),
-    markerResponsibilities: z.string()
-        .nonempty({ message: "Please add a description of Marker Resposibilities" }),
+    courseCode: z.string(),
+    courseDescription: z.string(),
+    numOfEstimatedStudents: z.number(),
+    numOfEnrolledStudents: z.number(),
+    markerHours: z.number(),
+    markerResponsibilities: z.string(),
     needMarkers: z.boolean(),
-    markersNeeded: z.number()
-        .int().nonnegative(),
+    markersNeeded: z.number(),
     semester: z.string(),
 })
 
-// POST /api/courses/ 
+// POST /api/courses/
 export async function POST(req: NextRequest) {
     // Wait for supervisor to send course information
     const {
@@ -54,7 +44,7 @@ export async function POST(req: NextRequest) {
     ) {
         return NextResponse.json({
             status: 400,
-            statusText: DEFAULT_ERROR_MSG,
+            statusText: 'Missing required information',
         })
     }
 
