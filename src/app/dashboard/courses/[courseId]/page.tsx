@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 
 export default function CreateCoursePage() {
     const pathname = usePathname()
-    const courseId = pathname.split('/').pop()
+    const courseId = pathname.split('/').pop() || ''
 
     return (
         <>

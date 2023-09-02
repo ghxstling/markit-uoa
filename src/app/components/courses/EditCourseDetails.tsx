@@ -19,7 +19,7 @@ import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
 import TextField from '@mui/material/TextField'
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 
 type EditCourseDetailsProps = {
     courseId: string // Assuming courseId is a string
@@ -60,6 +60,43 @@ export default function EditCourseDetails({
         'success' | 'error'
     >('success')
     const router = useRouter()
+    const [isEditing, setIsEditing] = useState(false)
+
+    const originalCourseDataRef = React.useRef<OriginalCourseData | null>(null)
+
+    const toggleEdit = () => {
+        setIsEditing(!isEditing)
+    }
+
+    const revertChanges = () => {
+        const originalData = originalCourseDataRef.current
+
+        if (originalData) {
+            setCourseCode(originalData.courseCode)
+            setCourseDescription(originalData.courseDescription)
+            setSelectedYear(originalData.selectedYear)
+            setSelectedSemester(originalData.selectedSemester)
+            setSliderValue(originalData.sliderValue)
+            setEnrolledSliderValue(originalData.enrolledSliderValue)
+            setMarkerHoursSliderValue(originalData.markerHoursSliderValue)
+            setMarkerSliderValue(originalData.markerSliderValue)
+            setDescription(originalData.description)
+
+            setIsEditing(false)
+        }
+    }
+
+    type OriginalCourseData = {
+        courseCode: string
+        courseDescription: string
+        selectedYear: number
+        selectedSemester: string
+        sliderValue: number
+        enrolledSliderValue: number
+        markerHoursSliderValue: number
+        markerSliderValue: number
+        description: string
+    }
 
     type Course = {
         courseCode: string
@@ -74,6 +111,19 @@ export default function EditCourseDetails({
 
     async function populateForm(course: Course) {
         try {
+            // Store the original data of the course
+            originalCourseDataRef.current = {
+                courseCode: course.courseCode,
+                courseDescription: course.courseDescription,
+                selectedYear: parseInt(course.semester.substring(0, 4)),
+                selectedSemester: course.semester.substring(4),
+                sliderValue: course.numOfEstimatedStudents,
+                enrolledSliderValue: course.numOfEnrolledStudents,
+                markerHoursSliderValue: course.markerHours,
+                markerSliderValue: course.markersNeeded,
+                description: course.markerResponsibilities,
+            }
+
             setCourseCode(course.courseCode)
             setCourseDescription(course.courseDescription)
 
@@ -289,6 +339,7 @@ export default function EditCourseDetails({
                             style={{ width: '350px' }}
                             value={courseCode}
                             onChange={(e) => setCourseCode(e.target.value)}
+                            disabled={!isEditing}
                         />
                     </Grid>
                     <Grid item>
@@ -300,10 +351,15 @@ export default function EditCourseDetails({
                             onChange={(e) =>
                                 setCourseDescription(e.target.value)
                             }
+                            disabled={!isEditing}
                         />
                     </Grid>
                     <Grid item>
-                        <FormControl fullWidth style={{ width: '350px' }}>
+                        <FormControl
+                            fullWidth
+                            style={{ width: '350px' }}
+                            disabled={!isEditing}
+                        >
                             <InputLabel id="year-select-label">Year</InputLabel>
                             <Select
                                 labelId="year-select-label"
@@ -323,7 +379,11 @@ export default function EditCourseDetails({
                         </FormControl>
                     </Grid>
                     <Grid item>
-                        <FormControl fullWidth style={{ width: '350px' }}>
+                        <FormControl
+                            fullWidth
+                            style={{ width: '350px' }}
+                            disabled={!isEditing}
+                        >
                             <InputLabel id="semester-select-label">
                                 Semester
                             </InputLabel>
@@ -374,7 +434,11 @@ export default function EditCourseDetails({
                                     min={0}
                                     max={800}
                                     value={sliderValue}
-                                    onChange={handleSliderChange}
+                                    onChange={
+                                        isEditing
+                                            ? handleSliderChange
+                                            : undefined
+                                    }
                                 />
                                 <Grid container justifyContent="center">
                                     <Grid item xs={6}>
@@ -390,6 +454,7 @@ export default function EditCourseDetails({
                                                     handleManualInputChange
                                                 }
                                                 style={{ width: '90px' }}
+                                                disabled={!isEditing}
                                                 InputProps={{
                                                     inputProps: {
                                                         min: 0,
@@ -431,7 +496,11 @@ export default function EditCourseDetails({
                                     min={0}
                                     max={800}
                                     value={enrolledSliderValue}
-                                    onChange={handleEnrolledSliderChange}
+                                    onChange={
+                                        isEditing
+                                            ? handleEnrolledSliderChange
+                                            : undefined
+                                    }
                                 />
                                 <Grid container justifyContent="center">
                                     <Grid item xs={6}>
@@ -447,6 +516,7 @@ export default function EditCourseDetails({
                                                     handleEnrolledManualInputChange
                                                 }
                                                 style={{ width: '90px' }}
+                                                disabled={!isEditing}
                                                 InputProps={{
                                                     inputProps: {
                                                         min: 0,
@@ -488,7 +558,11 @@ export default function EditCourseDetails({
                                     min={0}
                                     max={200}
                                     value={markerHoursSliderValue}
-                                    onChange={handleMarkerHoursSliderChange}
+                                    onChange={
+                                        isEditing
+                                            ? handleMarkerHoursSliderChange
+                                            : undefined
+                                    }
                                 />
                                 <Grid container justifyContent="center">
                                     <Grid item xs={6}>
@@ -506,6 +580,7 @@ export default function EditCourseDetails({
                                                     handleMarkerHoursManualInputChange
                                                 }
                                                 style={{ width: '90px' }}
+                                                disabled={!isEditing}
                                                 InputProps={{
                                                     inputProps: {
                                                         min: 0,
@@ -547,7 +622,11 @@ export default function EditCourseDetails({
                                     min={0}
                                     max={20}
                                     value={markerSliderValue}
-                                    onChange={handleMarkerSliderChange}
+                                    onChange={
+                                        isEditing
+                                            ? handleMarkerSliderChange
+                                            : undefined
+                                    }
                                 />
                                 <Grid container justifyContent="center">
                                     <Grid item xs={6}>
@@ -563,6 +642,7 @@ export default function EditCourseDetails({
                                                     handleMarkerManualInputChange
                                                 }
                                                 style={{ width: '90px' }}
+                                                disabled={!isEditing}
                                                 InputProps={{
                                                     inputProps: {
                                                         min: 0,
@@ -592,6 +672,7 @@ export default function EditCourseDetails({
                                 rows={4}
                                 value={description}
                                 onChange={handleDescriptionChange}
+                                disabled={!isEditing}
                             />
                             <FormHelperText>{`${wordCount}/100`}</FormHelperText>
                         </Grid>
@@ -603,24 +684,51 @@ export default function EditCourseDetails({
                         spacing={1}
                         style={{ marginTop: '1em' }}
                     >
-                        <Grid item>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={handleSubmit}
-                            >
-                                SAVE
-                            </Button>
-                        </Grid>
-                        <Grid item>
-                            <Button
-                                variant="outlined"
-                                color="primary"
-                                onClick={handleCancel}
-                            >
-                                CANCEL
-                            </Button>
-                        </Grid>
+                        {!isEditing ? (
+                            // Not in editing mode
+                            <>
+                                <Grid item>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={() => setIsEditing(true)}
+                                    >
+                                        EDIT
+                                    </Button>
+                                </Grid>
+                                <Grid item>
+                                    <Button
+                                        variant="outlined"
+                                        color="primary"
+                                        onClick={handleCancel} // This just takes the user back as before
+                                    >
+                                        BACK
+                                    </Button>
+                                </Grid>
+                            </>
+                        ) : (
+                            // In editing mode
+                            <>
+                                <Grid item>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={handleSubmit}
+                                    >
+                                        SAVE
+                                    </Button>
+                                </Grid>
+                                <Grid item>
+                                    <Button
+                                        variant="outlined"
+                                        color="primary"
+                                        onClick={revertChanges}
+                                    >
+                                        CANCEL
+                                    </Button>
+                                </Grid>
+                            </>
+                        )}
                     </Grid>
                 </Grid>
             </Paper>

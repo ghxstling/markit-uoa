@@ -21,12 +21,10 @@ export default function Home() {
                 }}
             >
                 <div style={{ marginBottom: '10px' }}>
-                    {' '}
                     <Link href="/dashboard/courses">Create a New Course</Link>
                 </div>
                 <div>
-                    {' '}
-                    <Link href={`/dashboard/courses/123`}>Edit Course</Link>
+                    <Link href={`/dashboard/courses/15`}>Edit Course</Link>
                 </div>
             </div>
         </>
