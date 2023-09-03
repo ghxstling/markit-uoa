@@ -14,7 +14,7 @@ import {
     Stepper,
     Typography,
 } from '@mui/material'
-import React from 'react'
+import React, { useState, Component } from 'react'
 
 const steps = [
     'Personal Details',
@@ -36,7 +36,7 @@ function getStepContent(step: number) {
 }
 
 const Application = () => {
-    const [activeStep, setActiveStep] = React.useState(0)
+    const [activeStep, setActiveStep] = useState(0)
 
     const handleNext = () => {
         setActiveStep(activeStep + 1)

@@ -109,8 +109,6 @@ const PersonalDetails = () => {
                             fullWidth
                             id="email"
                             label="Email Address"
-                            value={email}
-                            disabled
                         />
                         <input type="hidden" name="email" value={email} />
                     </Grid>
@@ -145,7 +143,7 @@ const PersonalDetails = () => {
                     severity="error"
                     sx={{ width: '100%' }}
                 >
-                    Please enter only 9 digits for your student ID
+                    Please enter 9 digits for your student ID
                 </Alert>
             </Snackbar>
         </>
