@@ -19,6 +19,7 @@ import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
 import TextField from '@mui/material/TextField'
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function CourseDetails() {
     const [courseCode, setCourseCode] = useState('')
@@ -52,6 +53,7 @@ export default function CourseDetails() {
     const [snackbarSeverity, setSnackbarSeverity] = React.useState<
         'success' | 'error'
     >('success')
+    const router = useRouter()
 
     const handleManualInputChange = (
         event: React.ChangeEvent<HTMLInputElement>
@@ -185,21 +187,8 @@ export default function CourseDetails() {
         }
     }
 
-    function clearForm() {
-        setCourseCode('')
-        setCourseDescription('')
-        setSelectedYear(new Date().getFullYear())
-        setSelectedSemester('SS')
-        setSliderValue(0)
-        setManualInputValue('0')
-        setEnrolledSliderValue(0)
-        setEnrolledManualInputValue('0')
-        setMarkerHoursSliderValue(0)
-        setMarkerHoursManualInputValue('0')
-        setMarkerSliderValue(0)
-        setMarkerManualInputValue('0')
-        setDescription('')
-        setWordCount(0)
+    function handleCancel() {
+        router.back() // this navigates the user to the previous page in history
     }
 
     return (
@@ -548,9 +537,9 @@ export default function CourseDetails() {
                             <Button
                                 variant="outlined"
                                 color="primary"
-                                onClick={clearForm}
+                                onClick={handleCancel}
                             >
-                                DISCARD
+                                BACK
                             </Button>
                         </Grid>
                     </Grid>
