@@ -4,10 +4,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Sidebar from "../components/Sidebar"
 import StarIcon from '@mui/icons-material/Star';
 import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TableFooter from '@mui/material/TableFooter';
+import TablePagination from '@mui/material/TablePagination';
+import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import Tooltip from '@mui/material/Tooltip';
@@ -15,6 +21,80 @@ import React, { useState, useEffect } from 'react';
 import { fetchData } from 'next-auth/client/_utils';
 import { AlignStart } from 'react-bootstrap-icons';
 import { start } from 'repl';
+import { useTheme } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import LastPageIcon from '@mui/icons-material/LastPage';
+
+interface TablePaginationActionsProps {
+    count: number;
+    page: number;
+    rowsPerPage: number;
+    onPageChange: (
+      event: React.MouseEvent<HTMLButtonElement>,
+      newPage: number,
+    ) => void;
+  }
+
+
+function TablePaginationActions(props: TablePaginationActionsProps) {
+    const theme = useTheme();
+    const { count, page, rowsPerPage, onPageChange } = props;
+  
+    const handleFirstPageButtonClick = (
+      event: React.MouseEvent<HTMLButtonElement>,
+    ) => {
+      onPageChange(event, 0);
+    };
+  
+    const handleBackButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+      onPageChange(event, page - 1);
+    };
+  
+    const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+      onPageChange(event, page + 1);
+    };
+  
+    const handleLastPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+      onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+    };
+  
+    return (
+      <Box sx={{ flexShrink: 0, ml: 2.5 }}>
+        <IconButton
+          onClick={handleFirstPageButtonClick}
+          disabled={page === 0}
+          aria-label="first page"
+        >
+          {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
+        </IconButton>
+        <IconButton
+          onClick={handleBackButtonClick}
+          disabled={page === 0}
+          aria-label="previous page"
+        >
+          {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+        </IconButton>
+        <IconButton
+          onClick={handleNextButtonClick}
+          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+          aria-label="next page"
+        >
+          {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+        </IconButton>
+        <IconButton
+          onClick={handleLastPageButtonClick}
+          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+          aria-label="last page"
+        >
+          {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
+        </IconButton>
+      </Box>
+    );
+  }
 
 export default function CSHomepage(){
 
@@ -24,6 +104,7 @@ export default function CSHomepage(){
         semester: string
         markers: number
         applicants: number
+        status: boolean
     }
     
     const [data,setData] = useState<Course[]>([]);;
@@ -35,7 +116,7 @@ export default function CSHomepage(){
 
     const fetchData = async () => {
         try {
-          const response = await fetch(api);
+          const response = await fetch('https://64edee691f87218271420833.mockapi.io/Courses/Course');
           const jsonData = await response.json();
           setData(jsonData);
         } catch (error) {
@@ -43,7 +124,25 @@ export default function CSHomepage(){
         }
       };
 
+      const [page, setPage] = React.useState(0);
+      const [rowsPerPage, setRowsPerPage] = React.useState(5);
     
+      const emptyRows =
+        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
+    
+      const handleChangePage = (
+        event: React.MouseEvent<HTMLButtonElement> | null,
+        newPage: number,
+      ) => {
+        setPage(newPage);
+      };
+    
+      const handleChangeRowsPerPage = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+      ) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+      };
 
 
     return(
@@ -64,28 +163,54 @@ export default function CSHomepage(){
                 </div>
                 <h1 style={{paddingTop:30, paddingBottom:50}}>Welcome, Supervisor</h1>
                 <Button variant="contained">CREATE NEW COURSE</Button>
-                <div style={{paddingTop:40, margin:0}}>
-                    <Row style={{width:'100%'}}>
-                        <Col style={{textAlign:'center'}}>Course <ArrowDownwardIcon></ArrowDownwardIcon></Col>
-                        <Col style={{textAlign:'center'}}>Semester <ArrowDownwardIcon/></Col>
-                        <Col style={{textAlign:'center'}}>Edit Course Details</Col>
-                        <Col style={{textAlign:'center'}} md="auto">Markers Needed <Tooltip title="Markers"><InfoOutlinedIcon/></Tooltip> <ArrowDownwardIcon/></Col>
-                        <Col style={{textAlign:'center'}} md="auto">Number of Applicants <Tooltip title="Applicants"><InfoOutlinedIcon/></Tooltip> <ArrowDownwardIcon/></Col>
-                        <Col style={{textAlign:'center'}}>Status <Tooltip title="status"><InfoOutlinedIcon/></Tooltip> </Col>
-                        <Divider variant='fullWidth' style={{backgroundColor:'#000000', textAlign:'left'}}/>
-                    </Row>
-                    {data.map((course, index) => (
-                        <Row key={index} style={{paddingTop:10, paddingBottom:10}}>
-                            <Col>{course.course}</Col>
-                            <Col>{course.semester}</Col>
-                            <Col><Button>Edit</Button></Col>
-                            <Col>{course.markers}</Col>
-                            <Col>{course.applicants}</Col>
-                            <Col><Button>Status</Button></Col>
-                            <Divider variant='fullWidth' style={{backgroundColor:'#000000', textAlign:'left'}}/>
-                        </Row>
-                    ))}
-                </div>
+                <TableContainer component={Paper}>
+                    <Table style={{paddingTop:40, margin:0}}>
+                        <TableHead>
+                            <TableRow style={{width:'100%'}}>
+                                <TableCell style={{textAlign:'center'}}>Course <ArrowDownwardIcon></ArrowDownwardIcon></TableCell>
+                                <TableCell style={{textAlign:'center'}}>Semester <ArrowDownwardIcon/></TableCell>
+                                <TableCell style={{textAlign:'center'}}>Edit Course Details</TableCell>
+                                <TableCell style={{textAlign:'center'}}>Markers Needed <Tooltip title="Markers"><InfoOutlinedIcon/></Tooltip> <ArrowDownwardIcon/></TableCell>
+                                <TableCell style={{textAlign:'center'}}>Number of Applicants <Tooltip title="Applicants"><InfoOutlinedIcon/></Tooltip> <ArrowDownwardIcon/></TableCell>
+                                <TableCell style={{textAlign:'center'}}>Status <Tooltip title="status"><InfoOutlinedIcon/></Tooltip> </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        {(rowsPerPage > 0
+                            ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            : data
+                        ).map((course, index) => (
+                            <TableRow key={index} style={{}}>
+                                <TableCell style={{textAlign:'center'}}>{course.course}</TableCell>
+                                <TableCell style={{textAlign:'center'}}>{course.semester}</TableCell>
+                                <TableCell style={{textAlign:'center'}}><Button>Edit</Button></TableCell>
+                                <TableCell style={{textAlign:'center'}}>{course.markers}</TableCell>
+                                <TableCell style={{textAlign:'center'}}>{course.applicants}</TableCell>
+                                <TableCell style={{textAlign:'center'}}><Button>Status</Button></TableCell>
+                            </TableRow>
+                        ))}
+                        <TableFooter>
+                            <TableRow>
+                                <TablePagination
+                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                colSpan={3}
+                                count={data.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                SelectProps={{
+                                    inputProps: {
+                                    'aria-label': 'rows per page',
+                                    },
+                                    native: true,
+                                }}
+                                onPageChange={handleChangePage}
+                                onRowsPerPageChange={handleChangeRowsPerPage}
+                                ActionsComponent={TablePaginationActions}
+                                />
+                            </TableRow>
+                        </TableFooter>
+                    </Table>
+                </TableContainer>
+                <div style={{paddingTop:50}}></div>
             </div>
         </div>
     )
