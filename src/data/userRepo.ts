@@ -1,4 +1,5 @@
 import prisma from '@/libs/prisma'
+import { Role } from '@/models/role'
 import { Prisma } from '@prisma/client'
 
 export default class UserRepo {
@@ -12,5 +13,15 @@ export default class UserRepo {
         return await prisma.user.findUnique({
             where: { email },
         })
+    }
+
+    static async doesUserHaveRole(email: string, role: Role) {
+        const user = await prisma.user.findUnique({
+            where: { email },
+        })
+        if (!user) {
+            return false
+        }
+        return user.role === role
     }
 }
