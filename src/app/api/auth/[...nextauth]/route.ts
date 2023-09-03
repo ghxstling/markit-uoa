@@ -1,5 +1,5 @@
 import UserRepo from '@/data/userRepo'
-import NextAuth from 'next-auth'
+import NextAuth, { AuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 
 const clientId = process.env.GOOGLE_CLIENT_ID
@@ -8,13 +8,17 @@ const clientSecret = process.env.GOOGLE_CLIENT_SECRET
 if (!clientId) throw new Error('Missing env.GOOGLE_CLIENT_ID')
 if (!clientSecret) throw new Error('Missing env.GOOGLE_CLIENT_SECRET')
 
-const handler = NextAuth({
+const authOptions: AuthOptions = {
     providers: [
         GoogleProvider({
             clientId,
             clientSecret,
         }),
     ],
+    session: {
+        strategy: 'jwt',
+        maxAge: 30 * 24 * 60 * 60, // 30 days
+    },
     callbacks: {
         async signIn({ user }) {
             const userFromEmail = await UserRepo.getUserbyEmail(user.email!)
@@ -27,6 +31,8 @@ const handler = NextAuth({
             return true
         },
     },
-})
+}
 
-export { handler as GET, handler as POST }
+const handler = NextAuth(authOptions)
+
+export { handler as GET, handler as POST, authOptions }
