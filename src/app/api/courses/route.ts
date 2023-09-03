@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import CourseRepo from '@/data/courseRepo'
-import { courseSchema } from '@/app/components/courses/ZodSchemas'
+import { courseSchema } from '@/models/ZodSchemas'
 
 // POST /api/courses/ 
 export async function POST(req: NextRequest) {

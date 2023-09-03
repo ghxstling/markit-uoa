@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import CourseRepo from '@/data/courseRepo'
-import { courseSchema } from '@/app/components/courses/ZodSchemas'
+import { courseSchema } from '@/models/ZodSchemas'
 
-// TODO: add zod validation for PATCH
 // PATCH /api/courses/{courseId}
 export async function PATCH(req: NextRequest, { params }: { params: { courseId: string } }) {
  
