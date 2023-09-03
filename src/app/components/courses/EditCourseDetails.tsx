@@ -61,6 +61,7 @@ export default function EditCourseDetails({
     >('success')
     const router = useRouter()
     const [isEditing, setIsEditing] = useState(false)
+    const [isSaved, setIsSaved] = useState(false)
 
     const originalCourseDataRef = React.useRef<OriginalCourseData | null>(null)
 
@@ -307,6 +308,7 @@ export default function EditCourseDetails({
             setSnackbarMessage('Course successfully updated!')
             setSnackbarSeverity('success')
             setOpenSnackbar(true)
+            setIsSaved(true)
         } catch (error) {
             // Handle network or other unknown errors
             console.error('Error:', error)
@@ -700,7 +702,7 @@ export default function EditCourseDetails({
                                     <Button
                                         variant="outlined"
                                         color="primary"
-                                        onClick={handleCancel} // This just takes the user back as before
+                                        onClick={handleCancel}
                                     >
                                         BACK
                                     </Button>
@@ -722,9 +724,13 @@ export default function EditCourseDetails({
                                     <Button
                                         variant="outlined"
                                         color="primary"
-                                        onClick={revertChanges}
+                                        onClick={
+                                            isSaved
+                                                ? handleCancel
+                                                : revertChanges
+                                        }
                                     >
-                                        CANCEL
+                                        {isSaved ? 'BACK' : 'CANCEL'}
                                     </Button>
                                 </Grid>
                             </>
