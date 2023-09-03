@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import CourseRepo from '@/data/courseRepo'
 
+type Params = {
+    params: {
+        courseId: string
+    }
+}
+
 // PATCH /api/courses/{courseId}
-export async function PATCH(req: NextRequest, { params }: { params: { courseId: string } }) {
+export async function PATCH(req: NextRequest, { params }: Params) {
  
-    // Store params.id into courseId for readability
+    // Store params.courseId into courseId for readability
     const courseId = parseInt(params.courseId);
 
     // Get the course from the database by ID
@@ -13,7 +19,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { courseId: 
     // If it doesn't exist, return status code 404 NOT FOUND
     if (course == null) {
         return NextResponse.json({
-            statusText: ' Course not found'
+            status: 404,
+            statusText: 'Course not found'
         }, { status: 404 });
     }
 
