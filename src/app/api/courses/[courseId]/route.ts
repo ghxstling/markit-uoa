@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import CourseRepo from '@/data/courseRepo'
+import { courseSchema } from '@/models/ZodSchemas'
 
 // PATCH /api/courses/{courseId}
 export async function PATCH(req: NextRequest, { params }: { params: { courseId: string } }) {
@@ -13,7 +14,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { courseId: 
     // If it doesn't exist, return status code 404 NOT FOUND
     if (course == null) {
         return NextResponse.json({
-            statusText: ' Course not found'
+            status: 404,
+            statusText: 'Course not found'
         }, { status: 404 });
     }
 
@@ -29,6 +31,26 @@ export async function PATCH(req: NextRequest, { params }: { params: { courseId: 
         markersNeeded,
         semester,
     } = await req.json();
+
+    // If some information is missing, return code 400 BAD REQUEST
+    const result = courseSchema.safeParse({
+        courseCode,
+        courseDescription,
+        numOfEstimatedStudents,
+        numOfEnrolledStudents,
+        markerHours,
+        markerResponsibilities,
+        needMarkers,
+        markersNeeded,
+        semester,
+    })
+
+    if (!result.success) {
+        return NextResponse.json(result.error, {
+            status: 400,
+            statusText: result.error.issues[0].message,
+        })
+    }
 
     // Update the course information
     const updatedCourse = await CourseRepo.updateCourse(courseId, {
