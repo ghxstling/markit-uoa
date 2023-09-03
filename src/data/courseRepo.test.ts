@@ -14,6 +14,8 @@ const courseInputHelper = (
         markerHours: 7,
         needMarkers: true,
         markersNeeded: 9,
+        semester: "2022S1",
+        markerResponsibilities: "Marker responsibilities",
     };
 };
 
