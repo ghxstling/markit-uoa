@@ -30,10 +30,7 @@ export async function POST(req: NextRequest) {
         semester,
     })
 
-    console.log("validating")
     if (!result.success) {
-
-        console.log(result.error.issues[0].message)
         return NextResponse.json(result.error, {
             status: 400,
             statusText: result.error.issues[0].message,
