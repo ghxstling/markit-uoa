@@ -2,7 +2,19 @@ import { NextRequest, NextResponse } from 'next/server'
 import CourseRepo from '@/data/courseRepo'
 import { courseSchema } from '@/models/ZodSchemas'
 
-// POST /api/courses/ 
+// GET /api/courses/
+export async function GET(req: NextRequest) {
+    // Get all courses from the database
+    const courses = await CourseRepo.getAllCourses()
+
+    // Return the courses with status code 200 OK
+    return NextResponse.json(courses, {
+        status: 200,
+        statusText: 'OK',
+    })
+}
+
+// POST /api/courses/
 export async function POST(req: NextRequest) {
     // Wait for supervisor to send course information
     const {
