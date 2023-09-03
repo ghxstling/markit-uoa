@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import CourseRepo from '@/data/courseRepo'
+import { courseSchema } from '@/models/ZodSchemas'
 
 type Params = {
     params: {
@@ -61,6 +62,26 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         markersNeeded,
         semester,
     } = await req.json();
+
+    // If some information is missing, return code 400 BAD REQUEST
+    const result = courseSchema.safeParse({
+        courseCode,
+        courseDescription,
+        numOfEstimatedStudents,
+        numOfEnrolledStudents,
+        markerHours,
+        markerResponsibilities,
+        needMarkers,
+        markersNeeded,
+        semester,
+    })
+
+    if (!result.success) {
+        return NextResponse.json(result.error, {
+            status: 400,
+            statusText: result.error.issues[0].message,
+        })
+    }
 
     // Update the course information
     const updatedCourse = await CourseRepo.updateCourse(courseId, {
