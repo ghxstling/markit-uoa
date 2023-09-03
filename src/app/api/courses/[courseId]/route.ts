@@ -27,7 +27,7 @@ export async function GET(req: NextRequest, { params }: Params) {
     // Return the course with status code 200 OK
     return NextResponse.json(course, {
         status: 200,
-        statusText: 'OK',
+        statusText: 'Found course ' + course.courseCode,
     })
 
 }
