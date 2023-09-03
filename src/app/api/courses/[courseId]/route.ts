@@ -15,7 +15,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { courseId: 
     // If it doesn't exist, return status code 404 NOT FOUND
     if (course == null) {
         return NextResponse.json({
-            statusText: ' Course not found'
+            status: 404,
+            statusText: 'Course not found'
         }, { status: 404 });
     }
 
