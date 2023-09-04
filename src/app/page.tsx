@@ -18,9 +18,12 @@ export default function Home() {
                     marginTop: '20px',
                 }}
             >
-                <Typography variant="h1">Hello World</Typography>
-                <UserStatus />
-                <Link href="/dashboard/courses">Create a New Course</Link>
+                <div style={{ marginBottom: '10px' }}>
+                    <Link href="/dashboard/courses">Create a New Course</Link>
+                </div>
+                <div>
+                    <Link href={`/dashboard/courses/25`}>Edit Course</Link>
+                </div>
             </div>
         </>
     )
