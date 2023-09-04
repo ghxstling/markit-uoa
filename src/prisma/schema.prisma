@@ -24,3 +24,10 @@ model Course {
   // TODO: add course coordinator (name, email)
   // TODO: add course director (name, email)
 }
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+  role  String  @default("student") // Refer to the role enum in models/role.ts
+}
