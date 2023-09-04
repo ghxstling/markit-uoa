@@ -30,6 +30,20 @@ const authOptions: AuthOptions = {
             }
             return true
         },
+        async jwt({ token, profile }) {
+            // profile not null on first sign in
+            if (profile) {
+                const userFromEmail = await UserRepo.getUserbyEmail(
+                    profile.email!
+                )
+                token.role = userFromEmail!.role
+            }
+            return token
+        },
+        async session({ session, token }) {
+            session.role = token.role
+            return session
+        },
     },
 }
 
