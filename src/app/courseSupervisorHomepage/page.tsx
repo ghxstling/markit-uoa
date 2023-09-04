@@ -99,12 +99,12 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
 export default function CSHomepage(){
 
     interface Course {
-        id: number
         course: string
         semester: string
         markers: number
         applicants: number
         status: boolean
+        id: number
     }
     
     const [data,setData] = useState<Course[]>([]);;
@@ -142,7 +142,11 @@ export default function CSHomepage(){
       ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
+        data.map((course, index) => (
+        console.log(course.status)
+        ))
       };
+
 
 
     return(
@@ -185,9 +189,23 @@ export default function CSHomepage(){
                                 <TableCell style={{textAlign:'center'}}><Button>Edit</Button></TableCell>
                                 <TableCell style={{textAlign:'center'}}>{course.markers}</TableCell>
                                 <TableCell style={{textAlign:'center'}}>{course.applicants}</TableCell>
-                                <TableCell style={{textAlign:'center'}}><Button>Status</Button></TableCell>
+                                <TableCell style={{textAlign:'center'}}> {course.status ? (
+                                    <Button variant="contained" color="success" style={{width:'75%'}}>
+                                      Complete
+                                    </Button>
+                                  ) : (
+                                    <Button variant="contained" color="error" style={{width:'75%'}}>
+                                      Incomplete
+                                    </Button>
+                                  )}
+                                </TableCell>
                             </TableRow>
                         ))}
+                        {emptyRows > 0 && (
+                          <TableRow style={{ height: 53 * emptyRows }}>
+                            <TableCell colSpan={6} />
+                          </TableRow>
+                        )}
                         <TableFooter>
                             <TableRow>
                                 <TablePagination
