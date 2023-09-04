@@ -102,8 +102,8 @@ const EmploymentDetails = () => {
 
     return (
         <>
-            <Typography component="h1" variant="h5">
-                Personal Details
+            <Typography component="h1" variant="h5" fontWeight="bold">
+                Employment Details
             </Typography>
             <Box
                 component="form"
