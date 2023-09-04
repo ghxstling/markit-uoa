@@ -41,13 +41,14 @@ const PersonalDetails = () => {
 
         const studentID = data.get('studentID') as string
 
-        // Check if the length of the studentID is not 9, show error message
-        if (studentID.length !== 9) {
-            setSnackbarMessage('Please enter 9 digits for your student ID')
+        if (validator.isEmail(data.get('email') as string) === false) {
+            setSnackbarMessage('Please enter a valid email address')
             setOpenSnackBar(true)
             return
-        } else if (validator.isEmail(data.get('email') as string) === false) {
-            setSnackbarMessage('Please enter a valid email address')
+        }
+        // Check if the length of the studentID is not 9, show error message
+        else if (studentID.length !== 9) {
+            setSnackbarMessage('Please enter 9 digits for your student ID')
             setOpenSnackBar(true)
             return
         }
