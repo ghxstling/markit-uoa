@@ -202,13 +202,13 @@ export default function CSHomepage(){
                             </TableRow>
                         ))}
                         {emptyRows > 0 && (
-                          <TableRow style={{ height: 53 * emptyRows }}>
+                          <TableRow style={{ height: 69.5 * emptyRows }}>
                             <TableCell colSpan={6} />
                           </TableRow>
                         )}
-                        <TableFooter>
+                        <TableFooter style={{ display: 'flex', justifyContent: 'center', textAlign:'center' }}>
                             <TableRow>
-                                <TablePagination
+                                <TablePagination 
                                 rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
                                 colSpan={3}
                                 count={data.length}
