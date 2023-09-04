@@ -11,7 +11,7 @@ export const config = {
 }
 
 export async function middleware(req: NextRequest) {
-    // middlware does not apply to auth routes
+    // middleware does not apply to auth routes
     if (req.nextUrl.pathname.startsWith('/api/auth')) return NextResponse.next()
     const token = await getToken({ req, secret })
     if (token == null) {

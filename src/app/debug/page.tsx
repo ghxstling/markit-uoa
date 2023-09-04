@@ -9,8 +9,8 @@ const DebugPage = () => {
 
     const makeApiCall = async () => {
         try {
-            const response = await fetch('/api/courses', {
-                method: 'GET',
+            const response = await fetch('/api/courses/1', {
+                method: 'PATCH',
             })
             const data = await response.json()
             setApiResponse(data)

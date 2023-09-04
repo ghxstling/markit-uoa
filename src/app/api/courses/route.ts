@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import CourseRepo from '@/data/courseRepo'
 import { courseSchema } from '@/models/ZodSchemas'
+import { getToken } from 'next-auth/jwt'
+import { Role } from '@/models/role'
 
 // GET /api/courses/
 export async function GET(req: NextRequest) {
@@ -16,6 +18,16 @@ export async function GET(req: NextRequest) {
 
 // POST /api/courses/
 export async function POST(req: NextRequest) {
+    const token = await getToken({ req })
+    if (token!.role != Role.Supervisor) {
+        return new NextResponse(
+            JSON.stringify({
+                success: false,
+                message: 'Only supervisors can add courses',
+            }),
+            { status: 403, headers: { 'content-type': 'application/json' } }
+        )
+    }
     // Wait for supervisor to send course information
     const {
         courseCode,
