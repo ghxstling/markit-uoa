@@ -22,7 +22,7 @@ export default function Home() {
                     <Link href="/dashboard/courses">Create a New Course</Link>
                 </div>
                 <div>
-                    <Link href={`/dashboard/courses/15`}>Edit Course</Link>
+                    <Link href={`/dashboard/courses/25`}>Edit Course</Link>
                 </div>
             </div>
         </>

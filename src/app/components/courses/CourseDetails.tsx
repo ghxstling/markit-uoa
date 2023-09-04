@@ -58,12 +58,20 @@ export default function CourseDetails() {
     const handleManualInputChange = (
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
-        const value = event.target.valueAsNumber
-        if (value >= 0 && value <= 800) {
-            setSliderValue(value)
-            setManualInputValue(event.target.value)
+        let inputValue = event.target.value
+        if (inputValue === '') {
+            inputValue = '0'
         }
+        let numValue = parseInt(inputValue)
+        inputValue = numValue.toString()
+        if (numValue > 800) {
+            inputValue = '800'
+            numValue = 800
+        }
+        setManualInputValue(inputValue)
+        setSliderValue(numValue)
     }
+
     const handleSliderChange = (event: Event, newValue: number | number[]) => {
         if (typeof newValue === 'number') {
             setSliderValue(newValue)
@@ -74,12 +82,20 @@ export default function CourseDetails() {
     const handleEnrolledManualInputChange = (
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
-        const value = event.target.valueAsNumber
-        if (value >= 0 && value <= 800) {
-            setEnrolledSliderValue(value)
-            setEnrolledManualInputValue(event.target.value)
+        let inputValue = event.target.value
+        if (inputValue === '') {
+            inputValue = '0'
         }
+        let numValue = parseInt(inputValue)
+        inputValue = numValue.toString()
+        if (numValue > 800) {
+            inputValue = '800'
+            numValue = 800
+        }
+        setEnrolledManualInputValue(inputValue)
+        setEnrolledSliderValue(numValue)
     }
+
     const handleEnrolledSliderChange = (
         event: Event,
         newValue: number | number[]
@@ -93,12 +109,20 @@ export default function CourseDetails() {
     const handleMarkerHoursManualInputChange = (
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
-        const value = event.target.valueAsNumber
-        if (value >= 0 && value <= 200) {
-            setMarkerHoursSliderValue(value)
-            setMarkerHoursManualInputValue(event.target.value)
+        let inputValue = event.target.value
+        if (inputValue === '') {
+            inputValue = '0'
         }
+        let numValue = parseInt(inputValue)
+        inputValue = numValue.toString()
+        if (numValue > 200) {
+            inputValue = '200'
+            numValue = 200
+        }
+        setMarkerHoursManualInputValue(inputValue)
+        setMarkerHoursSliderValue(numValue)
     }
+
     const handleMarkerHoursSliderChange = (
         event: Event,
         newValue: number | number[]
@@ -112,11 +136,18 @@ export default function CourseDetails() {
     const handleMarkerManualInputChange = (
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
-        const value = event.target.valueAsNumber
-        if (value >= 0 && value <= 200) {
-            setMarkerSliderValue(value)
-            setMarkerManualInputValue(event.target.value)
+        let inputValue = event.target.value
+        if (inputValue === '') {
+            inputValue = '0'
         }
+        let numValue = parseInt(inputValue)
+        inputValue = numValue.toString()
+        if (numValue > 200) {
+            inputValue = '200'
+            numValue = 200
+        }
+        setMarkerManualInputValue(inputValue)
+        setMarkerSliderValue(numValue)
     }
 
     const handleMarkerSliderChange = (
