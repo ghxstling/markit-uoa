@@ -6,7 +6,6 @@ import Sidebar from './components/Sidebar'
 export default function Home() {
     return (
         <>
-            <Typography variant="h1">Hello World</Typography>
             <Sidebar />
 
             <div
@@ -19,8 +18,12 @@ export default function Home() {
                     marginTop: '20px',
                 }}
             >
-                <UserStatus />
-                <Link href="/dashboard/courses">Create a New Course</Link>
+                <div style={{ marginBottom: '10px' }}>
+                    <Link href="/dashboard/courses">Create a New Course</Link>
+                </div>
+                <div>
+                    <Link href={`/dashboard/courses/25`}>Edit Course</Link>
+                </div>
             </div>
         </>
     )
