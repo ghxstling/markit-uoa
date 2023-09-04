@@ -9,6 +9,7 @@ import {
 import { useSession } from 'next-auth/react'
 import React, { useState } from 'react'
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
+import validator from 'validator'
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     props,
@@ -18,6 +19,9 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 })
 
 const PersonalDetails = () => {
+    const [snackbarMessage, setSnackbarMessage] = useState(
+        'Please enter 9 digits for your student ID'
+    )
     const [openSnackBar, setOpenSnackBar] = useState(false)
 
     const handleClose = (
@@ -39,6 +43,11 @@ const PersonalDetails = () => {
 
         // Check if the length of the studentID is not 9, show error message
         if (studentID.length !== 9) {
+            setSnackbarMessage('Please enter 9 digits for your student ID')
+            setOpenSnackBar(true)
+            return
+        } else if (validator.isEmail(data.get('email') as string) === false) {
+            setSnackbarMessage('Please enter a valid email address')
             setOpenSnackBar(true)
             return
         }
@@ -108,7 +117,7 @@ const PersonalDetails = () => {
                             type="email"
                             fullWidth
                             id="email"
-                            label="Email Address"
+                            label="Preferred Email Address"
                         />
                         <input type="hidden" name="email" value={email} />
                     </Grid>
@@ -143,7 +152,7 @@ const PersonalDetails = () => {
                     severity="error"
                     sx={{ width: '100%' }}
                 >
-                    Please enter 9 digits for your student ID
+                    {snackbarMessage}
                 </Alert>
             </Snackbar>
         </>

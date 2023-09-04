@@ -10,8 +10,17 @@ import {
     MenuItem,
     Slider,
     Input,
+    Snackbar,
 } from '@mui/material'
+import MuiAlert, { AlertProps } from '@mui/material/Alert'
 import React, { useState } from 'react'
+
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+    props,
+    ref
+) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+})
 
 const EmploymentDetails = () => {
     const [permResidentSelectedValue, setPermResidentSelectedValue] =
@@ -19,6 +28,18 @@ const EmploymentDetails = () => {
     const [degree, setDegree] = useState('')
     const [degreeYearsValue, setDegreeYearsValue] = React.useState(1)
     const [workHoursValue, setWorkHoursValue] = React.useState(1)
+    const [openSnackBar, setOpenSnackBar] = useState(false)
+
+    const handleClose = (
+        event?: React.SyntheticEvent | Event,
+        reason?: string
+    ) => {
+        if (reason === 'clickaway') {
+            return
+        }
+
+        setOpenSnackBar(false)
+    }
 
     const handleDegreeSliderChange = (
         event: Event,
@@ -67,6 +88,13 @@ const EmploymentDetails = () => {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         const data = new FormData(event.currentTarget)
+
+        //check for if Degree === "", return snackbar error
+
+        if ((data.get('degree') as string) === '') {
+            setOpenSnackBar(true)
+            return
+        }
 
         console.log({
             overseas: data.get('overseas'),
@@ -249,6 +277,7 @@ const EmploymentDetails = () => {
                             value={degree}
                             onChange={handleDegreeChange}
                             fullWidth
+                            required
                         >
                             <MenuItem value={'Bachelors'}>Bachelors</MenuItem>
                             <MenuItem value={'Post Graduate'}>
@@ -366,6 +395,20 @@ const EmploymentDetails = () => {
                     Submit Details
                 </Button>
             </Box>
+            <Snackbar
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                open={openSnackBar}
+                autoHideDuration={6000}
+                onClose={handleClose}
+            >
+                <Alert
+                    onClose={handleClose}
+                    severity="error"
+                    sx={{ width: '100%' }}
+                >
+                    Please enter your degree type
+                </Alert>
+            </Snackbar>
         </>
     )
 }

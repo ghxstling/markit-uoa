@@ -18,6 +18,7 @@ export default function Home() {
                     marginTop: '20px',
                 }}
             >
+                <UserStatus />
                 <div style={{ marginBottom: '10px' }}>
                     <Link href="/dashboard/courses">Create a New Course</Link>
                 </div>
