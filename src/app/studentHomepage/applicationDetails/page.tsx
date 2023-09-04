@@ -14,7 +14,7 @@ import {
     Stepper,
     Typography,
 } from '@mui/material'
-import React, { useState, Component } from 'react'
+import React, { useState } from 'react'
 
 const steps = [
     'Personal Details',
@@ -64,7 +64,7 @@ const Application = () => {
                                 variant="h4"
                                 align="center"
                             >
-                                Application
+                                Application Details
                             </Typography>
                             <Stepper
                                 activeStep={activeStep}

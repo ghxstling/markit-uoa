@@ -2,7 +2,6 @@
 
 import { Grid, Button, Typography } from '@mui/material'
 import React, { useState } from 'react'
-import PhotoCamera from '@mui/icons-material/PhotoCamera'
 
 const CVAndTranscript = () => {
     const [cvFile, setCvFile] = useState<File>()
@@ -62,7 +61,12 @@ const CVAndTranscript = () => {
 
     return (
         <>
-            <Typography variant="h5" fontWeight="bold" sx={{ mb: '20px' }}>
+            <Typography
+                component="h1"
+                variant="h5"
+                fontWeight="bold"
+                sx={{ mb: '20px' }}
+            >
                 CV and Transcript Upload
             </Typography>
             <Grid container spacing={4} direction="column">
