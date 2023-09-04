@@ -2,6 +2,7 @@
 // This is an easy way to test auth and roles for backend endpoints
 'use client'
 import { useState } from 'react'
+import { UserStatus } from '../components/UserStatus'
 
 const DebugPage = () => {
     const [apiResponse, setApiResponse] = useState(null)
@@ -24,6 +25,7 @@ const DebugPage = () => {
     return (
         <div>
             <h1>Debug Page - API Calls</h1>
+            <UserStatus />
             <button onClick={makeApiCall}>Make API Call</button>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {apiResponse && (
