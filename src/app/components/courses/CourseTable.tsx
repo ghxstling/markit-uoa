@@ -24,7 +24,6 @@ export default function CourseTable(){
     }
     
     const [data,setData] = useState<Course[]>([]);;
-    const api = String(process.env.ApiToken);
 
     useEffect(() => {
         fetchData();
