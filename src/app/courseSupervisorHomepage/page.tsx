@@ -142,7 +142,7 @@ export default function CSHomepage(){
                                   <TableCell style={{textAlign:'center'}}><Button href='src/app/dashboard/courses/[courseId]/page.tsx'>Edit</Button></TableCell>
                                   <TableCell style={{textAlign:'center'}}>{course.markersNeeded}</TableCell>
                                   <TableCell style={{textAlign:'center'}}>{course.applicants}</TableCell>
-                                  <TableCell style={{textAlign:'center'}}> {course.status ? (
+                                  <TableCell style={{textAlign:'center'}}> {course.needMarkers ? (
                                       <Button variant="contained" color="success" style={{width:'75%'}}>
                                         Complete
                                       </Button>
