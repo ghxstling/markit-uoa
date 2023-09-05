@@ -10,6 +10,12 @@ import { useSession } from 'next-auth/react'
 import React, { useState } from 'react'
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
 import validator from 'validator'
+import { IFormValues } from '@/app/interfaces/FormValues'
+
+interface PersonalDetailsProps {
+    formValues: IFormValues
+    setFormValues: React.Dispatch<React.SetStateAction<IFormValues>>
+}
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     props,
@@ -18,11 +24,28 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
 })
 
-const PersonalDetails = () => {
+const PersonalDetails: React.FC<PersonalDetailsProps> = ({
+    formValues,
+    setFormValues,
+}) => {
     const [snackbarMessage, setSnackbarMessage] = useState(
         'Please enter 9 digits for your student ID'
     )
     const [openSnackBar, setOpenSnackBar] = useState(false)
+
+    const handleAuidChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (
+            (/^\d+$/.test(event.target.value) === true ||
+                event.target.value === '') &&
+            (event.target.value as string).length <= 9
+        ) {
+            setFormValues({ ...formValues, AUID: event.target.value as string })
+        }
+    }
+
+    const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setFormValues({ ...formValues, email: event.target.value })
+    }
 
     const handleClose = (
         event?: React.SyntheticEvent | Event,
@@ -39,13 +62,14 @@ const PersonalDetails = () => {
         event.preventDefault()
         const data = new FormData(event.currentTarget)
 
-        const studentID = data.get('studentID') as string
+        const studentID = data.get('AUID') as string
 
         if (validator.isEmail(data.get('email') as string) === false) {
             setSnackbarMessage('Please enter a valid email address')
             setOpenSnackBar(true)
             return
         }
+
         // Check if the length of the studentID is not 9, show error message
         else if (studentID.length !== 9) {
             setSnackbarMessage('Please enter 9 digits for your student ID')
@@ -63,14 +87,15 @@ const PersonalDetails = () => {
 
     const { data: session } = useSession()
 
-    let name: string = ''
-    let upi: string = ''
-    let email: string = ''
+    let fullName: string = ''
+    let formUpi: string = ''
 
     if (session && session.user && session.user.name && session.user.email) {
-        name = session.user.name
-        email = session.user.email
-        upi = email.slice(0, 7)
+        fullName = session.user.name
+        formUpi = session.user.email.slice(0, 7)
+        if (fullName !== formValues.name && formUpi !== formValues.upi) {
+            setFormValues({ ...formValues, name: fullName, upi: formUpi })
+        }
     }
 
     return (
@@ -93,10 +118,14 @@ const PersonalDetails = () => {
                             id="name"
                             label="Full Name"
                             autoFocus
-                            value={name}
+                            value={formValues.name}
                             disabled
                         />
-                        <input type="hidden" name="name" value={name} />
+                        <input
+                            type="hidden"
+                            name="name"
+                            value={formValues.name}
+                        />
                     </Grid>
                     <Grid item xs={12}>
                         <TextField
@@ -106,10 +135,14 @@ const PersonalDetails = () => {
                             id="upi"
                             label="UPI"
                             autoFocus
-                            value={upi}
+                            value={formValues.upi}
                             disabled
                         />
-                        <input type="hidden" name="upi" value={upi} />
+                        <input
+                            type="hidden"
+                            name="upi"
+                            value={formValues.upi}
+                        />
                     </Grid>
                     <Grid item xs={12}>
                         <TextField
@@ -119,17 +152,19 @@ const PersonalDetails = () => {
                             fullWidth
                             id="email"
                             label="Preferred Email Address"
+                            value={formValues.email}
+                            onChange={handleEmailChange}
                         />
-                        <input type="hidden" name="email" value={email} />
                     </Grid>
                     <Grid item xs={12}>
                         <TextField
                             required
                             fullWidth
-                            name="studentID"
+                            name="AUID"
                             label="Student ID"
-                            id="studentID"
-                            type="number"
+                            id="AUID"
+                            value={formValues.AUID}
+                            onChange={handleAuidChange}
                         />
                     </Grid>
                 </Grid>

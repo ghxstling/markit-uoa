@@ -14,6 +14,12 @@ import {
 } from '@mui/material'
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
 import React, { useState } from 'react'
+import { IFormValues } from '@/app/interfaces/FormValues'
+
+interface EmploymentDetailsProps {
+    formValues: IFormValues
+    setFormValues: React.Dispatch<React.SetStateAction<IFormValues>>
+}
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     props,
@@ -22,10 +28,10 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
 })
 
-const EmploymentDetails = () => {
-    const [permResidentSelectedValue, setPermResidentSelectedValue] =
-        useState('Yes')
-    const [degree, setDegree] = useState('')
+const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({
+    formValues,
+    setFormValues,
+}) => {
     const [degreeYearsValue, setDegreeYearsValue] = React.useState(1)
     const [workHoursValue, setWorkHoursValue] = React.useState(1)
     const [openSnackBar, setOpenSnackBar] = useState(false)
@@ -45,44 +51,63 @@ const EmploymentDetails = () => {
         event: Event,
         newValue: number | number[]
     ) => {
-        setDegreeYearsValue(newValue as number)
+        setFormValues({
+            ...formValues,
+            degreeYears: newValue as number,
+        })
     }
 
     const handleDegreeYearsInputChange = (
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
-        setDegreeYearsValue(
-            Math.min(
+        setFormValues({
+            ...formValues,
+            degreeYears: Math.min(
                 event.target.value === '' ? 1 : Number(event.target.value),
                 10
-            )
-        )
+            ),
+        })
     }
 
     const handleWorkHoursSliderChange = (
         event: Event,
         newValue: number | number[]
     ) => {
-        setWorkHoursValue(newValue as number)
+        setFormValues({ ...formValues, workHours: newValue as number })
     }
 
     const handleWorkHoursInputChange = (
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
-        setWorkHoursValue(
-            Math.min(
+        setFormValues({
+            ...formValues,
+            workHours: Math.min(
                 event.target.value === '' ? 1 : Number(event.target.value),
                 30
-            )
-        )
+            ),
+        })
     }
 
     const handleDegreeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setDegree(event.target.value as string)
+        setFormValues({
+            ...formValues,
+            degree: event.target.value,
+        })
     }
 
     const handleResidencyChange = (event: any) => {
-        setPermResidentSelectedValue(event.target.value)
+        setFormValues({
+            ...formValues,
+            citizenOrPermanentResident: event.target.value,
+        })
+    }
+
+    const handleOverseasChange = (event: any) => {
+        setFormValues({ ...formValues, currentlyOverseas: event.target.value })
+    }
+
+    const handleWorkVisaChange = (event: any) => {
+        setFormValues({ ...formValues, workVisa: event.target.value })
     }
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -155,10 +180,11 @@ const EmploymentDetails = () => {
                             </Grid>
                             <Grid item>
                                 <RadioGroup
-                                    defaultValue="No"
+                                    value={formValues.currentlyOverseas}
                                     row
                                     name="overseas"
                                     id="overseas"
+                                    onChange={handleOverseasChange}
                                 >
                                     <Grid container spacing={4}>
                                         <Grid item>
@@ -195,7 +221,9 @@ const EmploymentDetails = () => {
                             </Grid>
                             <Grid item>
                                 <RadioGroup
-                                    defaultValue="Yes"
+                                    value={
+                                        formValues.citizenOrPermanentResident
+                                    }
                                     row
                                     name="permenantResident"
                                     id="permenantResident"
@@ -221,7 +249,7 @@ const EmploymentDetails = () => {
                             </Grid>
                         </Grid>
                     </Grid>
-                    {permResidentSelectedValue === 'No' && (
+                    {formValues.citizenOrPermanentResident === 'No' && (
                         <>
                             <Grid item xs={12}>
                                 <Grid
@@ -240,10 +268,11 @@ const EmploymentDetails = () => {
                                     </Grid>
                                     <Grid item>
                                         <RadioGroup
-                                            defaultValue="Yes"
+                                            value={formValues.workVisa}
                                             row
                                             name="workVisa"
                                             id="workVisa"
+                                            onChange={handleWorkVisaChange}
                                         >
                                             <Grid container spacing={4}>
                                                 <Grid item>
@@ -274,7 +303,7 @@ const EmploymentDetails = () => {
                             id="degree"
                             label="Degree"
                             select
-                            value={degree}
+                            value={formValues.degree}
                             onChange={handleDegreeChange}
                             fullWidth
                             required
@@ -304,7 +333,7 @@ const EmploymentDetails = () => {
                                 <Input
                                     name="degreeYears"
                                     id="degreeYears"
-                                    value={degreeYearsValue}
+                                    value={formValues.degreeYears}
                                     size="small"
                                     onChange={handleDegreeYearsInputChange}
                                     inputProps={{
@@ -320,11 +349,7 @@ const EmploymentDetails = () => {
 
                             <Grid item>
                                 <Slider
-                                    value={
-                                        typeof degreeYearsValue === 'number'
-                                            ? degreeYearsValue
-                                            : 0
-                                    }
+                                    value={formValues.degreeYears}
                                     onChange={handleDegreeSliderChange}
                                     aria-labelledby="degree-years-slider"
                                     min={1}
@@ -354,7 +379,7 @@ const EmploymentDetails = () => {
                                 <Input
                                     name="workHours"
                                     id="workHours"
-                                    value={workHoursValue}
+                                    value={formValues.workHours}
                                     size="small"
                                     onChange={handleWorkHoursInputChange}
                                     inputProps={{
@@ -370,11 +395,7 @@ const EmploymentDetails = () => {
                             </Grid>
                             <Grid item>
                                 <Slider
-                                    value={
-                                        typeof workHoursValue === 'number'
-                                            ? workHoursValue
-                                            : 0
-                                    }
+                                    value={formValues.workHours}
                                     onChange={handleWorkHoursSliderChange}
                                     aria-labelledby="degree-years-slider"
                                     min={1}

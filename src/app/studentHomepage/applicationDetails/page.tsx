@@ -4,6 +4,7 @@ import CVAndTranscript from '@/app/components/ApplicationForms/CVAndTranscript'
 import EmploymentDetails from '@/app/components/ApplicationForms/EmploymentDetails'
 import PersonalDetails from '@/app/components/ApplicationForms/PersonalDetails'
 import Sidebar from '@/app/components/Sidebar'
+import { IFormValues } from '@/app/interfaces/FormValues'
 import {
     Box,
     Button,
@@ -22,12 +23,26 @@ const steps = [
     'CV and Academic Transcript Upload',
 ]
 
-function getStepContent(step: number) {
+function getStepContent(
+    step: number,
+    formValues: IFormValues,
+    setFormValues: React.Dispatch<React.SetStateAction<IFormValues>>
+) {
     switch (step) {
         case 0:
-            return <PersonalDetails />
+            return (
+                <PersonalDetails
+                    formValues={formValues}
+                    setFormValues={setFormValues}
+                />
+            )
         case 1:
-            return <EmploymentDetails />
+            return (
+                <EmploymentDetails
+                    formValues={formValues}
+                    setFormValues={setFormValues}
+                />
+            )
         case 2:
             return <CVAndTranscript />
         default:
@@ -37,8 +52,23 @@ function getStepContent(step: number) {
 
 const Application = () => {
     const [activeStep, setActiveStep] = useState(0)
+    const [formValues, setFormValues] = useState<IFormValues>({
+        name: '',
+        upi: '',
+        email: '',
+        AUID: '',
+        currentlyOverseas: 'No',
+        citizenOrPermanentResident: 'Yes',
+        workVisa: 'Yes',
+        degree: '',
+        degreeYears: 1,
+        workHours: 1,
+    })
 
     const handleNext = () => {
+        if (activeStep === steps.length - 1) {
+            console.log(formValues)
+        }
         setActiveStep(activeStep + 1)
     }
 
@@ -85,7 +115,11 @@ const Application = () => {
                                 </>
                             ) : (
                                 <>
-                                    {getStepContent(activeStep)}
+                                    {getStepContent(
+                                        activeStep,
+                                        formValues,
+                                        setFormValues
+                                    )}
                                     <Box
                                         sx={{
                                             display: 'flex',
