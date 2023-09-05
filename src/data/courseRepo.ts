@@ -12,6 +12,15 @@ export default class CourseRepo {
         });
     }
 
+    static async getUpdatedCoures() {
+        return await prisma.course.findMany({
+            orderBy: {
+                modifiedAt: "desc",
+            },
+            take: 20,
+        });
+    }
+
     static async addCourse(data: Prisma.CourseCreateInput) {
         return await prisma.course.create({
             data,
