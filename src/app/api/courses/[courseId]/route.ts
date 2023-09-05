@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import CourseRepo from '@/data/courseRepo'
 import { courseSchema } from '@/models/ZodSchemas'
+import { getToken } from 'next-auth/jwt'
+import { Role } from '@/models/role'
 
 type Params = {
     params: {
@@ -10,19 +12,21 @@ type Params = {
 
 // GET /api/courses/{courseId}
 export async function GET(req: NextRequest, { params }: Params) {
-    
     // Store params.courseId into courseId for readability
-    const courseId = parseInt(params.courseId);
+    const courseId = parseInt(params.courseId)
 
     // Get the course from the database by ID
-    const course = await CourseRepo.getCourseById(courseId);
+    const course = await CourseRepo.getCourseById(courseId)
 
     // If it doesn't exist, return status code 404 NOT FOUND
     if (course == null) {
-        return NextResponse.json({
-            status: 404,
-            statusText: 'Course not found'
-        }, { status: 404 });
+        return NextResponse.json(
+            {
+                status: 404,
+                statusText: 'Course not found',
+            },
+            { status: 404 }
+        )
     }
 
     // Return the course with status code 200 OK
@@ -30,24 +34,35 @@ export async function GET(req: NextRequest, { params }: Params) {
         status: 200,
         statusText: 'Found course ' + course.courseCode,
     })
-
 }
 
 // PATCH /api/courses/{courseId}
 export async function PATCH(req: NextRequest, { params }: Params) {
- 
+    const token = await getToken({ req })
+    if (token!.role != Role.Supervisor) {
+        return new NextResponse(
+            JSON.stringify({
+                success: false,
+                message: 'Only supervisors can update courses',
+            }),
+            { status: 403, headers: { 'content-type': 'application/json' } }
+        )
+    }
     // Store params.courseId into courseId for readability
-    const courseId = parseInt(params.courseId);
+    const courseId = parseInt(params.courseId)
 
     // Get the course from the database by ID
-    const course = await CourseRepo.getCourseById(courseId);
+    const course = await CourseRepo.getCourseById(courseId)
 
     // If it doesn't exist, return status code 404 NOT FOUND
     if (course == null) {
-        return NextResponse.json({
-            status: 404,
-            statusText: 'Course not found'
-        }, { status: 404 });
+        return NextResponse.json(
+            {
+                status: 404,
+                statusText: 'Course not found',
+            },
+            { status: 404 }
+        )
     }
 
     // Get updated course information from supervisor
@@ -61,7 +76,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         needMarkers,
         markersNeeded,
         semester,
-    } = await req.json();
+    } = await req.json()
 
     // If some information is missing, return code 400 BAD REQUEST
     const result = courseSchema.safeParse({
@@ -99,6 +114,6 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     // Return the updated course with status code 200 OK
     return NextResponse.json(updatedCourse, {
         status: 200,
-        statusText: 'Updated course information'
+        statusText: 'Updated course information',
     })
 }
