@@ -61,7 +61,10 @@ const rows = [
 export default function RecentActivityTable() {
     return (
         <TableContainer component={Paper}>
-            <Table sx={{ minWidth: '887px' }} aria-label="simple table">
+            <Table
+                sx={{ minWidth: { md: '442px', lg: '887px' } }}
+                aria-label="simple table"
+            >
                 <TableBody>
                     {rows.map((row) => (
                         <TableRow

@@ -10,7 +10,6 @@ export default function coordinatorDashboardLayout({
         <html lang="en">
             <body>
                 <Stack direction={'row'}>
-                    {/* <Box sx={{ width: '15rem' }}> */}
                     <Box sx={{ width: '15rem' }}>
                         <Sidebar />
                     </Box>
