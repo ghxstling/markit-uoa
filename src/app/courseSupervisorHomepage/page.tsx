@@ -1,33 +1,30 @@
 'use client'
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Sidebar from "../components/Sidebar"
-import StarIcon from '@mui/icons-material/Star';
-import Container from 'react-bootstrap/Container';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TableFooter from '@mui/material/TableFooter';
-import TablePagination from '@mui/material/TablePagination';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import Tooltip from '@mui/material/Tooltip';
-import React, { useState, useEffect } from 'react';
-import { fetchData } from 'next-auth/client/_utils';
-import { AlignStart } from 'react-bootstrap-icons';
-import { start } from 'repl';
-import { useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableFooter from '@mui/material/TableFooter';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { useSession } from 'next-auth/react';
+import React, { useEffect, useState } from 'react';
+import DynamicBreadcrumb from '../components/DynamicBreadcrumb';
+import Sidebar from "../components/Sidebar";
 
 interface TablePaginationActionsProps {
     count: number;
@@ -39,62 +36,6 @@ interface TablePaginationActionsProps {
     ) => void;
   }
 
-
-function TablePaginationActions(props: TablePaginationActionsProps) {
-    const theme = useTheme();
-    const { count, page, rowsPerPage, onPageChange } = props;
-  
-    const handleFirstPageButtonClick = (
-      event: React.MouseEvent<HTMLButtonElement>,
-    ) => {
-      onPageChange(event, 0);
-    };
-  
-    const handleBackButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-      onPageChange(event, page - 1);
-    };
-  
-    const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-      onPageChange(event, page + 1);
-    };
-  
-    const handleLastPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-      onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-    };
-  
-    return (
-      <Box sx={{ flexShrink: 0, ml: 2.5 }}>
-        <IconButton
-          onClick={handleFirstPageButtonClick}
-          disabled={page === 0}
-          aria-label="first page"
-        >
-          {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-        </IconButton>
-        <IconButton
-          onClick={handleBackButtonClick}
-          disabled={page === 0}
-          aria-label="previous page"
-        >
-          {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-        </IconButton>
-        <IconButton
-          onClick={handleNextButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="next page"
-        >
-          {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-        </IconButton>
-        <IconButton
-          onClick={handleLastPageButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-          aria-label="last page"
-        >
-          {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
-        </IconButton>
-      </Box>
-    );
-  }
 
 export default function CSHomepage(){
 
@@ -147,12 +88,23 @@ export default function CSHomepage(){
         ))
       };
 
+      const { data: session } = useSession()
+
+      let firstName: string = ''
+
+      if (session && session.user && session.user.name && session.user.email) {
+          firstName = session.user.name.slice(
+              0,
+              session.user.name.lastIndexOf(' ') + 1
+          )
+      }
+
 
 
     return(
         <div>
             <div>
-                <Sidebar></Sidebar>
+                <Sidebar/>
             </div>
             <div style={{
                 paddingTop: 50,
@@ -160,15 +112,17 @@ export default function CSHomepage(){
                 paddingRight:100
                 }}>
                 <div style={{display:"inline-flex", fontSize: 16}}>
-                <StarIcon style={{
-                    width: 16
-                }}></StarIcon>
-                <p>Dashboard</p>
+                <DynamicBreadcrumb></DynamicBreadcrumb>
                 </div>
-                <h1 style={{paddingTop:30, paddingBottom:50}}>Welcome, Supervisor</h1>
-                <Button variant="contained">CREATE NEW COURSE</Button>
-                <TableContainer component={Paper}>
-                    <Table style={{paddingTop:40, margin:0}}>
+                <Typography
+                        sx={{ mt: '28px' }}
+                        variant="h4"
+                        fontWeight="bold">
+                        Welcome, {firstName}
+                    </Typography>
+                <Button variant="contained" sx={{backgroundColor: '#00467F', mt: '53px', mb: '58px',}}>CREATE NEW COURSE</Button>
+                <TableContainer component={Paper} style={{marginTop:20}}>
+                    <Table style={{paddingTop:40}}>
                         <TableHead>
                             <TableRow style={{width:'100%'}}>
                                 <TableCell style={{textAlign:'center'}}>Course <ArrowDownwardIcon></ArrowDownwardIcon></TableCell>
@@ -206,24 +160,21 @@ export default function CSHomepage(){
                             <TableCell colSpan={6} />
                           </TableRow>
                         )}
-                        <TableFooter style={{ display: 'flex', justifyContent: 'center', textAlign:'center' }}>
+                        <TableFooter style={{ display: 'flex'}}>
                             <TableRow>
+                              <div style={{ textAlign: 'center' }}>
                                 <TablePagination 
                                 rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
                                 colSpan={3}
                                 count={data.length}
                                 rowsPerPage={rowsPerPage}
                                 page={page}
-                                SelectProps={{
-                                    inputProps: {
-                                    'aria-label': 'rows per page',
-                                    },
-                                    native: true,
-                                }}
                                 onPageChange={handleChangePage}
                                 onRowsPerPageChange={handleChangeRowsPerPage}
-                                ActionsComponent={TablePaginationActions}
+                                showFirstButton= {true}
+                                showLastButton= {true}
                                 />
+                              </div>
                             </TableRow>
                         </TableFooter>
                     </Table>
