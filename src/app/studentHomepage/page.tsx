@@ -85,7 +85,7 @@ const studentHomepage = () => {
                     >
                         Welcome, {firstName}
                     </Typography>
-                    <Link href="./studentHomepage/applicationDetails" passHref>
+                    <Link href="./studentHomepage/Application" passHref>
                         <Button
                             variant="contained"
                             sx={{
@@ -94,7 +94,7 @@ const studentHomepage = () => {
                                 mb: '58px',
                             }}
                         >
-                            Complete Application Details
+                            Apply Now
                         </Button>
                     </Link>
                     {/* create table */}

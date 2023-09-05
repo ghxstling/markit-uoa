@@ -94,7 +94,7 @@ const Application = () => {
                                 variant="h4"
                                 align="center"
                             >
-                                Application Details
+                                Application
                             </Typography>
                             <Stepper
                                 activeStep={activeStep}
