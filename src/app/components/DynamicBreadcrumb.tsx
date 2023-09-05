@@ -24,8 +24,8 @@ const DynamicBreadcrumb = () => {
         <>
             <Stack direction={'row'} spacing={'20px'}>
                 <Breadcrumbs separator="›" aria-label="breadcrumb">
-                    {breadcrumbs.map((breadcrumb) => (
-                        <Typography>
+                    {breadcrumbs.map((breadcrumb, index) => (
+                        <Typography key={index}>
                             {/* <StarIcon
                                 sx={{ mb: -0.2, mr: 0.5 }}
                                 fontSize="inherit"
