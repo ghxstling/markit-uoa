@@ -123,12 +123,12 @@ export default function CSHomepage(){
                     <Table style={{paddingTop:40}}>
                         <TableHead>
                             <TableRow style={{}}>
-                                <TableCell style={{textAlign:'center'}}>Course<ArrowDownwardIcon/></TableCell>
-                                <TableCell style={{textAlign:'center'}}>Semester <ArrowDownwardIcon/></TableCell>
-                                <TableCell style={{textAlign:'center'}}>Edit Course Details</TableCell>
-                                <TableCell style={{textAlign:'center'}}>Markers Needed <Tooltip title="Markers"><InfoOutlinedIcon/></Tooltip> <ArrowDownwardIcon/></TableCell>
-                                <TableCell style={{textAlign:'center'}}>Number of Applicants <Tooltip title="Applicants"><InfoOutlinedIcon/></Tooltip> <ArrowDownwardIcon/></TableCell>
-                                <TableCell style={{textAlign:'center'}}>Status <Tooltip title="status"><InfoOutlinedIcon/></Tooltip> </TableCell>
+                                <TableCell style={{textAlign:'center'}}><div style={{display:'flex', alignItems: 'center', flexWrap: 'wrap',}}>Course<ArrowDownwardIcon/></div></TableCell>
+                                <TableCell style={{textAlign:'center'}}><div style={{display:'flex', alignItems: 'center', flexWrap: 'wrap',}}>Semester <ArrowDownwardIcon/></div></TableCell>
+                                <TableCell style={{textAlign:'center'}}><div style={{display:'flex', alignItems: 'center', flexWrap: 'wrap',}}>Edit Course Details</div></TableCell>
+                                <TableCell style={{textAlign:'center'}}><div style={{display:'flex', alignItems: 'center', flexWrap: 'wrap',}}>Markers Needed <Tooltip title="Markers"><InfoOutlinedIcon/></Tooltip> <ArrowDownwardIcon/></div></TableCell>
+                                <TableCell style={{textAlign:'center'}}><div style={{display:'flex', alignItems: 'center', flexWrap: 'wrap',}}>Number of Applicants <Tooltip title="Applicants"><InfoOutlinedIcon/></Tooltip> <ArrowDownwardIcon/></div></TableCell>
+                                <TableCell style={{textAlign:'center'}}><div style={{display:'flex', alignItems: 'center', flexWrap: 'wrap',}}>Status <Tooltip title="status"><InfoOutlinedIcon/></Tooltip></div></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
