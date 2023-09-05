@@ -6,23 +6,56 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
+import Link from 'next/link'
+import Button from '@mui/material/Button'
 
 function createData(
+    role: string,
     name: string,
-    calories: number,
-    fat: number,
-    carbs: number,
-    protein: number
+    course: string,
+    action: string,
+    when: string
 ) {
-    return { name, calories, fat, carbs, protein }
+    return { role, name, course, action, when }
 }
 
 const rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
+    createData(
+        'Supervisor',
+        'John Doe',
+        'Compsci 101',
+        'Changed Marker Hours',
+        '28/10/2023'
+    ),
+    createData(
+        'Supervisor',
+        'John Smith',
+        'Compsci 210',
+        'Changed Preferred Number of Markers',
+        '24/10/2023'
+    ),
+    createData(
+        'Supervisor',
+        'John Cena',
+        'Compsci 340',
+        'Changed Number of Assignments',
+        '10/10/2023'
+    ),
+    createData(
+        'Supervisor',
+        'John John',
+        'Compsci 340',
+        'Changed Preferred Number of Markers',
+        '16/09/2023'
+    ),
+    createData(
+        'Supervisor',
+        'Johnson Donovan',
+        'Compsci 345',
+        'Changed Marker Responsibility',
+        '22/08/2021'
+    ),
 ]
 
 export default function RecentActivityTable() {
@@ -40,12 +73,32 @@ export default function RecentActivityTable() {
                             }}
                         >
                             <TableCell component="th" scope="row">
-                                {row.name}
+                                <>
+                                    <Typography variant="h6">
+                                        {row.role}: {row.name}
+                                    </Typography>
+
+                                    <Typography
+                                        variant="subtitle1"
+                                        color={'#666666'}
+                                    >
+                                        {row.action} - {row.course}
+                                    </Typography>
+                                </>
                             </TableCell>
-                            <TableCell align="right">{row.calories}</TableCell>
-                            <TableCell align="right">{row.fat}</TableCell>
-                            <TableCell align="right">{row.carbs}</TableCell>
-                            <TableCell align="right">{row.protein}</TableCell>
+                            <TableCell align="right">{row.when}</TableCell>
+                            <TableCell align="right">
+                                <Link href="./" passHref>
+                                    <Button
+                                        variant="outlined"
+                                        sx={{
+                                            color: '#00467F',
+                                        }}
+                                    >
+                                        VIEW CHANGE
+                                    </Button>
+                                </Link>
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
