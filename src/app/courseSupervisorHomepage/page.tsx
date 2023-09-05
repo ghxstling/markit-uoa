@@ -1,30 +1,24 @@
 'use client'
 
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import FirstPageIcon from '@mui/icons-material/FirstPage';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import LastPageIcon from '@mui/icons-material/LastPage';
+import { TableBody } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
-import TableFooter from '@mui/material/TableFooter';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import DynamicBreadcrumb from '../components/DynamicBreadcrumb';
 import Sidebar from "../components/Sidebar";
-import { TableBody } from '@mui/material';
 
 interface TablePaginationActionsProps {
     count: number;
@@ -84,7 +78,7 @@ export default function CSHomepage(){
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
         data.map((course, index) => (
-        console.log(course.status)
+        console.log(course.needMarkers)
         ))
       };
 
@@ -117,7 +111,7 @@ export default function CSHomepage(){
                         fontWeight="bold">
                         Welcome, {firstName}
                     </Typography>
-                <Button variant="contained" sx={{backgroundColor: '#00467F', mt: '53px', mb: '58px',}}>CREATE NEW COURSE</Button>
+                <Button variant="contained" sx={{backgroundColor: '#00467F', mt: '53px', mb: '58px',}} href='/dashboard/courses'>CREATE NEW COURSE</Button>
 
                 <TableContainer component={Paper} style={{marginTop:20}}>
                     <Table style={{paddingTop:40}}>
@@ -139,7 +133,7 @@ export default function CSHomepage(){
                               <TableRow key={index} style={{}}>
                                   <TableCell style={{textAlign:'center'}}>{course.courseCode}</TableCell>
                                   <TableCell style={{textAlign:'center'}}>{course.semester}</TableCell>
-                                  <TableCell style={{textAlign:'center'}}><Button href='src/app/dashboard/courses/[courseId]/page.tsx'>Edit</Button></TableCell>
+                                  <TableCell style={{textAlign:'center'}}><Link href='src/app/dashboard/courses/[courseId]/page.tsx' as={`/dashboard/courses/${course.id}`}><Button>Edit</Button></Link></TableCell>
                                   <TableCell style={{textAlign:'center'}}>{course.markersNeeded}</TableCell>
                                   <TableCell style={{textAlign:'center'}}>{course.applicants}</TableCell>
                                   <TableCell style={{textAlign:'center'}}> {course.needMarkers ? (
