@@ -61,12 +61,7 @@ const CVAndTranscript = () => {
 
     return (
         <>
-            <Typography
-                component="h1"
-                variant="h5"
-                fontWeight="bold"
-                sx={{ mb: '20px' }}
-            >
+            <Typography component="h1" variant="h5" fontWeight="bold" sx={{ mb: '20px' }}>
                 CV and Transcript Upload
             </Typography>
             <Grid container spacing={4} direction="column">
@@ -76,11 +71,7 @@ const CVAndTranscript = () => {
                             <Grid item>
                                 <Button variant="contained" component="label">
                                     Upload CV
-                                    <input
-                                        hidden
-                                        type="file"
-                                        onChange={handleCvFileUpload}
-                                    />
+                                    <input hidden type="file" onChange={handleCvFileUpload} />
                                 </Button>
                             </Grid>
                             <Grid item>
@@ -89,11 +80,7 @@ const CVAndTranscript = () => {
                             <Grid item>
                                 <Button variant="contained" component="label">
                                     Submit CV Upload
-                                    <input
-                                        hidden
-                                        type="submit"
-                                        value="Submit CV Upload"
-                                    />
+                                    <input hidden type="submit" value="Submit CV Upload" />
                                 </Button>
                             </Grid>
                         </Grid>
@@ -105,11 +92,7 @@ const CVAndTranscript = () => {
                             <Grid item>
                                 <Button variant="contained" component="label">
                                     Upload Transcript
-                                    <input
-                                        hidden
-                                        type="file"
-                                        onChange={handleTranscriptFileUpload}
-                                    />
+                                    <input hidden type="file" onChange={handleTranscriptFileUpload} />
                                 </Button>
                             </Grid>
                             <Grid item>
@@ -118,11 +101,7 @@ const CVAndTranscript = () => {
                             <Grid item>
                                 <Button variant="contained" component="label">
                                     Submit Transcript Upload
-                                    <input
-                                        hidden
-                                        type="submit"
-                                        value="Submit CV Upload"
-                                    />
+                                    <input hidden type="submit" value="Submit CV Upload" />
                                 </Button>
                             </Grid>
                         </Grid>

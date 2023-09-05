@@ -21,25 +21,16 @@ interface EmploymentDetailsProps {
     setFormValues: React.Dispatch<React.SetStateAction<IFormValues>>
 }
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-    props,
-    ref
-) {
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
 })
 
-const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({
-    formValues,
-    setFormValues,
-}) => {
+const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({ formValues, setFormValues }) => {
     const [degreeYearsValue, setDegreeYearsValue] = React.useState(1)
     const [workHoursValue, setWorkHoursValue] = React.useState(1)
     const [openSnackBar, setOpenSnackBar] = useState(false)
 
-    const handleClose = (
-        event?: React.SyntheticEvent | Event,
-        reason?: string
-    ) => {
+    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
             return
         }
@@ -47,44 +38,28 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({
         setOpenSnackBar(false)
     }
 
-    const handleDegreeSliderChange = (
-        event: Event,
-        newValue: number | number[]
-    ) => {
+    const handleDegreeSliderChange = (event: Event, newValue: number | number[]) => {
         setFormValues({
             ...formValues,
             degreeYears: newValue as number,
         })
     }
 
-    const handleDegreeYearsInputChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleDegreeYearsInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFormValues({
             ...formValues,
-            degreeYears: Math.min(
-                event.target.value === '' ? 1 : Number(event.target.value),
-                10
-            ),
+            degreeYears: Math.min(event.target.value === '' ? 1 : Number(event.target.value), 10),
         })
     }
 
-    const handleWorkHoursSliderChange = (
-        event: Event,
-        newValue: number | number[]
-    ) => {
+    const handleWorkHoursSliderChange = (event: Event, newValue: number | number[]) => {
         setFormValues({ ...formValues, workHours: newValue as number })
     }
 
-    const handleWorkHoursInputChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleWorkHoursInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFormValues({
             ...formValues,
-            workHours: Math.min(
-                event.target.value === '' ? 1 : Number(event.target.value),
-                30
-            ),
+            workHours: Math.min(event.target.value === '' ? 1 : Number(event.target.value), 30),
         })
     }
 
@@ -158,25 +133,12 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({
             <Typography component="h1" variant="h5" fontWeight="bold">
                 Employment Details
             </Typography>
-            <Box
-                component="form"
-                noValidate
-                onSubmit={handleSubmit}
-                sx={{ mt: 3 }}
-            >
+            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
-                        <Grid
-                            container
-                            direction="column"
-                            spacing={0}
-                            justifyContent="center"
-                            alignItems="center"
-                        >
+                        <Grid container direction="column" spacing={0} justifyContent="center" alignItems="center">
                             <Grid item>
-                                <Typography>
-                                    Are you currently living overseas?
-                                </Typography>
+                                <Typography>Are you currently living overseas?</Typography>
                             </Grid>
                             <Grid item>
                                 <RadioGroup
@@ -188,18 +150,10 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({
                                 >
                                     <Grid container spacing={4}>
                                         <Grid item>
-                                            <FormControlLabel
-                                                value="Yes"
-                                                control={<Radio />}
-                                                label="Yes"
-                                            />
+                                            <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
                                         </Grid>
                                         <Grid item>
-                                            <FormControlLabel
-                                                value="No"
-                                                control={<Radio />}
-                                                label="No"
-                                            />
+                                            <FormControlLabel value="No" control={<Radio />} label="No" />
                                         </Grid>
                                     </Grid>
                                 </RadioGroup>
@@ -207,23 +161,13 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({
                         </Grid>
                     </Grid>
                     <Grid item xs={12}>
-                        <Grid
-                            container
-                            direction="column"
-                            spacing={0}
-                            justifyContent="center"
-                            alignItems="center"
-                        >
+                        <Grid container direction="column" spacing={0} justifyContent="center" alignItems="center">
                             <Grid item>
-                                <Typography>
-                                    Are you a citizen or permanent resident?
-                                </Typography>
+                                <Typography>Are you a citizen or permanent resident?</Typography>
                             </Grid>
                             <Grid item>
                                 <RadioGroup
-                                    value={
-                                        formValues.citizenOrPermanentResident
-                                    }
+                                    value={formValues.citizenOrPermanentResident}
                                     row
                                     name="permenantResident"
                                     id="permenantResident"
@@ -231,18 +175,10 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({
                                 >
                                     <Grid container spacing={4}>
                                         <Grid item>
-                                            <FormControlLabel
-                                                value="Yes"
-                                                control={<Radio />}
-                                                label="Yes"
-                                            />
+                                            <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
                                         </Grid>
                                         <Grid item>
-                                            <FormControlLabel
-                                                value="No"
-                                                control={<Radio />}
-                                                label="No"
-                                            />
+                                            <FormControlLabel value="No" control={<Radio />} label="No" />
                                         </Grid>
                                     </Grid>
                                 </RadioGroup>
@@ -261,9 +197,7 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({
                                 >
                                     <Grid item>
                                         <Typography textAlign="center">
-                                            If you are not a citizen/permanent
-                                            resident, do you have a valid work
-                                            visa?
+                                            If you are not a citizen/permanent resident, do you have a valid work visa?
                                         </Typography>
                                     </Grid>
                                     <Grid item>
@@ -276,18 +210,10 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({
                                         >
                                             <Grid container spacing={4}>
                                                 <Grid item>
-                                                    <FormControlLabel
-                                                        value="Yes"
-                                                        control={<Radio />}
-                                                        label="Yes"
-                                                    />
+                                                    <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
                                                 </Grid>
                                                 <Grid item>
-                                                    <FormControlLabel
-                                                        value="No"
-                                                        control={<Radio />}
-                                                        label="No"
-                                                    />
+                                                    <FormControlLabel value="No" control={<Radio />} label="No" />
                                                 </Grid>
                                             </Grid>
                                         </RadioGroup>
@@ -309,24 +235,14 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({
                             required
                         >
                             <MenuItem value={'Bachelors'}>Bachelors</MenuItem>
-                            <MenuItem value={'Post Graduate'}>
-                                Post Graduate
-                            </MenuItem>
+                            <MenuItem value={'Post Graduate'}>Post Graduate</MenuItem>
                         </TextField>
                     </Grid>
 
                     <Grid item xs={12}>
-                        <Grid
-                            container
-                            direction="column"
-                            spacing={0}
-                            justifyContent="center"
-                            alignItems="center"
-                        >
+                        <Grid container direction="column" spacing={0} justifyContent="center" alignItems="center">
                             <Grid item>
-                                <Typography gutterBottom>
-                                    How many years into this degree are you?
-                                </Typography>
+                                <Typography gutterBottom>How many years into this degree are you?</Typography>
                             </Grid>
 
                             <Grid item>
@@ -362,17 +278,10 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({
                     </Grid>
 
                     <Grid item xs={12}>
-                        <Grid
-                            container
-                            direction="column"
-                            spacing={0}
-                            justifyContent="center"
-                            alignItems="center"
-                        >
+                        <Grid container direction="column" spacing={0} justifyContent="center" alignItems="center">
                             <Grid item xs={12}>
                                 <Typography gutterBottom>
-                                    What is the maximum number of hours per week
-                                    you can work?
+                                    What is the maximum number of hours per week you can work?
                                 </Typography>
                             </Grid>
                             <Grid item>
@@ -407,12 +316,7 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({
                         </Grid>
                     </Grid>
                 </Grid>
-                <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2 }}
-                >
+                <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
                     Submit Details
                 </Button>
             </Box>
@@ -422,11 +326,7 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({
                 autoHideDuration={6000}
                 onClose={handleClose}
             >
-                <Alert
-                    onClose={handleClose}
-                    severity="error"
-                    sx={{ width: '100%' }}
-                >
+                <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
                     Please enter your degree type
                 </Alert>
             </Snackbar>

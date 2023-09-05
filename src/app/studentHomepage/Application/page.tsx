@@ -5,23 +5,12 @@ import EmploymentDetails from '@/app/components/ApplicationForms/EmploymentDetai
 import PersonalDetails from '@/app/components/ApplicationForms/PersonalDetails'
 import Sidebar from '@/app/components/Sidebar'
 import { IFormValues } from '@/app/interfaces/FormValues'
-import {
-    Box,
-    Button,
-    Container,
-    Paper,
-    Step,
-    StepLabel,
-    Stepper,
-    Typography,
-} from '@mui/material'
+import { Box, Button, Container, Paper, Snackbar, Step, StepLabel, Stepper, Typography } from '@mui/material'
 import React, { useState } from 'react'
+import validator from 'validator'
+import MuiAlert, { AlertProps } from '@mui/material/Alert'
 
-const steps = [
-    'Personal Details',
-    'Employment Details',
-    'CV and Academic Transcript Upload',
-]
+const steps = ['Personal Details', 'Employment Details', 'CV and Academic Transcript Upload']
 
 function getStepContent(
     step: number,
@@ -30,25 +19,19 @@ function getStepContent(
 ) {
     switch (step) {
         case 0:
-            return (
-                <PersonalDetails
-                    formValues={formValues}
-                    setFormValues={setFormValues}
-                />
-            )
+            return <PersonalDetails formValues={formValues} setFormValues={setFormValues} />
         case 1:
-            return (
-                <EmploymentDetails
-                    formValues={formValues}
-                    setFormValues={setFormValues}
-                />
-            )
+            return <EmploymentDetails formValues={formValues} setFormValues={setFormValues} />
         case 2:
             return <CVAndTranscript />
         default:
             throw new Error('Unknown step')
     }
 }
+
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+})
 
 const Application = () => {
     const [activeStep, setActiveStep] = useState(0)
@@ -65,9 +48,34 @@ const Application = () => {
         workHours: 1,
     })
 
+    const [snackbarMessage, setSnackbarMessage] = useState('Please enter 9 digits for your student ID')
+    const [openSnackBar, setOpenSnackBar] = useState(false)
+
+    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return
+        }
+
+        setOpenSnackBar(false)
+    }
+
     const handleNext = () => {
         if (activeStep === steps.length - 1) {
-            console.log(formValues)
+            if (validator.isEmail(formValues.email) === false) {
+                setSnackbarMessage('Please enter a valid email address')
+                setOpenSnackBar(true)
+                return
+            } else if ((formValues.AUID as string).length !== 9) {
+                setSnackbarMessage('Please enter 9 digits for your student ID')
+                setOpenSnackBar(true)
+                return
+            } else if (formValues.degree === '') {
+                setSnackbarMessage('Please select a degree type')
+                setOpenSnackBar(true)
+                return
+            } else {
+                //Form Submission
+            }
         }
         setActiveStep(activeStep + 1)
     }
@@ -85,21 +93,11 @@ const Application = () => {
                         <Sidebar />
                     </Box>
                     <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
-                        <Paper
-                            variant="outlined"
-                            sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}
-                        >
-                            <Typography
-                                component="h1"
-                                variant="h4"
-                                align="center"
-                            >
+                        <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
+                            <Typography component="h1" variant="h4" align="center">
                                 Application
                             </Typography>
-                            <Stepper
-                                activeStep={activeStep}
-                                sx={{ pt: 3, pb: 5 }}
-                            >
+                            <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
                                 {steps.map((label) => (
                                     <Step key={label}>
                                         <StepLabel>{label}</StepLabel>
@@ -115,11 +113,7 @@ const Application = () => {
                                 </>
                             ) : (
                                 <>
-                                    {getStepContent(
-                                        activeStep,
-                                        formValues,
-                                        setFormValues
-                                    )}
+                                    {getStepContent(activeStep, formValues, setFormValues)}
                                     <Box
                                         sx={{
                                             display: 'flex',
@@ -127,23 +121,27 @@ const Application = () => {
                                         }}
                                     >
                                         {activeStep !== 0 && (
-                                            <Button
-                                                onClick={handleBack}
-                                                sx={{ mt: 3, ml: 1 }}
-                                            >
+                                            <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
                                                 Back
                                             </Button>
                                         )}
-                                        <Button
-                                            variant="contained"
-                                            onClick={handleNext}
-                                            sx={{ mt: 3, ml: 1 }}
-                                        >
-                                            {activeStep === steps.length - 1
-                                                ? 'Submit Application'
-                                                : 'Next'}
+                                        <Button variant="contained" onClick={handleNext} sx={{ mt: 3, ml: 1 }}>
+                                            {activeStep === steps.length - 1 ? 'Submit Application' : 'Next'}
                                         </Button>
                                     </Box>
+                                    <Snackbar
+                                        anchorOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'right',
+                                        }}
+                                        open={openSnackBar}
+                                        autoHideDuration={6000}
+                                        onClose={handleClose}
+                                    >
+                                        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+                                            {snackbarMessage}
+                                        </Alert>
+                                    </Snackbar>
                                 </>
                             )}
                         </Paper>
