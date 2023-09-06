@@ -11,16 +11,17 @@ datasource db {
 }
 
 model Course {
-  id                     Int     @id @default(autoincrement())
+  id                     Int      @id @default(autoincrement())
   courseCode             String
   courseDescription      String
   numOfEstimatedStudents Int
   numOfEnrolledStudents  Int
   markerHours            Int
   markerResponsibilities String
-  needMarkers            Boolean @default(true)
+  needMarkers            Boolean  @default(true)
   markersNeeded          Int
   semester               String
+  modifiedAt             DateTime @updatedAt @default(now())
   // TODO: add course coordinator (name, email)
   // TODO: add course director (name, email)
 }
