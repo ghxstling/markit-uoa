@@ -9,8 +9,9 @@ import { Box, Button, Container, Paper, Snackbar, Step, StepLabel, Stepper, Typo
 import React, { useState } from 'react'
 import validator from 'validator'
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
+import CoursePreferences from '@/app/components/ApplicationForms/CoursePreferences'
 
-const steps = ['Personal Details', 'Employment Details', 'CV and Academic Transcript Upload']
+const steps = ['Personal Details', 'Employment Details', 'CV and Academic Transcript Upload', 'Course Preferences']
 
 function getStepContent(
     step: number,
@@ -24,6 +25,8 @@ function getStepContent(
             return <EmploymentDetails formValues={formValues} setFormValues={setFormValues} />
         case 2:
             return <CVAndTranscript />
+        case 3:
+            return <CoursePreferences />
         default:
             throw new Error('Unknown step')
     }
@@ -92,7 +95,7 @@ const Application = () => {
                     <Box sx={{ width: '15rem' }}>
                         <Sidebar />
                     </Box>
-                    <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
+                    <Container component="main" maxWidth="md" sx={{ mb: 4 }}>
                         <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
                             <Typography component="h1" variant="h4" align="center">
                                 Application

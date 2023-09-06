@@ -3,13 +3,27 @@ import React, { useState } from 'react'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
 import DeleteIcon from '@mui/icons-material/Delete'
 import DescriptionIcon from '@mui/icons-material/Description'
-import { Button, Grid, Typography, Box } from '@mui/material'
-import { unknown } from 'zod'
+import { Button, Grid, Typography, Box, Snackbar } from '@mui/material'
+import MuiAlert, { AlertProps } from '@mui/material/Alert'
+
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+})
 
 const CVAndTranscript = () => {
     const [files, setFiles]: any[] = useState([])
     const [fileLimit, setFileLimit] = useState(false)
+    const [openSnackBar, setOpenSnackBar] = useState(false)
+
     const MAX_COUNT = 2
+
+    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return
+        }
+
+        setOpenSnackBar(false)
+    }
 
     const handleFileDelete = (index: any) => {
         const newFiles = [...files]
@@ -19,7 +33,15 @@ const CVAndTranscript = () => {
 
     const handleFileEvent = (event: any) => {
         const uploadedFiles = Array.prototype.slice.call(event.target.files)
-        handleFileUpload(uploadedFiles)
+        for (let i = 0; i < uploadedFiles.length; i++) {
+            const file = uploadedFiles[i]
+            if (file.type !== 'application/pdf') {
+                setOpenSnackBar(true)
+                event.target.value = '' // clear the input
+                return
+            }
+            handleFileUpload(uploadedFiles)
+        }
     }
 
     const handleFileUpload = (uploadedFiles: any) => {
@@ -60,11 +82,21 @@ const CVAndTranscript = () => {
                     cursor: 'pointer',
                     borderRadius: '5px',
                 }}
-                onClick={() => document.querySelector('.input-field').click()}
+                onClick={() => (document.querySelector('.input-field') as HTMLElement).click()}
             >
-                <input type="file" multiple className="input-field" hidden onChange={handleFileEvent} />
+                <input
+                    type="file"
+                    multiple
+                    className="input-field"
+                    accept="application/pdf"
+                    hidden
+                    onChange={handleFileEvent}
+                />
 
                 <CloudUploadIcon style={{ color: '#1475cf', fontSize: '60px' }} />
+                <Typography variant="subtitle1">Click to upload</Typography>
+                <Typography variant="subtitle2">PDF only</Typography>
+                <Typography variant="subtitle2">MAXIMUM 2 FILES</Typography>
             </form>
 
             {/* Map each file to its own grid item */}
@@ -97,6 +129,19 @@ const CVAndTranscript = () => {
                     </Grid>
                 </>
             ))}
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                }}
+                open={openSnackBar}
+                autoHideDuration={6000}
+                onClose={handleClose}
+            >
+                <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+                    Please upload a PDF File
+                </Alert>
+            </Snackbar>
         </>
     )
 }
