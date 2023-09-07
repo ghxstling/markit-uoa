@@ -4,34 +4,38 @@ import CourseApplication from './CourseApplication'
 
 type CourseApplicationType = {
     id: number
+    prefId: number
     data: {
         course: string
         grade: string
-        explainQualified: string
+        explainNotTaken: string
         markedPreviously: string
         tutoredPreviously: string
-        explainNoPrevious: string
+        explainNotPrevious: string
     }
 }
 
 const CoursePreferences = () => {
     const [courseApplications, setCourseApplications] = useState<CourseApplicationType[]>([])
+    const [coursePreferenceID, setCoursePreferenceID] = useState(1)
 
     const addCourseApplication = () => {
         setCourseApplications((prevApplications) => [
             ...prevApplications,
             {
                 id: new Date().getTime(),
+                prefId: coursePreferenceID,
                 data: {
                     course: '',
                     grade: '',
-                    explainQualified: '',
+                    explainNotTaken: '',
                     markedPreviously: 'No',
                     tutoredPreviously: 'No',
-                    explainNoPrevious: '',
+                    explainNotPrevious: '',
                 },
             },
         ])
+        setCoursePreferenceID(coursePreferenceID + 1)
     }
 
     const updateApplication = (updatedApplication: any) => {
@@ -40,10 +44,20 @@ const CoursePreferences = () => {
                 application.id === updatedApplication.id ? updatedApplication : application
             )
         )
+        courseApplications.forEach((application) => {
+            console.log(application.data)
+        })
     }
 
     const removeCourseApplication = (id: number) => {
-        setCourseApplications((prevApplications) => prevApplications.filter((application) => application.id !== id))
+        let prefIdCounter = 1
+        const updatedApplications = courseApplications.filter((application) => application.id !== id)
+        updatedApplications.forEach((application, index) => {
+            application.prefId = index + 1
+            prefIdCounter++
+        })
+        setCourseApplications(updatedApplications)
+        setCoursePreferenceID(prefIdCounter)
     }
 
     return (
@@ -55,9 +69,9 @@ const CoursePreferences = () => {
                     </Typography>
                 </Grid>
                 <Grid item>
-                    <Grid container spacing={3} direction="column">
+                    <Grid container width={400} spacing={3} direction="column">
                         {courseApplications.map((application) => (
-                            <Grid item>
+                            <Grid item width={400}>
                                 <CourseApplication
                                     key={application.id}
                                     application={application}
