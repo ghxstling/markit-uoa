@@ -1,42 +1,68 @@
-import { Box, Button, FormControlLabel, Grid, MenuItem, Radio, RadioGroup, TextField, Typography } from '@mui/material'
-import React from 'react'
+import {
+    Box,
+    Button,
+    FormControlLabel,
+    Grid,
+    Hidden,
+    MenuItem,
+    Radio,
+    RadioGroup,
+    TextField,
+    Typography,
+} from '@mui/material'
+import React, { useState, useEffect } from 'react'
 
 const CourseApplication = ({ application, updateApplication, removeCourseApplication }) => {
+    const [formData, setFormData] = useState({
+        course: '',
+        grade: '',
+        explainNotTaken: '',
+        markedPreviously: '',
+        tutoredPreviously: '',
+        explainNotPrevious: '',
+    })
+
     const thisApplicationId = application.id
-    const thisApplicationData = application.data
     const coursePrefId = application.prefId
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        const data = new FormData(event.currentTarget)
-        const newData = {
-            course: data.get('course'),
-            grade: data.get('grade'),
-            explainNotTaken: data.get('explainNotTaken'),
-            markedPreviously: data.get('markedPreviously'),
-            tutoredPreviously: data.get('tutoredPreviously'),
-            explainNotPrevious: data.get('explainNotPrevious'),
-        }
-        handleDataChange(newData)
+    const handleChange = (event: any) => {
+        const { name, value } = event.target
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: value,
+        }))
     }
 
-    const handleDataChange = (updatedData: any) => {
+    const handleDataChange = () => {
+        console.log(formData)
         const updatedApplication = {
             id: thisApplicationId,
-            data: updatedData,
+            data: formData,
         }
-        updateApplication(updatedApplication)
+        setTimeout(() => {
+            updateApplication(updatedApplication)
+        }, 100)
     }
 
     return (
         <>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+            <Box component="form" noValidate sx={{ mt: 3 }}>
                 <Grid container spacing={3} justifyContent="center" direction="column">
                     <Grid item>
                         <Typography variant="h4">Preference {coursePrefId}</Typography>
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField name="course" id="course" label="Select Course" select fullWidth required>
+                        <TextField
+                            name="course"
+                            id="course"
+                            label="Select Course"
+                            select
+                            fullWidth
+                            required
+                            value={formData.course}
+                            onChange={handleChange}
+                            onBlur={() => setTimeout(handleDataChange, 100)}
+                        >
                             <MenuItem value={'COMPSCI 101'}>COMPSCI 101</MenuItem>
                             <MenuItem value={'COMPSCI 110'}>COMPSCI 110</MenuItem>
                             {/* 
@@ -46,7 +72,17 @@ const CourseApplication = ({ application, updateApplication, removeCourseApplica
                         </TextField>
                     </Grid>
                     <Grid item xs={12}>
-                        <TextField name="grade" id="grade" label="Grade Received When Taken" select fullWidth required>
+                        <TextField
+                            name="grade"
+                            id="grade"
+                            label="Grade Received When Taken"
+                            select
+                            fullWidth
+                            required
+                            value={formData.grade}
+                            onChange={handleChange}
+                            onBlur={() => setTimeout(handleDataChange, 100)}
+                        >
                             <MenuItem value={'A+'}>A+</MenuItem>
                             <MenuItem value={'A'}>A</MenuItem>
                             <MenuItem value={'B+'}>B+</MenuItem>
@@ -73,6 +109,9 @@ const CourseApplication = ({ application, updateApplication, removeCourseApplica
                             rows={4}
                             multiline
                             fullWidth
+                            value={formData.explainNotTaken}
+                            onChange={handleChange}
+                            onBlur={() => setTimeout(handleDataChange, 100)}
                         ></TextField>
                     </Grid>
                     <Grid item>
@@ -82,7 +121,15 @@ const CourseApplication = ({ application, updateApplication, removeCourseApplica
                                 <Typography>Have you marked this course previously?</Typography>
                             </Grid>
                             <Grid item>
-                                <RadioGroup row name="markedPreviously" id="markedPreviously" defaultValue="No">
+                                <RadioGroup
+                                    row
+                                    name="markedPreviously"
+                                    id="markedPreviously"
+                                    defaultValue="No"
+                                    value={formData.markedPreviously}
+                                    onChange={handleChange}
+                                    onBlur={() => setTimeout(handleDataChange, 100)}
+                                >
                                     <Grid container spacing={4}>
                                         <Grid item>
                                             <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -102,7 +149,15 @@ const CourseApplication = ({ application, updateApplication, removeCourseApplica
                                 <Typography>Have you tutored this course previously?</Typography>
                             </Grid>
                             <Grid item>
-                                <RadioGroup row name="tutoredPreviously" id="tutoredPreviously" defaultValue="No">
+                                <RadioGroup
+                                    row
+                                    name="tutoredPreviously"
+                                    id="tutoredPreviously"
+                                    defaultValue="No"
+                                    value={formData.tutoredPreviously}
+                                    onChange={handleChange}
+                                    onBlur={() => setTimeout(handleDataChange, 100)}
+                                >
                                     <Grid container spacing={4}>
                                         <Grid item>
                                             <FormControlLabel value="Yes" control={<Radio />} label="Yes" />
@@ -115,27 +170,25 @@ const CourseApplication = ({ application, updateApplication, removeCourseApplica
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid item>
-                        {/* Explanation for not marking or tutoring course previously */}
-                        <Grid item xs={12}>
-                            <Typography variant="subtitle2" sx={{ mb: '10px' }}>
-                                If you haven’t marked or tutored this course previously, please explain any other
-                                relevant experience that you have
-                            </Typography>
-                            <TextField
-                                name="explainNotPrevious"
-                                id="explainNotPrevious"
-                                label="Explanation..."
-                                rows={4}
-                                multiline
-                                fullWidth
-                            ></TextField>
-                        </Grid>
+                    {/* Explanation for not marking or tutoring course previously */}
+                    <Grid item xs={12}>
+                        <Typography variant="subtitle2" sx={{ mb: '10px' }}>
+                            If you haven’t marked or tutored this course previously, please explain any other relevant
+                            experience that you have (leave blank if you have)
+                        </Typography>
+                        <TextField
+                            name="explainNotPrevious"
+                            id="explainNotPrevious"
+                            label="Explanation..."
+                            rows={4}
+                            multiline
+                            fullWidth
+                            value={formData.explainNotPrevious}
+                            onChange={handleChange}
+                            onBlur={handleDataChange}
+                        ></TextField>
                     </Grid>
                 </Grid>
-                <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-                    Submit Details
-                </Button>
             </Box>
 
             <Button onClick={() => removeCourseApplication(thisApplicationId)}>Remove Application</Button>

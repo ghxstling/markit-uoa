@@ -1,6 +1,7 @@
 import { Box, Button, Grid, Typography } from '@mui/material'
 import React, { useState } from 'react'
 import CourseApplication from './CourseApplication'
+import { IFormValues } from '@/app/interfaces/FormValues'
 
 type CourseApplicationType = {
     id: number
@@ -15,9 +16,15 @@ type CourseApplicationType = {
     }
 }
 
-const CoursePreferences = () => {
+interface CoursePreferenceProps {
+    formValues: IFormValues
+    setFormValues: React.Dispatch<React.SetStateAction<IFormValues>>
+}
+
+const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFormValues }) => {
     const [courseApplications, setCourseApplications] = useState<CourseApplicationType[]>([])
     const [coursePreferenceID, setCoursePreferenceID] = useState(1)
+    let applicationData: CourseApplicationType[] = []
 
     const addCourseApplication = () => {
         setCourseApplications((prevApplications) => [
@@ -44,9 +51,12 @@ const CoursePreferences = () => {
                 application.id === updatedApplication.id ? updatedApplication : application
             )
         )
+
+        //on each update get application data and set form values data for applciations
         courseApplications.forEach((application) => {
-            console.log(application.data)
+            applicationData.push(application)
         })
+        setFormValues({ ...formValues, applications: applicationData })
     }
 
     const removeCourseApplication = (id: number) => {

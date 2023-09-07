@@ -26,7 +26,7 @@ function getStepContent(
         case 2:
             return <CVAndTranscript />
         case 3:
-            return <CoursePreferences />
+            return <CoursePreferences formValues={formValues} setFormValues={setFormValues} />
         default:
             throw new Error('Unknown step')
     }
@@ -49,6 +49,7 @@ const Application = () => {
         degree: '',
         degreeYears: 1,
         workHours: 1,
+        applications: [],
     })
 
     const [snackbarMessage, setSnackbarMessage] = useState('Please enter 9 digits for your student ID')
@@ -77,7 +78,9 @@ const Application = () => {
                 setOpenSnackBar(true)
                 return
             } else {
-                //Form Submission
+                setTimeout(() => {
+                    console.log(formValues)
+                }, 100)
             }
         }
         setActiveStep(activeStep + 1)

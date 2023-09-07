@@ -26,8 +26,6 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props,
 })
 
 const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({ formValues, setFormValues }) => {
-    const [degreeYearsValue, setDegreeYearsValue] = React.useState(1)
-    const [workHoursValue, setWorkHoursValue] = React.useState(1)
     const [openSnackBar, setOpenSnackBar] = useState(false)
 
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
@@ -85,27 +83,6 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({ formValues, setFo
         setFormValues({ ...formValues, workVisa: event.target.value })
     }
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        const data = new FormData(event.currentTarget)
-
-        //check for if Degree === "", return snackbar error
-
-        if ((data.get('degree') as string) === '') {
-            setOpenSnackBar(true)
-            return
-        }
-
-        console.log({
-            overseas: data.get('overseas'),
-            citezenResidency: data.get('permenantResident'),
-            workVisa: data.get('workVisa'),
-            degree: data.get('degree'),
-            degreeYears: data.get('degreeYears'),
-            workHours: data.get('workHours'),
-        })
-    }
-
     const degreeYearMarks = [
         {
             value: 1,
@@ -133,7 +110,7 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({ formValues, setFo
             <Typography component="h1" variant="h5" fontWeight="bold">
                 Employment Details
             </Typography>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+            <Box component="form" noValidate sx={{ mt: 3 }}>
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
                         <Grid container direction="column" spacing={0} justifyContent="center" alignItems="center">
@@ -316,9 +293,6 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({ formValues, setFo
                         </Grid>
                     </Grid>
                 </Grid>
-                <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-                    Submit Details
-                </Button>
             </Box>
             <Snackbar
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}

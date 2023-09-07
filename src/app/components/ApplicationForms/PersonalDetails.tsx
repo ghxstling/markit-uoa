@@ -1,4 +1,4 @@
-import { Box, Button, Grid, TextField, Typography, Snackbar } from '@mui/material'
+import { Box, Button, Grid, TextField, Typography } from '@mui/material'
 import { useSession } from 'next-auth/react'
 import React, { useState } from 'react'
 import { IFormValues } from '@/app/interfaces/FormValues'
@@ -22,20 +22,6 @@ const PersonalDetails: React.FC<PersonalDetailsProps> = ({ formValues, setFormVa
         setFormValues({ ...formValues, email: event.target.value })
     }
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        const data = new FormData(event.currentTarget)
-
-        const studentID = data.get('AUID') as string
-
-        console.log({
-            name: data.get('name'),
-            upi: data.get('upi'),
-            studentID: studentID,
-            email: data.get('email'),
-        })
-    }
-
     const { data: session } = useSession()
 
     let fullName: string = ''
@@ -54,7 +40,7 @@ const PersonalDetails: React.FC<PersonalDetailsProps> = ({ formValues, setFormVa
             <Typography component="h1" variant="h5" fontWeight="bold">
                 Personal Details
             </Typography>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+            <Box component="form" noValidate sx={{ mt: 3 }}>
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
                         <TextField
@@ -106,9 +92,6 @@ const PersonalDetails: React.FC<PersonalDetailsProps> = ({ formValues, setFormVa
                         />
                     </Grid>
                 </Grid>
-                <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-                    Submit Details
-                </Button>
             </Box>
         </>
     )

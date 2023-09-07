@@ -1,3 +1,16 @@
+type CourseApplicationType = {
+    id: number
+    prefId: number
+    data: {
+        course: string
+        grade: string
+        explainNotTaken: string
+        markedPreviously: string
+        tutoredPreviously: string
+        explainNotPrevious: string
+    }
+}
+
 export interface IFormValues {
     name: string
     upi: string
@@ -9,4 +22,5 @@ export interface IFormValues {
     degree: string
     degreeYears: number
     workHours: number
+    applications: CourseApplicationType[]
 }
