@@ -1,30 +1,88 @@
-import Typography from '@mui/material/Typography'
-import Link from 'next/link'
-import { UserStatus } from './components/UserStatus'
-import Sidebar from './components/Sidebar'
+'use client'
+import Image from 'next/image'
+import { Container, Typography } from '@mui/material'
+import { SignInButton } from './components/SignInButton'
+import { useEffect, useState } from 'react'
 
-export default function Home() {
+function LandingPage() {
+    const [loaded, setLoaded] = useState(false)
+
+    useEffect(() => {
+        setLoaded(true)
+    }, [])
+
     return (
-        <>
-            <Sidebar />
-
+        <div
+            style={{
+                position: 'relative',
+                width: '100vw',
+                height: '100vh',
+                overflow: 'hidden',
+                margin: 0,
+                padding: 0,
+            }}
+        >
             <div
                 style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: 'calc(100vh - /* Height of your other content */)',
-                    marginTop: '20px',
+                    opacity: loaded ? 1 : 0,
+                    transition: 'opacity 0.5s ease-in-out',
+                    position: 'absolute',
+                    width: '60%',
+                    height: '100%',
+                    overflow: 'hidden',
+                    left: 0,
                 }}
             >
-                <div style={{ marginBottom: '10px' }}>
-                    <Link href="/dashboard/courses">Create a New Course</Link>
-                </div>
-                <div>
-                    <Link href={`/dashboard/courses/25`}>Edit Course</Link>
-                </div>
+                <Image
+                    src="/landingPage.jpg"
+                    alt="Landing Page Image"
+                    layout="fill"
+                    objectFit="cover"
+                    quality={100}
+                />
             </div>
-        </>
+
+            <Container
+                style={{
+                    position: 'absolute',
+                    right: '5%',
+                    top: '25%',
+                    width: '35%',
+                }}
+            >
+                <Typography
+                    variant="h1"
+                    style={{
+                        opacity: loaded ? 1 : 0,
+                        transition: 'opacity 1s ease-in-out',
+                        fontSize: '85px',
+                        fontWeight: 'bold',
+                    }}
+                    gutterBottom
+                >
+                    MarkIt-UoA
+                </Typography>
+                <Typography
+                    variant="h5"
+                    style={{
+                        opacity: loaded ? 1 : 0,
+                        transition: 'opacity 1.5s ease-in-out',
+                        fontSize: '26px',
+                        marginBottom: '30px',
+                    }}
+                >
+                    Simplifying the marker application process for you.
+                </Typography>
+                <SignInButton
+                    style={{
+                        opacity: loaded ? 1 : 0,
+                        transition: 'opacity 2s ease-in-out',
+                        transform: `scale(${loaded ? 1 : 0.95})`,
+                    }}
+                />
+            </Container>
+        </div>
     )
 }
+
+export default LandingPage
