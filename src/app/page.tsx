@@ -3,13 +3,27 @@ import Image from 'next/image'
 import { Container, Typography } from '@mui/material'
 import { SignInButton } from './components/SignInButton'
 import { useEffect, useState } from 'react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 function LandingPage() {
     const [loaded, setLoaded] = useState(false)
+    const { data: session } = useSession()
+    const router = useRouter()
 
     useEffect(() => {
         setLoaded(true)
     }, [])
+
+    useEffect(() => {
+        // If the user is already signed in, redirect to the dashboard.
+        if (session) {
+            router.push('/courseSupervisorHomepage')
+        }
+    }, [session, router])
+
+    // If the user is signed in, you might not want to render anything or display a loader.
+    if (session) return null
 
     return (
         <div

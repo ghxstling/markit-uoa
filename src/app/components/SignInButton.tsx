@@ -26,7 +26,11 @@ export function SignInButton(props: SignInButtonProps) {
             variant="contained"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
-            onClick={() => signIn('google')}
+            onClick={() =>
+                signIn('google', {
+                    callbackUrl: '/courseSupervisorHomepage',
+                })
+            }
         >
             Get Started Here
         </Button>
