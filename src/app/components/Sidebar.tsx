@@ -17,7 +17,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications'
 import SettingsIcon from '@mui/icons-material/Settings'
 import LogoutIcon from '@mui/icons-material/Logout'
 import Link from 'next/link'
-import { useSession } from 'next-auth/react'
+import { useSession, signOut } from 'next-auth/react'
 
 //Styling
 const linkStyle = {
@@ -108,14 +108,14 @@ let content = (username: string, email: string) => {
 
             <List>
                 <ListItem disablePadding sx={{ mb: '1.5rem' }}>
-                    <Link href="./" passHref style={linkStyle}>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <LogoutIcon style={IconStyle} />
-                            </ListItemIcon>
-                            <ListItemText>Logout</ListItemText>
-                        </ListItemButton>
-                    </Link>
+                    <ListItemButton
+                        onClick={() => signOut({ callbackUrl: '/' })}
+                    >
+                        <ListItemIcon>
+                            <LogoutIcon style={IconStyle} />
+                        </ListItemIcon>
+                        <ListItemText>Logout</ListItemText>
+                    </ListItemButton>
                 </ListItem>
             </List>
         </Box>

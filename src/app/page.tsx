@@ -18,7 +18,7 @@ function LandingPage() {
     useEffect(() => {
         // If the user is already signed in, redirect to the dashboard.
         if (session) {
-            router.push('/courseSupervisorHomepage')
+            router.push('/auth/callback')
         }
     }, [session, router])
 
@@ -74,7 +74,6 @@ function LandingPage() {
                         opacity: loaded ? 1 : 0,
                         transition: 'opacity 1.3s ease-in-out',
                         fontSize: '95px',
-                        //fontWeight: 'bold',
                     }}
                     gutterBottom
                 >
