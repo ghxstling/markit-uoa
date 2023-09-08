@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react';
 import DynamicBreadcrumb from '../components/DynamicBreadcrumb';
 import Sidebar from "../components/Sidebar";
 import CourseTable from '../components/courses/CourseTable';
+import React from 'react';
 
 
 export default function CSHomepage(){
