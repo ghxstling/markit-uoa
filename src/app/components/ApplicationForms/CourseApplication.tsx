@@ -17,8 +17,8 @@ const CourseApplication = ({ application, updateApplication, removeCourseApplica
         course: '',
         grade: '',
         explainNotTaken: '',
-        markedPreviously: '',
-        tutoredPreviously: '',
+        markedPreviously: 'No',
+        tutoredPreviously: 'No',
         explainNotPrevious: '',
     })
 
@@ -33,15 +33,17 @@ const CourseApplication = ({ application, updateApplication, removeCourseApplica
         }))
     }
 
-    const handleDataChange = () => {
+    const handleApplicationUpdate = () => {
         console.log(formData)
         const updatedApplication = {
             id: thisApplicationId,
             data: formData,
         }
-        setTimeout(() => {
-            updateApplication(updatedApplication)
-        }, 100)
+        submitFormData(updatedApplication)
+    }
+
+    const submitFormData = (newApplication: any) => {
+        updateApplication(newApplication)
     }
 
     return (
@@ -61,7 +63,7 @@ const CourseApplication = ({ application, updateApplication, removeCourseApplica
                             required
                             value={formData.course}
                             onChange={handleChange}
-                            onBlur={() => setTimeout(handleDataChange, 100)}
+                            onBlur={handleApplicationUpdate}
                         >
                             <MenuItem value={'COMPSCI 101'}>COMPSCI 101</MenuItem>
                             <MenuItem value={'COMPSCI 110'}>COMPSCI 110</MenuItem>
@@ -81,7 +83,7 @@ const CourseApplication = ({ application, updateApplication, removeCourseApplica
                             required
                             value={formData.grade}
                             onChange={handleChange}
-                            onBlur={() => setTimeout(handleDataChange, 100)}
+                            onBlur={handleApplicationUpdate}
                         >
                             <MenuItem value={'A+'}>A+</MenuItem>
                             <MenuItem value={'A'}>A</MenuItem>
@@ -111,7 +113,7 @@ const CourseApplication = ({ application, updateApplication, removeCourseApplica
                             fullWidth
                             value={formData.explainNotTaken}
                             onChange={handleChange}
-                            onBlur={() => setTimeout(handleDataChange, 100)}
+                            onBlur={handleApplicationUpdate}
                         ></TextField>
                     </Grid>
                     <Grid item>
@@ -125,10 +127,9 @@ const CourseApplication = ({ application, updateApplication, removeCourseApplica
                                     row
                                     name="markedPreviously"
                                     id="markedPreviously"
-                                    defaultValue="No"
                                     value={formData.markedPreviously}
                                     onChange={handleChange}
-                                    onBlur={() => setTimeout(handleDataChange, 100)}
+                                    onBlur={handleApplicationUpdate}
                                 >
                                     <Grid container spacing={4}>
                                         <Grid item>
@@ -153,10 +154,9 @@ const CourseApplication = ({ application, updateApplication, removeCourseApplica
                                     row
                                     name="tutoredPreviously"
                                     id="tutoredPreviously"
-                                    defaultValue="No"
                                     value={formData.tutoredPreviously}
                                     onChange={handleChange}
-                                    onBlur={() => setTimeout(handleDataChange, 100)}
+                                    onBlur={handleApplicationUpdate}
                                 >
                                     <Grid container spacing={4}>
                                         <Grid item>
@@ -185,7 +185,7 @@ const CourseApplication = ({ application, updateApplication, removeCourseApplica
                             fullWidth
                             value={formData.explainNotPrevious}
                             onChange={handleChange}
-                            onBlur={handleDataChange}
+                            onBlur={handleApplicationUpdate}
                         ></TextField>
                     </Grid>
                 </Grid>

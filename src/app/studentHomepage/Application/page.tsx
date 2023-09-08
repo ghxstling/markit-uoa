@@ -78,9 +78,7 @@ const Application = () => {
                 setOpenSnackBar(true)
                 return
             } else {
-                setTimeout(() => {
-                    console.log(formValues)
-                }, 100)
+                console.log(formValues)
             }
         }
         setActiveStep(activeStep + 1)

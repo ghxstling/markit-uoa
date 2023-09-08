@@ -1,5 +1,5 @@
 import { Box, Button, Grid, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import CourseApplication from './CourseApplication'
 import { IFormValues } from '@/app/interfaces/FormValues'
 
@@ -24,7 +24,6 @@ interface CoursePreferenceProps {
 const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFormValues }) => {
     const [courseApplications, setCourseApplications] = useState<CourseApplicationType[]>([])
     const [coursePreferenceID, setCoursePreferenceID] = useState(1)
-    let applicationData: CourseApplicationType[] = []
 
     const addCourseApplication = () => {
         setCourseApplications((prevApplications) => [
@@ -51,13 +50,16 @@ const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFor
                 application.id === updatedApplication.id ? updatedApplication : application
             )
         )
-
-        //on each update get application data and set form values data for applciations
-        courseApplications.forEach((application) => {
-            applicationData.push(application)
-        })
-        setFormValues({ ...formValues, applications: applicationData })
     }
+
+    //wait for the courseApplications use state to update before setting the form values
+    useEffect(() => {
+        const newApplications: CourseApplicationType[] = []
+        courseApplications.forEach((application) => {
+            newApplications.push(application)
+        })
+        setFormValues({ ...formValues, applications: newApplications })
+    }, [courseApplications])
 
     const removeCourseApplication = (id: number) => {
         let prefIdCounter = 1
@@ -74,16 +76,29 @@ const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFor
         <>
             <Grid container spacing={3} direction="column" justifyContent="center" alignItems="center">
                 <Grid item>
-                    <Typography variant="h5" fontWeight="bold">
-                        Course Preference Selection and Application
-                    </Typography>
+                    <Grid container direction="column" justifyContent="center" alignItems="center">
+                        <Grid item>
+                            <Typography variant="h5" fontWeight="bold">
+                                Course Preference Selection and Application
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="subtitle2" fontWeight="bold" color="red">
+                                WARNING: If you leave this page you will need to re-enter your preferences.
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="subtitle2" fontWeight="bold" color="red">
+                                Please check other application data before adding preferences
+                            </Typography>
+                        </Grid>
+                    </Grid>
                 </Grid>
                 <Grid item>
                     <Grid container width={400} spacing={3} direction="column">
                         {courseApplications.map((application) => (
-                            <Grid item width={400}>
+                            <Grid item width={400} key={application.id}>
                                 <CourseApplication
-                                    key={application.id}
                                     application={application}
                                     updateApplication={updateApplication}
                                     removeCourseApplication={removeCourseApplication}
