@@ -17,13 +17,13 @@ export function SignInButton(props: SignInButtonProps) {
             style={{
                 width: '300px',
                 height: '50px',
-                backgroundColor: '#00467F',
-                color: 'white',
+                backgroundColor: hovered ? '#00467F' : 'transparent',
+                color: hovered ? 'white' : '#00467F',
                 fontSize: '16px',
-                textDecoration: hovered ? 'underline' : 'none',
+                border: '2px solid #00467F',
                 ...style,
             }}
-            variant="contained"
+            variant="outlined"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             onClick={() =>
