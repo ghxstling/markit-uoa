@@ -25,6 +25,7 @@ import SettingsIcon from '@mui/icons-material/Settings'
 import LogoutIcon from '@mui/icons-material/Logout'
 import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 //Styling
 const linkStyle = {
@@ -38,15 +39,14 @@ const IconStyle = {
 }
 
 //Create Sidebar Content
-let content = (username: string, email: string) => {
-    const [open, setOpen] = useState(false)
-    const handleClickOpen = () => {
-        setOpen(true)
-    }
-
-    const handleClose = () => {
-        setOpen(false)
-    }
+let content = (
+    username: string,
+    email: string,
+    redirectToDashboard: () => void,
+    open: boolean,
+    handleClickOpen: () => void,
+    handleClose: () => void
+) => {
     return (
         <Box
             sx={{
@@ -77,14 +77,12 @@ let content = (username: string, email: string) => {
                     {email}
                 </ListSubheader>
                 <ListItem disablePadding sx={{ mt: '1.5rem' }}>
-                    <Link href="./" passHref style={linkStyle}>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <DashboardIcon style={IconStyle} />
-                            </ListItemIcon>
-                            <ListItemText>Dashboard</ListItemText>
-                        </ListItemButton>
-                    </Link>
+                    <ListItemButton onClick={redirectToDashboard}>
+                        <ListItemIcon>
+                            <DashboardIcon style={IconStyle} />
+                        </ListItemIcon>
+                        <ListItemText>Dashboard</ListItemText>
+                    </ListItemButton>
                 </ListItem>
 
                 <ListItem disablePadding>
@@ -167,8 +165,39 @@ let content = (username: string, email: string) => {
 
 const Sidebar = () => {
     const { data: session } = useSession()
+    const router = useRouter()
+    const [open, setOpen] = useState(false)
+    const handleClickOpen = () => {
+        setOpen(true)
+    }
 
-    let sidebarContent = content('', '')
+    const handleClose = () => {
+        setOpen(false)
+    }
+    const redirectToDashboard = () => {
+        if (session) {
+            switch (session.role) {
+                case 'coordinator':
+                    router.push('/coordinatorDashboard')
+                    break
+                case 'supervisor':
+                    router.push('/courseSupervisorHomepage')
+                    break
+                default:
+                    router.push('/studentHomepage')
+                    break
+            }
+        }
+    }
+
+    let sidebarContent = content(
+        '',
+        '',
+        redirectToDashboard,
+        open,
+        handleClickOpen,
+        handleClose
+    )
 
     //Get users name and email from session
     if (session && session.user && session.user.name && session.user.email) {
@@ -177,7 +206,14 @@ const Sidebar = () => {
             session.user.name.slice(session.user.name.lastIndexOf(' '))[1] +
             '.'
         const email: string = session.user.email
-        sidebarContent = content(name, email)
+        let sidebarContent = content(
+            '',
+            '',
+            redirectToDashboard,
+            open,
+            handleClickOpen,
+            handleClose
+        )
     }
 
     return (
