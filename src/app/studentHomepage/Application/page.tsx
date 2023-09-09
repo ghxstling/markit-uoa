@@ -65,6 +65,7 @@ const Application = () => {
 
     const handleNext = () => {
         if (activeStep === steps.length - 1) {
+            //check individual fields
             if (validator.isEmail(formValues.email) === false) {
                 setSnackbarMessage('Please enter a valid email address')
                 setOpenSnackBar(true)
@@ -77,9 +78,26 @@ const Application = () => {
                 setSnackbarMessage('Please select a degree type')
                 setOpenSnackBar(true)
                 return
-            } else {
-                console.log(formValues)
             }
+
+            //check all applications
+            for (let application of formValues.applications) {
+                if (application.data.course === '') {
+                    setSnackbarMessage(
+                        'One of your applications does not contain a selected Course, please select a course for all applications'
+                    )
+                    setOpenSnackBar(true)
+                    return
+                } else if (application.data.grade === '') {
+                    setSnackbarMessage(
+                        'One of your applications does not contain a selected Grade, please select a grade for all applications or select Not Taken Previously'
+                    )
+                    setOpenSnackBar(true)
+                    return
+                }
+            }
+
+            //Here you need to check that there are 2 selected files (do this after the file storage method has been confirmed)
         }
         setActiveStep(activeStep + 1)
     }

@@ -25,6 +25,19 @@ interface Course {
     semester: string
 }
 
+type CourseApplicationType = {
+    id: number
+    prefId: number
+    data: {
+        course: string
+        grade: string
+        explainNotTaken: string
+        markedPreviously: string
+        tutoredPreviously: string
+        explainNotPrevious: string
+    }
+}
+
 const CourseApplication = ({ application, updateApplication, removeCourseApplication }) => {
     const [formData, setFormData] = useState(application.data)
     const [courseData, setCourseData] = useState<Course[]>([])
@@ -48,14 +61,14 @@ const CourseApplication = ({ application, updateApplication, removeCourseApplica
 
     const handleChange = (event: any) => {
         const { name, value } = event.target
-        setFormData((prevFormData) => ({
+        setFormData((prevFormData: CourseApplicationType[]) => ({
             ...prevFormData,
             [name]: value,
         }))
     }
 
     const handleApplicationUpdate = () => {
-        console.log(formData)
+        console.log(formData) //remvoe this later
         const updatedApplication = {
             id: thisApplicationId,
             data: formData,
@@ -116,6 +129,13 @@ const CourseApplication = ({ application, updateApplication, removeCourseApplica
                             <MenuItem value={'D-'}>D-</MenuItem>
                             <MenuItem value={'NotTaken'}>Not Taken Previously</MenuItem>
                         </TextField>
+                        <Typography variant="caption">
+                            If You Have Not Taken The Course Before, Select{' '}
+                            <b>
+                                <i>Not Taken Previously</i>
+                            </b>{' '}
+                            for the grade
+                        </Typography>
                     </Grid>
                     <Grid item xs={12}>
                         <Typography variant="subtitle2" sx={{ mb: '10px' }}>
