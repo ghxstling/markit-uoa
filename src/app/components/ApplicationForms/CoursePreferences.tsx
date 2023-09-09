@@ -22,12 +22,11 @@ interface CoursePreferenceProps {
 }
 
 const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFormValues }) => {
-    const [courseApplications, setCourseApplications] = useState<CourseApplicationType[]>([])
     const [coursePreferenceID, setCoursePreferenceID] = useState(1)
 
     const addCourseApplication = () => {
-        setCourseApplications((prevApplications) => [
-            ...prevApplications,
+        let newApplications: CourseApplicationType[] = [
+            ...formValues.applications,
             {
                 id: new Date().getTime(),
                 prefId: coursePreferenceID,
@@ -40,35 +39,28 @@ const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFor
                     explainNotPrevious: '',
                 },
             },
-        ])
+        ]
+
+        setFormValues({ ...formValues, applications: newApplications })
         setCoursePreferenceID(coursePreferenceID + 1)
     }
 
     const updateApplication = (updatedApplication: any) => {
-        setCourseApplications((prevApplications) =>
-            prevApplications.map((application) =>
-                application.id === updatedApplication.id ? updatedApplication : application
-            )
+        let currentApplications = formValues.applications
+        currentApplications = currentApplications.map((application) =>
+            application.id === updatedApplication.id ? updatedApplication : application
         )
+        setFormValues({ ...formValues, applications: currentApplications })
     }
-
-    //wait for the courseApplications use state to update before setting the form values
-    useEffect(() => {
-        const newApplications: CourseApplicationType[] = []
-        courseApplications.forEach((application) => {
-            newApplications.push(application)
-        })
-        setFormValues({ ...formValues, applications: newApplications })
-    }, [courseApplications])
 
     const removeCourseApplication = (id: number) => {
         let prefIdCounter = 1
-        const updatedApplications = courseApplications.filter((application) => application.id !== id)
+        const updatedApplications = formValues.applications.filter((application) => application.id !== id)
         updatedApplications.forEach((application, index) => {
             application.prefId = index + 1
             prefIdCounter++
         })
-        setCourseApplications(updatedApplications)
+        setFormValues({ ...formValues, applications: updatedApplications })
         setCoursePreferenceID(prefIdCounter)
     }
 
@@ -82,21 +74,11 @@ const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFor
                                 Course Preference Selection and Application
                             </Typography>
                         </Grid>
-                        <Grid item>
-                            <Typography variant="subtitle2" fontWeight="bold" color="red">
-                                WARNING: If you leave this page you will need to re-enter your preferences.
-                            </Typography>
-                        </Grid>
-                        <Grid item>
-                            <Typography variant="subtitle2" fontWeight="bold" color="red">
-                                Please check other application data before adding preferences
-                            </Typography>
-                        </Grid>
                     </Grid>
                 </Grid>
                 <Grid item>
                     <Grid container width={400} spacing={3} direction="column">
-                        {courseApplications.map((application) => (
+                        {formValues.applications.map((application) => (
                             <Grid item width={400} key={application.id}>
                                 <CourseApplication
                                     application={application}

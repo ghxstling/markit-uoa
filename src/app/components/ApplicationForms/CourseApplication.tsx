@@ -12,15 +12,36 @@ import {
 } from '@mui/material'
 import React, { useState, useEffect } from 'react'
 
+interface Course {
+    id: number
+    courseCode: string
+    courseDescription: string
+    numOfEstimatedStudents: number
+    numOfEnrolledStudents: number
+    markerHours: number
+    markerResponsibilities: string
+    needMarkers: boolean
+    markersNeeded: number
+    semester: string
+}
+
 const CourseApplication = ({ application, updateApplication, removeCourseApplication }) => {
-    const [formData, setFormData] = useState({
-        course: '',
-        grade: '',
-        explainNotTaken: '',
-        markedPreviously: 'No',
-        tutoredPreviously: 'No',
-        explainNotPrevious: '',
-    })
+    const [formData, setFormData] = useState(application.data)
+    const [courseData, setCourseData] = useState<Course[]>([])
+
+    useEffect(() => {
+        fetchData()
+    }, [])
+
+    const fetchData = async () => {
+        try {
+            const response = await fetch('/api/courses', { method: 'GET' })
+            const jsonData = await response.json()
+            setCourseData(jsonData)
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
+    }
 
     const thisApplicationId = application.id
     const coursePrefId = application.prefId
@@ -65,12 +86,9 @@ const CourseApplication = ({ application, updateApplication, removeCourseApplica
                             onChange={handleChange}
                             onBlur={handleApplicationUpdate}
                         >
-                            <MenuItem value={'COMPSCI 101'}>COMPSCI 101</MenuItem>
-                            <MenuItem value={'COMPSCI 110'}>COMPSCI 110</MenuItem>
-                            {/* 
-                                Need to fetch all courses then do a .map() and render all menu items
-                                with smth like: <MenuItem value={{Course.id}}>{Course.name}</MenuItem>
-                            */}
+                            {courseData.map((course) => (
+                                <MenuItem value={course.id}>{course.courseCode}</MenuItem>
+                            ))}
                         </TextField>
                     </Grid>
                     <Grid item xs={12}>
@@ -117,7 +135,6 @@ const CourseApplication = ({ application, updateApplication, removeCourseApplica
                         ></TextField>
                     </Grid>
                     <Grid item>
-                        {/* Radio marked course previously? */}
                         <Grid container direction="column" spacing={0} justifyContent="center" alignItems="center">
                             <Grid item>
                                 <Typography>Have you marked this course previously?</Typography>
@@ -144,7 +161,6 @@ const CourseApplication = ({ application, updateApplication, removeCourseApplica
                         </Grid>
                     </Grid>
                     <Grid item>
-                        {/* Radio tutored course previously? */}
                         <Grid container direction="column" spacing={0} justifyContent="center" alignItems="center">
                             <Grid item>
                                 <Typography>Have you tutored this course previously?</Typography>
@@ -170,7 +186,6 @@ const CourseApplication = ({ application, updateApplication, removeCourseApplica
                             </Grid>
                         </Grid>
                     </Grid>
-                    {/* Explanation for not marking or tutoring course previously */}
                     <Grid item xs={12}>
                         <Typography variant="subtitle2" sx={{ mb: '10px' }}>
                             If you haven’t marked or tutored this course previously, please explain any other relevant
