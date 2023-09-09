@@ -1,4 +1,4 @@
-export enum Degree {
+export enum DegreeType {
     Bachelor = 'bachelor',
     Honours = 'bachelor honours',
     GraduateCertificate = 'graduate certificate',
