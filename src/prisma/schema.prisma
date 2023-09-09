@@ -11,21 +11,21 @@ datasource db {
 }
 
 model Course {
-  id                     Int           @id @default(autoincrement())
+  id                     Int          @id @default(autoincrement())
   courseCode             String
   courseDescription      String
   numOfEstimatedStudents Int
   numOfEnrolledStudents  Int
   markerHours            Int
   markerResponsibilities String
-  needMarkers            Boolean       @default(true)
+  needMarkers            Boolean      @default(true)
   markersNeeded          Int
   semester               String
-  modifiedAt             DateTime      @default(now()) @updatedAt
-  // many to many with Application
-  applications           Application[] // list of applications a course has
+  modifiedAt             DateTime     @default(now()) @updatedAt
   // TODO: add course coordinator (name, email)
   // TODO: add course director (name, email)
+  // One to Many with Preference
+  Preferences            Preference[]
 }
 
 model User {
@@ -49,7 +49,7 @@ model Student {
   overseasStatus        String?
   residencyStatus       Boolean      @default(true) //true for PR and Citizen, false for international
   validWorkVisa         Boolean?     @default(true)
-  degreeType            String
+  degreeType            String // Refer to the degreeType enum in models/degreeType.ts
   degreeYear            Int
   maxWorkHours          Int          @default(5) //minimum should be 5hrs
   otherContracts        Boolean      @default(false) //refers to whether the student has other marker, tutor contracts
@@ -59,16 +59,26 @@ model Student {
 }
 
 model Application {
-  id                      Int      @id @default(autoincrement())
-  applicationStatus       String   @default("pending") // refer to the applicationStatus enum in models/applicationStatus.ts
+  id                Int          @id @default(autoincrement())
+  applicationStatus String       @default("pending") // refer to the applicationStatus enum in models/applicationStatus.ts
+  // one to one with Student
+  student           Student      @relation(fields: [studentID], references: [id])
+  studentID         Int          @unique
+  // one to many with Preference
+  Preferences       Preference[]
+}
+
+model Preference {
+  id                      Int         @id @default(autoincrement())
+  // many to one with Application
+  application             Application @relation(fields: [applicationID], references: [id])
+  applicationID           Int         @unique
+  // many to one with Course
+  course                  Course      @relation(fields: [courseID], references: [id])
+  courseID                Int         @unique
   hasCompletedCourse      Boolean
-  previouslyAchievedGrade String? // needed if hasCompletedCourse is false
+  previouslyAchievedGrade String? // needed if hasCompletedCourse is true
   hasTutoredCourse        Boolean
   hasMarkedCourse         Boolean
   equivalentQualification String? // needed if hasTutoredCourse && hasMarkedCourse is false
-  // many to many with Course
-  courses                 Course[] // list of courses the application is for
-  // one to one with Student
-  student                 Student  @relation(fields: [studentID], references: [id])
-  studentID               Int      @unique
 }
