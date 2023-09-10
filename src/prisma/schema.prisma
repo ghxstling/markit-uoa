@@ -42,7 +42,7 @@ model Student {
   // one to one with User
   user                  User         @relation(fields: [userID], references: [id])
   userID                Int          @unique
-  userName              String
+  preferredEmail        String       
   upi                   String       @unique // ABCD123
   auID                  Int          @unique // 111222333
   overseas              Boolean      @default(false)
@@ -80,5 +80,6 @@ model Preference {
   previouslyAchievedGrade String? // needed if hasCompletedCourse is true
   hasTutoredCourse        Boolean
   hasMarkedCourse         Boolean
+  notTakenExplanation     String? // needed if previouslyAchievedGrade is null or undefined
   equivalentQualification String? // needed if hasTutoredCourse && hasMarkedCourse is false
 }
