@@ -5,11 +5,28 @@ import { SignInButton } from './components/SignInButton'
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import styles from './LandingPage.module.css'
 
 function LandingPage() {
     const [loaded, setLoaded] = useState(false)
     const { data: session } = useSession()
     const router = useRouter()
+
+    useEffect(() => {
+        // When the component mounts
+        document.body.style.margin = '0'
+        document.body.style.padding = '0'
+        document.documentElement.style.margin = '0'
+        document.documentElement.style.padding = '0'
+
+        return () => {
+            // When the component unmounts
+            document.body.style.margin = ''
+            document.body.style.padding = ''
+            document.documentElement.style.margin = ''
+            document.documentElement.style.padding = ''
+        }
+    }, [])
 
     useEffect(() => {
         setLoaded(true)
@@ -26,6 +43,7 @@ function LandingPage() {
 
     return (
         <div
+            className={styles.root}
             style={{
                 position: 'relative',
                 width: '100vw',
