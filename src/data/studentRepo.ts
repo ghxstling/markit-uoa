@@ -7,6 +7,10 @@ export type CreateStudentInputWithConnect = {
 }
 
 export default class StudentRepo {
+    static async getAllStudents() {
+        return await prisma.student.findMany()
+    }
+
     static async getStudentByUpi(upi: string) {
         return await prisma.student.findUnique({
             where: { upi },
