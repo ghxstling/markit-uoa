@@ -14,7 +14,7 @@ interface Course {
     semester: string
 }
 
-import { CourseApplicationType } from '@/app/types/CourseApplicationType'
+import { CourseApplicationType } from '@/types/CourseApplicationType'
 
 interface CourseApplicationProps {
     application: CourseApplicationType

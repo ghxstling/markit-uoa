@@ -13,7 +13,7 @@ import {
 } from '@mui/material'
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
 import React, { useState } from 'react'
-import { IFormValues } from '@/app/types/IFormValues'
+import { IFormValues } from '@/types/IFormValues'
 
 interface EmploymentDetailsProps {
     formValues: IFormValues

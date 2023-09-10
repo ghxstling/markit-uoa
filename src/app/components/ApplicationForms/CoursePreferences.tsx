@@ -1,8 +1,8 @@
 import { Button, Grid, Typography } from '@mui/material'
 import React, { useState } from 'react'
 import CourseApplication from './CourseApplication'
-import { IFormValues } from '@/app/types/IFormValues'
-import { CourseApplicationType } from '@/app/types/CourseApplicationType'
+import { IFormValues } from '@/types/IFormValues'
+import { CourseApplicationType } from '@/types/CourseApplicationType'
 
 interface CoursePreferenceProps {
     formValues: IFormValues
