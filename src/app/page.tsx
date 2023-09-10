@@ -5,7 +5,6 @@ import { SignInButton } from './components/SignInButton'
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import styles from './LandingPage.module.css'
 
 function LandingPage() {
     const [loaded, setLoaded] = useState(false)
@@ -43,7 +42,6 @@ function LandingPage() {
 
     return (
         <div
-            className={styles.root}
             style={{
                 position: 'relative',
                 width: '100vw',
@@ -72,9 +70,17 @@ function LandingPage() {
                 <Image
                     src="/landingPage.jpg"
                     alt="Landing Page Image"
-                    layout="fill"
-                    objectFit="cover"
                     quality={100}
+                    width={1920}
+                    height={1080}
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                    }}
                 />
             </div>
 
