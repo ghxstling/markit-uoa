@@ -13,6 +13,7 @@ import CoursePreferences from '@/app/components/ApplicationForms/CoursePreferenc
 
 const steps = ['Personal Details', 'Employment Details', 'CV and Academic Transcript Upload', 'Course Preferences']
 
+// get content for each application step
 function getStepContent(
     step: number,
     formValues: IFormValues,
@@ -37,6 +38,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props,
 })
 
 const Application = () => {
+    //initialise use states
     const [activeStep, setActiveStep] = useState(0)
     const [formValues, setFormValues] = useState<IFormValues>({
         name: '',
@@ -51,7 +53,6 @@ const Application = () => {
         workHours: 1,
         applications: [],
     })
-
     const [snackbarMessage, setSnackbarMessage] = useState('Please enter 9 digits for your student ID')
     const [openSnackBar, setOpenSnackBar] = useState(false)
 
@@ -97,7 +98,8 @@ const Application = () => {
                 }
             }
 
-            //Here you need to check that there are 2 selected files (do this after the file storage method has been confirmed)
+            //TODO: check that there are 2 selected files (do this after the file storage method has been confirmed)
+            console.log(formValues)
         }
         setActiveStep(activeStep + 1)
     }
@@ -127,7 +129,6 @@ const Application = () => {
                                 ))}
                             </Stepper>
                             {activeStep === steps.length ? (
-                                //Add a snackbar to this later
                                 <>
                                     <Typography variant="h5" gutterBottom>
                                         Thank you for your application.

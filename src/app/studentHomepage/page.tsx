@@ -26,7 +26,7 @@ const studentHomepage = () => {
     const [rowPerPage, setRowPerPage] = useState(5)
 
     //handle pagination
-    const handPageChange = (event: unknown, newpage: any) => {
+    const handPageChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newpage: number) => {
         setPage(newpage)
     }
 

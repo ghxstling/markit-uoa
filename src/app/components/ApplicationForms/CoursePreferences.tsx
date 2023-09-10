@@ -45,7 +45,7 @@ const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFor
         setCoursePreferenceID(coursePreferenceID + 1)
     }
 
-    const updateApplication = (updatedApplication: any) => {
+    const updateApplication = (updatedApplication: CourseApplicationType) => {
         let currentApplications = formValues.applications
         currentApplications = currentApplications.map((application) =>
             application.id === updatedApplication.id ? updatedApplication : application

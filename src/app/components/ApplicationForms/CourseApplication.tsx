@@ -1,15 +1,4 @@
-import {
-    Box,
-    Button,
-    FormControlLabel,
-    Grid,
-    Hidden,
-    MenuItem,
-    Radio,
-    RadioGroup,
-    TextField,
-    Typography,
-} from '@mui/material'
+import { Box, Button, FormControlLabel, Grid, MenuItem, Radio, RadioGroup, TextField, Typography } from '@mui/material'
 import React, { useState, useEffect } from 'react'
 
 interface Course {
@@ -38,7 +27,17 @@ type CourseApplicationType = {
     }
 }
 
-const CourseApplication = ({ application, updateApplication, removeCourseApplication }) => {
+interface CourseApplicationProps {
+    application: CourseApplicationType
+    updateApplication: (updatedApplication: CourseApplicationType) => void
+    removeCourseApplication: (id: number) => void
+}
+
+const CourseApplication: React.FC<CourseApplicationProps> = ({
+    application,
+    updateApplication,
+    removeCourseApplication,
+}) => {
     const [formData, setFormData] = useState(application.data)
     const [courseData, setCourseData] = useState<Course[]>([])
 
@@ -59,24 +58,34 @@ const CourseApplication = ({ application, updateApplication, removeCourseApplica
     const thisApplicationId = application.id
     const coursePrefId = application.prefId
 
-    const handleChange = (event: any) => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target
-        setFormData((prevFormData: CourseApplicationType[]) => ({
-            ...prevFormData,
-            [name]: value,
-        }))
+        setFormData(
+            (prevFormData: {
+                course: string
+                grade: string
+                explainNotTaken: string
+                markedPreviously: string
+                tutoredPreviously: string
+                explainNotPrevious: string
+            }) => ({
+                ...prevFormData,
+                [name]: value,
+            })
+        )
     }
 
     const handleApplicationUpdate = () => {
         console.log(formData) //remvoe this later
-        const updatedApplication = {
+        const updatedApplication: CourseApplicationType = {
             id: thisApplicationId,
+            prefId: coursePrefId,
             data: formData,
         }
         submitFormData(updatedApplication)
     }
 
-    const submitFormData = (newApplication: any) => {
+    const submitFormData = (newApplication: CourseApplicationType) => {
         updateApplication(newApplication)
     }
 

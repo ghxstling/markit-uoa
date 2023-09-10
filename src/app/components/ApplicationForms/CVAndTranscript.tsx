@@ -11,7 +11,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props,
 })
 
 const CVAndTranscript = () => {
-    const [files, setFiles]: any[] = useState([])
+    const [files, setFiles] = useState<File[]>([])
     const [fileLimit, setFileLimit] = useState(false)
     const [openSnackBar, setOpenSnackBar] = useState(false)
 
@@ -25,14 +25,14 @@ const CVAndTranscript = () => {
         setOpenSnackBar(false)
     }
 
-    const handleFileDelete = (index: any) => {
+    const handleFileDelete = (index: number) => {
         const newFiles = [...files]
         newFiles.splice(index, 1)
         setFiles(newFiles)
     }
 
-    const handleFileEvent = (event: any) => {
-        const uploadedFiles = Array.prototype.slice.call(event.target.files)
+    const handleFileEvent = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const uploadedFiles: File[] = Array.prototype.slice.call(event.target.files)
         for (let i = 0; i < uploadedFiles.length; i++) {
             const file = uploadedFiles[i]
             if (file.type !== 'application/pdf') {
@@ -44,10 +44,10 @@ const CVAndTranscript = () => {
         }
     }
 
-    const handleFileUpload = (uploadedFiles: any) => {
+    const handleFileUpload = (uploadedFiles: File[]) => {
         const uploaded = [...files]
         let limitExceeded = false
-        uploadedFiles.some((file: any) => {
+        uploadedFiles.some((file: File) => {
             if (uploaded.findIndex((f) => f.name === file.name) === -1) {
                 uploaded.push(file)
                 if (uploaded.length === MAX_COUNT) {
@@ -100,16 +100,20 @@ const CVAndTranscript = () => {
             </form>
 
             {/* Map each file to its own grid item */}
-            {files.map((file: any, index: any) => (
+            {files.map((file: File, index: number) => (
                 <>
-                    <Grid container spacing={1}>
-                        <Grid item>
+                    <Grid container spacing={1} width={809}>
+                        <Grid item width="100%">
                             <Grid
                                 spacing={1}
                                 container
                                 alignItems="center"
                                 justifyContent="space-between"
-                                sx={{ mt: '20px', backgroundColor: '#e9f0fe', p: '1px 2px' }}
+                                sx={{ m: '10px 0px', backgroundColor: '#e9f0fe', p: '1px 2px' }}
+                                width="100%"
+
+                                //margin: '10px 0',
+                                //padding: '15px 20px'
                             >
                                 <Grid item>
                                     <Grid container alignItems="center" spacing={2}>
