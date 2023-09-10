@@ -4,7 +4,7 @@ import CVAndTranscript from '@/app/components/ApplicationForms/CVAndTranscript'
 import EmploymentDetails from '@/app/components/ApplicationForms/EmploymentDetails'
 import PersonalDetails from '@/app/components/ApplicationForms/PersonalDetails'
 import Sidebar from '@/app/components/Sidebar'
-import { IFormValues } from '@/app/interfaces/FormValues'
+import { IFormValues } from '@/app/types/IFormValues'
 import { Box, Button, Container, Paper, Snackbar, Step, StepLabel, Stepper, Typography } from '@mui/material'
 import React, { useState } from 'react'
 import validator from 'validator'
@@ -51,8 +51,11 @@ const Application = () => {
         degree: '',
         degreeYears: 1,
         workHours: 1,
-        applications: [],
+        coursePreferences: [],
     })
+
+    //TODO If there is an existing application, fetch existing application and update formValues
+
     const [snackbarMessage, setSnackbarMessage] = useState('Please enter 9 digits for your student ID')
     const [openSnackBar, setOpenSnackBar] = useState(false)
 
@@ -82,14 +85,14 @@ const Application = () => {
             }
 
             //check all applications
-            for (let application of formValues.applications) {
-                if (application.data.course === '') {
+            for (let coursePreference of formValues.coursePreferences) {
+                if (coursePreference.data.course === '') {
                     setSnackbarMessage(
                         'One of your applications does not contain a selected Course, please select a course for all applications'
                     )
                     setOpenSnackBar(true)
                     return
-                } else if (application.data.grade === '') {
+                } else if (coursePreference.data.grade === '') {
                     setSnackbarMessage(
                         'One of your applications does not contain a selected Grade, please select a grade for all applications or select Not Taken Previously'
                     )

@@ -1,7 +1,7 @@
-import { Box, Button, Grid, TextField, Typography } from '@mui/material'
+import { Box, Grid, TextField, Typography } from '@mui/material'
 import { useSession } from 'next-auth/react'
-import React, { useState } from 'react'
-import { IFormValues } from '@/app/interfaces/FormValues'
+import React from 'react'
+import { IFormValues } from '@/app/types/IFormValues'
 
 interface PersonalDetailsProps {
     formValues: IFormValues

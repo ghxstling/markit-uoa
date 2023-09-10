@@ -1,20 +1,8 @@
-import { Box, Button, Grid, Typography } from '@mui/material'
-import React, { useState, useEffect } from 'react'
+import { Button, Grid, Typography } from '@mui/material'
+import React, { useState } from 'react'
 import CourseApplication from './CourseApplication'
-import { IFormValues } from '@/app/interfaces/FormValues'
-
-type CourseApplicationType = {
-    id: number
-    prefId: number
-    data: {
-        course: string
-        grade: string
-        explainNotTaken: string
-        markedPreviously: string
-        tutoredPreviously: string
-        explainNotPrevious: string
-    }
-}
+import { IFormValues } from '@/app/types/IFormValues'
+import { CourseApplicationType } from '@/app/types/CourseApplicationType'
 
 interface CoursePreferenceProps {
     formValues: IFormValues
@@ -26,7 +14,7 @@ const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFor
 
     const addCourseApplication = () => {
         let newApplications: CourseApplicationType[] = [
-            ...formValues.applications,
+            ...formValues.coursePreferences,
             {
                 id: new Date().getTime(),
                 prefId: coursePreferenceID,
@@ -41,26 +29,28 @@ const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFor
             },
         ]
 
-        setFormValues({ ...formValues, applications: newApplications })
+        setFormValues({ ...formValues, coursePreferences: newApplications })
         setCoursePreferenceID(coursePreferenceID + 1)
     }
 
-    const updateApplication = (updatedApplication: CourseApplicationType) => {
-        let currentApplications = formValues.applications
-        currentApplications = currentApplications.map((application) =>
-            application.id === updatedApplication.id ? updatedApplication : application
+    const updateCoursePreference = (updatedApplication: CourseApplicationType) => {
+        let currentApplications = formValues.coursePreferences
+        currentApplications = currentApplications.map((coursePreference: CourseApplicationType) =>
+            coursePreference.id === updatedApplication.id ? updatedApplication : coursePreference
         )
-        setFormValues({ ...formValues, applications: currentApplications })
+        setFormValues({ ...formValues, coursePreferences: currentApplications })
     }
 
-    const removeCourseApplication = (id: number) => {
+    const removeCoursePreference = (id: number) => {
         let prefIdCounter = 1
-        const updatedApplications = formValues.applications.filter((application) => application.id !== id)
-        updatedApplications.forEach((application, index) => {
-            application.prefId = index + 1
+        const updatedApplications = formValues.coursePreferences.filter(
+            (coursePreference) => coursePreference.id !== id
+        )
+        updatedApplications.forEach((coursePreference, index) => {
+            coursePreference.prefId = index + 1
             prefIdCounter++
         })
-        setFormValues({ ...formValues, applications: updatedApplications })
+        setFormValues({ ...formValues, coursePreferences: updatedApplications })
         setCoursePreferenceID(prefIdCounter)
     }
 
@@ -78,12 +68,12 @@ const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFor
                 </Grid>
                 <Grid item>
                     <Grid container width={400} spacing={3} direction="column">
-                        {formValues.applications.map((application) => (
-                            <Grid item width={400} key={application.id}>
+                        {formValues.coursePreferences.map((coursePreference) => (
+                            <Grid item width={400} key={coursePreference.id}>
                                 <CourseApplication
-                                    application={application}
-                                    updateApplication={updateApplication}
-                                    removeCourseApplication={removeCourseApplication}
+                                    application={coursePreference}
+                                    updateCoursePreference={updateCoursePreference}
+                                    removeCoursePreference={removeCoursePreference}
                                 />
                             </Grid>
                         ))}

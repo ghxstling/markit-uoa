@@ -1,6 +1,5 @@
 import {
     Box,
-    Button,
     Grid,
     TextField,
     Typography,
@@ -14,7 +13,7 @@ import {
 } from '@mui/material'
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
 import React, { useState } from 'react'
-import { IFormValues } from '@/app/interfaces/FormValues'
+import { IFormValues } from '@/app/types/IFormValues'
 
 interface EmploymentDetailsProps {
     formValues: IFormValues

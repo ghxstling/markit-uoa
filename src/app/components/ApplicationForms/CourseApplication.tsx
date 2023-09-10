@@ -14,29 +14,18 @@ interface Course {
     semester: string
 }
 
-type CourseApplicationType = {
-    id: number
-    prefId: number
-    data: {
-        course: string
-        grade: string
-        explainNotTaken: string
-        markedPreviously: string
-        tutoredPreviously: string
-        explainNotPrevious: string
-    }
-}
+import { CourseApplicationType } from '@/app/types/CourseApplicationType'
 
 interface CourseApplicationProps {
     application: CourseApplicationType
-    updateApplication: (updatedApplication: CourseApplicationType) => void
-    removeCourseApplication: (id: number) => void
+    updateCoursePreference: (updatedApplication: CourseApplicationType) => void
+    removeCoursePreference: (id: number) => void
 }
 
 const CourseApplication: React.FC<CourseApplicationProps> = ({
     application,
-    updateApplication,
-    removeCourseApplication,
+    updateCoursePreference,
+    removeCoursePreference,
 }) => {
     const [formData, setFormData] = useState(application.data)
     const [courseData, setCourseData] = useState<Course[]>([])
@@ -86,7 +75,7 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
     }
 
     const submitFormData = (newApplication: CourseApplicationType) => {
-        updateApplication(newApplication)
+        updateCoursePreference(newApplication)
     }
 
     return (
@@ -235,7 +224,7 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
                 </Grid>
             </Box>
 
-            <Button onClick={() => removeCourseApplication(thisApplicationId)}>Remove Application</Button>
+            <Button onClick={() => removeCoursePreference(thisApplicationId)}>Remove Application</Button>
         </>
     )
 }
