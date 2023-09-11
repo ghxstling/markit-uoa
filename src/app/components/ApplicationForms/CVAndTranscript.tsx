@@ -11,6 +11,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props,
 })
 
 const CVAndTranscript = () => {
+    //have a seperate file upload for CV and Transcript
     const [files, setFiles] = useState<File[]>([])
     const [fileLimit, setFileLimit] = useState(false)
     const [openSnackBar, setOpenSnackBar] = useState(false)

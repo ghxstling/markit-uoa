@@ -53,8 +53,9 @@ const Application = () => {
         workHours: 1,
         coursePreferences: [],
     })
+    const [hasPreferences, setHasPreferences] = useState(true)
 
-    //TODO If there is an existing application, fetch existing application and update formValues
+    //TODO Fetch existing application, get relevant values and update formValues
 
     const [snackbarMessage, setSnackbarMessage] = useState('Please enter 9 digits for your student ID')
     const [openSnackBar, setOpenSnackBar] = useState(false)
@@ -68,8 +69,8 @@ const Application = () => {
     }
 
     const handleNext = () => {
-        if (activeStep === steps.length - 1) {
-            //check individual fields
+        //if case = 0, check id and email
+        if (activeStep === 0) {
             if (validator.isEmail(formValues.email) === false) {
                 setSnackbarMessage('Please enter a valid email address')
                 setOpenSnackBar(true)
@@ -78,12 +79,19 @@ const Application = () => {
                 setSnackbarMessage('Please enter 9 digits for your student ID')
                 setOpenSnackBar(true)
                 return
-            } else if (formValues.degree === '') {
+            }
+        }
+
+        //if activeStep === 1 check Degree is entered
+        else if (activeStep === 1) {
+            if (formValues.degree === '') {
                 setSnackbarMessage('Please select a degree type')
                 setOpenSnackBar(true)
                 return
             }
+        }
 
+        if (activeStep === steps.length - 1) {
             //check all applications
             for (let coursePreference of formValues.coursePreferences) {
                 if (coursePreference.data.course === '') {
@@ -105,6 +113,10 @@ const Application = () => {
             console.log(formValues)
         }
         setActiveStep(activeStep + 1)
+
+        //if case = 0, check id and email
+
+        //if case = 1, check
     }
 
     const handleBack = () => {
@@ -151,9 +163,26 @@ const Application = () => {
                                                 Back
                                             </Button>
                                         )}
-                                        <Button variant="contained" onClick={handleNext} sx={{ mt: 3, ml: 1 }}>
-                                            {activeStep === steps.length - 1 ? 'Submit Application' : 'Next'}
-                                        </Button>
+                                        {activeStep === steps.length - 1 ? (
+                                            formValues.coursePreferences.length === 0 ? (
+                                                <Button
+                                                    variant="contained"
+                                                    disabled
+                                                    onClick={handleNext}
+                                                    sx={{ mt: 3, ml: 1 }}
+                                                >
+                                                    Submit Application
+                                                </Button>
+                                            ) : (
+                                                <Button variant="contained" onClick={handleNext} sx={{ mt: 3, ml: 1 }}>
+                                                    Submit Application
+                                                </Button>
+                                            )
+                                        ) : (
+                                            <Button variant="contained" onClick={handleNext} sx={{ mt: 3, ml: 1 }}>
+                                                Next
+                                            </Button>
+                                        )}
                                     </Box>
                                     <Snackbar
                                         anchorOrigin={{
