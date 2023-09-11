@@ -60,7 +60,7 @@ export default function EditCourseDetails({
         'success' | 'error'
     >('success')
     const router = useRouter()
-    const [isEditing, setIsEditing] = useState(false)
+    const [isEditing, setIsEditing] = useState(true)
     const [isSaved, setIsSaved] = useState(false)
 
     const originalCourseDataRef = React.useRef<OriginalCourseData | null>(null)
@@ -337,6 +337,7 @@ export default function EditCourseDetails({
             setSnackbarSeverity('success')
             setOpenSnackbar(true)
             setIsSaved(true)
+            setIsEditing(false)
         } catch (error) {
             // Handle network or other unknown errors
             console.error('Error:', error)
