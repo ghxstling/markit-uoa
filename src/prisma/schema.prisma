@@ -11,24 +11,74 @@ datasource db {
 }
 
 model Course {
-  id                     Int      @id @default(autoincrement())
+  id                     Int          @id @default(autoincrement())
   courseCode             String
   courseDescription      String
   numOfEstimatedStudents Int
   numOfEnrolledStudents  Int
   markerHours            Int
   markerResponsibilities String
-  needMarkers            Boolean  @default(true)
+  needMarkers            Boolean      @default(true)
   markersNeeded          Int
   semester               String
-  modifiedAt             DateTime @updatedAt @default(now())
+  modifiedAt             DateTime     @default(now()) @updatedAt
   // TODO: add course coordinator (name, email)
   // TODO: add course director (name, email)
+  // One to Many with Preference
+  Preferences            Preference[]
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  role  String  @default("student") // Refer to the role enum in models/role.ts
+  id      Int      @id @default(autoincrement())
+  email   String   @unique
+  name    String?
+  role    String   @default("student") // Refer to the role enum in models/role.ts
+  // one to one with Student
+  student Student?
+}
+
+model Student {
+  id                    Int          @id @default(autoincrement())
+  // one to one with User
+  user                  User         @relation(fields: [userID], references: [id])
+  userID                Int          @unique
+  userName              String
+  upi                   String       @unique // ABCD123
+  auID                  Int          @unique // 111222333
+  overseas              Boolean      @default(false)
+  overseasStatus        String?
+  residencyStatus       Boolean      @default(true) //true for PR and Citizen, false for international
+  validWorkVisa         Boolean?     @default(true)
+  degreeType            String // Refer to the degreeType enum in models/degreeType.ts
+  degreeYear            Int
+  maxWorkHours          Int          @default(5) //minimum should be 5hrs
+  otherContracts        Boolean      @default(false) //refers to whether the student has other marker, tutor contracts
+  otherContractsDetails String?
+  // one to one with Application
+  application           Application?
+}
+
+model Application {
+  id                Int          @id @default(autoincrement())
+  applicationStatus String       @default("pending") // refer to the applicationStatus enum in models/applicationStatus.ts
+  // one to one with Student
+  student           Student      @relation(fields: [studentID], references: [id])
+  studentID         Int          @unique
+  // one to many with Preference
+  Preferences       Preference[]
+}
+
+model Preference {
+  id                      Int         @id @default(autoincrement())
+  // many to one with Application
+  application             Application @relation(fields: [applicationID], references: [id])
+  applicationID           Int         @unique
+  // many to one with Course
+  course                  Course      @relation(fields: [courseID], references: [id])
+  courseID                Int         @unique
+  hasCompletedCourse      Boolean
+  previouslyAchievedGrade String? // needed if hasCompletedCourse is true
+  hasTutoredCourse        Boolean
+  hasMarkedCourse         Boolean
+  equivalentQualification String? // needed if hasTutoredCourse && hasMarkedCourse is false
 }
