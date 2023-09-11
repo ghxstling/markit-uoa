@@ -43,7 +43,6 @@ model Student {
   // one to one with User
   user                  User         @relation(fields: [userID], references: [id])
   userID                Int          @unique
-  userName              String
   upi                   String       @unique // ABCD123
   auID                  Int          @unique // 111222333
   overseas              Boolean      @default(false)
@@ -55,8 +54,8 @@ model Student {
   maxWorkHours          Int          @default(5) //minimum should be 5hrs
   otherContracts        Boolean      @default(false) //refers to whether the student has other marker, tutor contracts
   otherContractsDetails String?
-  academicCV            String?
-  transcript            String?
+  academicCV            String?      // Store the resource URI from AWS S3 into academicCV field 
+  transcript            String?      // Store the resource URI from AWS S3 into academicCV field 
   // one to many with Application
   applications          Application[]
 }
@@ -70,6 +69,7 @@ model Application {
   // one to one with Course
   course                  Course      @relation(fields: [courseID], references: [id])
   courseID                Int         @unique
+  preferredEmail          String
   hasCompletedCourse      Boolean
   previouslyAchievedGrade String? // needed if hasCompletedCourse is true
   hasTutoredCourse        Boolean
