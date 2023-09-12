@@ -9,15 +9,23 @@ import {
     ListItemIcon,
     ListItemText,
     ListSubheader,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Button,
 } from '@mui/material'
-import React from 'react'
+import React, { useState } from 'react'
+
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import ArchiveIcon from '@mui/icons-material/Archive'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import SettingsIcon from '@mui/icons-material/Settings'
 import LogoutIcon from '@mui/icons-material/Logout'
 import Link from 'next/link'
-import { useSession } from 'next-auth/react'
+import { useSession, signOut } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 //Styling
 const linkStyle = {
@@ -31,7 +39,14 @@ const IconStyle = {
 }
 
 //Create Sidebar Content
-let content = (username: string, email: string) => {
+let content = (
+    username: string,
+    email: string,
+    redirectToDashboard: () => void,
+    open: boolean,
+    handleClickOpen: () => void,
+    handleClose: () => void
+) => {
     return (
         <Box
             sx={{
@@ -62,14 +77,12 @@ let content = (username: string, email: string) => {
                     {email}
                 </ListSubheader>
                 <ListItem disablePadding sx={{ mt: '1.5rem' }}>
-                    <Link href="./" passHref style={linkStyle}>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <DashboardIcon style={IconStyle} />
-                            </ListItemIcon>
-                            <ListItemText>Dashboard</ListItemText>
-                        </ListItemButton>
-                    </Link>
+                    <ListItemButton onClick={redirectToDashboard}>
+                        <ListItemIcon>
+                            <DashboardIcon style={IconStyle} />
+                        </ListItemIcon>
+                        <ListItemText>Dashboard</ListItemText>
+                    </ListItemButton>
                 </ListItem>
 
                 <ListItem disablePadding>
@@ -108,15 +121,43 @@ let content = (username: string, email: string) => {
 
             <List>
                 <ListItem disablePadding sx={{ mb: '1.5rem' }}>
-                    <Link href="./" passHref style={linkStyle}>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <LogoutIcon style={IconStyle} />
-                            </ListItemIcon>
-                            <ListItemText>Logout</ListItemText>
-                        </ListItemButton>
-                    </Link>
+                    <ListItemButton onClick={handleClickOpen}>
+                        <ListItemIcon>
+                            <LogoutIcon style={IconStyle} />
+                        </ListItemIcon>
+                        <ListItemText>Logout</ListItemText>
+                    </ListItemButton>
                 </ListItem>
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        {'Confirm Logout'}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Are you sure you want to log out?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose} color="primary">
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                handleClose()
+                                signOut({ callbackUrl: '/' })
+                            }}
+                            color="primary"
+                            autoFocus
+                        >
+                            Yes, Logout
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </List>
         </Box>
     )
@@ -124,17 +165,57 @@ let content = (username: string, email: string) => {
 
 const Sidebar = () => {
     const { data: session } = useSession()
+    const router = useRouter()
+    const [open, setOpen] = useState(false)
+    const handleClickOpen = () => {
+        setOpen(true)
+    }
 
-    let sidebarContent = content('', '')
+    const handleClose = () => {
+        setOpen(false)
+    }
+    const redirectToDashboard = () => {
+        if (session) {
+            switch (session.role) {
+                case 'coordinator':
+                    router.push('/coordinatorDashboard')
+                    break
+                case 'supervisor':
+                    router.push('/courseSupervisorHomepage')
+                    break
+                default:
+                    router.push('/studentHomepage')
+                    break
+            }
+        }
+    }
 
-    //Get users name and email from session
+    let sidebarContent
+
+    // Get users name and email from session
     if (session && session.user && session.user.name && session.user.email) {
         const name: string =
             session.user.name.slice(0, session.user.name.lastIndexOf(' ') + 1) +
             session.user.name.slice(session.user.name.lastIndexOf(' '))[1] +
             '.'
         const email: string = session.user.email
-        sidebarContent = content(name, email)
+        sidebarContent = content(
+            name,
+            email,
+            redirectToDashboard,
+            open,
+            handleClickOpen,
+            handleClose
+        )
+    } else {
+        sidebarContent = content(
+            '',
+            '',
+            redirectToDashboard,
+            open,
+            handleClickOpen,
+            handleClose
+        )
     }
 
     return (

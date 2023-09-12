@@ -10,22 +10,62 @@ import Typography from '@mui/material/Typography'
 import Link from 'next/link'
 import Button from '@mui/material/Button'
 
-function createData(role: string, name: string, course: string, action: string, when: string) {
+
+function createData(
+    role: string,
+    name: string,
+    course: string,
+    action: string,
+    when: string
+) {
     return { role, name, course, action, when }
 }
 
 const rows = [
-    createData('Supervisor', 'John Doe', 'Compsci 101', 'Changed Marker Hours', '28/10/2023'),
-    createData('Supervisor', 'John Smith', 'Compsci 210', 'Changed Preferred Number of Markers', '24/10/2023'),
-    createData('Supervisor', 'John Cena', 'Compsci 340', 'Changed Number of Assignments', '10/10/2023'),
-    createData('Supervisor', 'John John', 'Compsci 340', 'Changed Preferred Number of Markers', '16/09/2023'),
-    createData('Supervisor', 'Johnson Donovan', 'Compsci 345', 'Changed Marker Responsibility', '22/08/2021'),
+    createData(
+        'Supervisor',
+        'John Doe',
+        'Compsci 101',
+        'Changed Marker Hours',
+        '28/10/2023'
+    ),
+    createData(
+        'Supervisor',
+        'John Smith',
+        'Compsci 210',
+        'Changed Preferred Number of Markers',
+        '24/10/2023'
+    ),
+    createData(
+        'Supervisor',
+        'John Cena',
+        'Compsci 340',
+        'Changed Number of Assignments',
+        '10/10/2023'
+    ),
+    createData(
+        'Supervisor',
+        'John John',
+        'Compsci 340',
+        'Changed Preferred Number of Markers',
+        '16/09/2023'
+    ),
+    createData(
+        'Supervisor',
+        'Johnson Donovan',
+        'Compsci 345',
+        'Changed Marker Responsibility',
+        '22/08/2021'
+    ),
 ]
 
 export default function RecentActivityTable() {
     return (
         <TableContainer component={Paper}>
-            <Table sx={{ minWidth: { md: '442px', lg: '887px' } }} aria-label="simple table">
+            <Table
+                sx={{ minWidth: { md: '442px', lg: '887px' } }}
+                aria-label="simple table"
+            >
                 <TableBody>
                     {rows.map((row) => (
                         <TableRow
@@ -42,7 +82,10 @@ export default function RecentActivityTable() {
                                         {row.role}: {row.name}
                                     </Typography>
 
-                                    <Typography variant="subtitle1" color={'#666666'}>
+                                    <Typography
+                                        variant="subtitle1"
+                                        color={'#666666'}
+                                    >
                                         {row.action} - {row.course}
                                     </Typography>
                                 </>
