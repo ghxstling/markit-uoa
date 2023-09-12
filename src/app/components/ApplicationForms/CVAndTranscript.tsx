@@ -16,8 +16,6 @@ const CVAndTranscript = () => {
 
     const [openSnackBar, setOpenSnackBar] = useState(false)
 
-    const MAX_COUNT = 1
-
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
             return
@@ -43,7 +41,7 @@ const CVAndTranscript = () => {
     }
 
     const handleCvFileUpload = (uploadedFile: File) => {
-        //post to api
+        //handle api posting
         return
     }
 
@@ -64,7 +62,7 @@ const CVAndTranscript = () => {
     }
 
     const handleTranscriptFileUpload = (uploadedFile: File) => {
-        //post to api
+        //handle api posting
         return
     }
 
