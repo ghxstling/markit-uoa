@@ -43,23 +43,14 @@ export async function POST(req: NextRequest) {
     } = await req.json()
     
     const userFromEmail = await UserRepo.getUserbyEmail(String(token?.email))
-    let overseas
-    if (currentlyOverseas == 'Yes') overseas = true
-    else overseas = false
-    let residencyStatus
-    if (citizenOrPermanentResident == 'Yes') residencyStatus = true
-    else residencyStatus = false
-    let validWorkVisa
-    if (workVisa == 'Yes') validWorkVisa = true
-    else validWorkVisa = false
 
     const studentData = {
         userId: Number(userFromEmail?.id),
         upi,
         auid: AUID,
-        overseas,
-        residencyStatus,
-        validWorkVisa,
+        overseas: currentlyOverseas === 'Yes',
+        residencyStatus: citizenOrPermanentResident == 'Yes',
+        validWorkVisa: workVisa == 'Yes',
         degreeType: degree,
         degreeYear: degreeYears,
         maxWorkHours: workHours,
