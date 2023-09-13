@@ -62,21 +62,14 @@ const studentHomepage = () => {
     let firstName: string = ''
 
     if (session && session.user && session.user.name && session.user.email) {
-        firstName = session.user.name.slice(
-            0,
-            session.user.name.lastIndexOf(' ') + 1
-        )
+        firstName = session.user.name.slice(0, session.user.name.lastIndexOf(' ') + 1)
     }
 
     return (
         <>
             <Box sx={{ display: 'flex' }}>
                 <Box sx={{ mt: '50px', ml: '96px' }}>
-                    <Typography
-                        sx={{ mt: '28px' }}
-                        variant="h4"
-                        fontWeight="bold"
-                    >
+                    <Typography sx={{ mt: '28px' }} variant="h4" fontWeight="bold">
                         Welcome, {firstName}
                     </Typography>
                     <Link href="./" passHref>
@@ -101,9 +94,7 @@ const studentHomepage = () => {
                                 <TableHead>
                                     <TableRow>
                                         {columns.map((column) => (
-                                            <TableCell key={column.id}>
-                                                {column.name}
-                                            </TableCell>
+                                            <TableCell key={column.id}>{column.name}</TableCell>
                                         ))}
                                     </TableRow>
                                 </TableHead>
@@ -111,35 +102,16 @@ const studentHomepage = () => {
                                     {/* map each row to a table row and slice the number of rows based on rows per page */}
                                     {rows &&
                                         rows
-                                            .slice(
-                                                page * rowPerPage,
-                                                page * rowPerPage + rowPerPage
-                                            )
+                                            .slice(page * rowPerPage, page * rowPerPage + rowPerPage)
                                             .map((row, index) => {
                                                 return (
                                                     <TableRow key={index}>
                                                         {/* map each column value of a row to its own cell */}
                                                         {columns &&
-                                                            columns.map(
-                                                                (column) => {
-                                                                    let value =
-                                                                        row[
-                                                                            column
-                                                                                .id
-                                                                        ]
-                                                                    return (
-                                                                        <TableCell
-                                                                            key={
-                                                                                value
-                                                                            }
-                                                                        >
-                                                                            {
-                                                                                value
-                                                                            }
-                                                                        </TableCell>
-                                                                    )
-                                                                }
-                                                            )}
+                                                            columns.map((column) => {
+                                                                let value = row[column.id]
+                                                                return <TableCell key={value}>{value}</TableCell>
+                                                            })}
                                                     </TableRow>
                                                 )
                                             })}
