@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import Sidebar from '../components/Sidebar'
+import Sidebar from '../../components/Sidebar'
 import {
     Box,
     Button,
@@ -71,10 +71,6 @@ const studentHomepage = () => {
     return (
         <>
             <Box sx={{ display: 'flex' }}>
-                {/* Create basic layout */}
-                <Box sx={{ width: '15rem' }}>
-                    <Sidebar />
-                </Box>
                 <Box sx={{ mt: '50px', ml: '96px' }}>
                     <Typography
                         sx={{ mt: '28px' }}
