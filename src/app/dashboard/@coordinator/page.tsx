@@ -9,7 +9,6 @@ import Button from '@mui/material/Button'
 import DynamicBreadcrumb from '../../components/DynamicBreadcrumb'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import Sidebar from '../../components/Sidebar'
 import { Box } from '@mui/material'
 
 export default function coordinatorDashboard() {
@@ -18,21 +17,14 @@ export default function coordinatorDashboard() {
     let firstName: string = ''
 
     if (session && session.user && session.user.name && session.user.email) {
-        firstName = session.user.name.slice(
-            0,
-            session.user.name.lastIndexOf(' ') + 1
-        )
+        firstName = session.user.name.slice(0, session.user.name.lastIndexOf(' ') + 1)
     }
 
     return (
         <>
             <Stack sx={{ display: 'inline-block' }}>
                 <DynamicBreadcrumb />
-                <Typography
-                    sx={{ mt: '28px', mb: '53px' }}
-                    variant="h4"
-                    fontWeight="bold"
-                >
+                <Typography sx={{ mt: '28px', mb: '53px' }} variant="h4" fontWeight="bold">
                     Welcome, {firstName}
                 </Typography>
                 <Link href="./" passHref>
