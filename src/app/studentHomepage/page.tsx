@@ -16,7 +16,6 @@ import {
     TablePagination,
 } from '@mui/material'
 import { useSession } from 'next-auth/react'
-import DynamicBreadcrumb from '../components/DynamicBreadcrumb'
 import Link from 'next/link'
 
 const studentHomepage = () => {
@@ -77,7 +76,6 @@ const studentHomepage = () => {
                     <Sidebar />
                 </Box>
                 <Box sx={{ mt: '50px', ml: '96px' }}>
-                    <DynamicBreadcrumb />
                     <Typography
                         sx={{ mt: '28px' }}
                         variant="h4"
