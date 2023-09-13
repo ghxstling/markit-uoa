@@ -72,7 +72,7 @@ export async function GET(req: NextRequest, { params }: Params) {
 
         return NextResponse.json(response, {
             status: 200,
-            statusText: 'File ' + fileName + ' successfuly sent to Bucket student-academictranscript',
+            statusText: 'File ' + fileName + ' successfuly sent to Bucket student-academictranscripts',
         })
     }
     // If unsuccessful, return 400 BAD REQUEST
@@ -133,7 +133,7 @@ export async function POST(req: NextRequest, { params }: Params) {
     // Constuct the command object for sending the file to the bucket
     const fileName = file.name
     const command = new PutObjectCommand({
-        Bucket: "student-academictranscript",
+        Bucket: "student-academictranscripts",
         Key: fileName,
         Body: JSON.stringify({
             studentUpi: upi,
@@ -154,7 +154,7 @@ export async function POST(req: NextRequest, { params }: Params) {
         // Return the updated student with status 200 OK
         return NextResponse.json({ updatedStudent, response }, {
             status: 200,
-            statusText: 'File ' + fileName + ' successfuly sent to Bucket student-academictranscript',
+            statusText: 'File ' + fileName + ' successfuly sent to Bucket student-academictranscripts',
         })
     }
 
