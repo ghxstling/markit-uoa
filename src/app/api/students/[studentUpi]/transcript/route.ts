@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import StudentRepo from '@/data/studentRepo'
-import { studentSchema } from '@/models/ZodSchemas'
 import { getToken } from 'next-auth/jwt'
 import { Role } from '@/models/role'
 import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3"
@@ -8,11 +7,11 @@ import s3Client from '@/libs/s3client'
 
 type Params = {
     params: {
-        studentId: string
+        studentUpi: string
     }
 }
 
-// GET /api/students/{studentId}/transcript
+// GET /api/students/{studentUpi}/transcript
 export async function GET(req: NextRequest, { params }: Params) {
 
     // Check user token for authorised credentials
@@ -27,11 +26,11 @@ export async function GET(req: NextRequest, { params }: Params) {
         )
     }
 
-    // Store params.studentId into studentId for readability
-    const studentId = parseInt(params.studentId)
+    // Store params.studentUpi into upi for readability
+    const upi = parseInt(params.studentUpi)
 
-    // Get the student from the database by ID
-    const student = await StudentRepo.getStudentById(studentId)
+    // Get the student from the database by UPI
+    const student = await StudentRepo.getStudentByUpi(upi)
 
     // If it doesn't exist, return status code 404 NOT FOUND
     if (student == null) {
@@ -56,7 +55,7 @@ export async function GET(req: NextRequest, { params }: Params) {
         }, { status: 404 })
     }
 
-    // Constrcut the command object for retrieving the file from the bucket
+    // Construct the command object for retrieving the file from the bucket
     const command = new GetObjectCommand({
         Bucket: "student-academictranscripts",
         Key: fileName,
@@ -86,7 +85,7 @@ export async function GET(req: NextRequest, { params }: Params) {
     }
 }
 
-// POST /api/students/{studentId}/transcript
+// POST /api/students/{studentUpi}/transcript
 export async function POST(req: NextRequest, { params }: Params) {
     
     // Check user token for authorised credentials
@@ -101,11 +100,11 @@ export async function POST(req: NextRequest, { params }: Params) {
         )
     }
 
-    // Store params.studentId into studentId for readability
-    const studentId = parseInt(params.studentId)
+    // Store params.studentUpi into upi for readability
+    const upi = parseInt(params.studentUpi)
 
-    // Get the student from the database by ID
-    const student = await StudentRepo.getStudentById(studentId)
+    // Get the student from the database by UPI
+    const student = await StudentRepo.getStudentByUpi(upi)
 
     // If it doesn't exist, return status code 404 NOT FOUND
     if (student == null) {
@@ -137,7 +136,7 @@ export async function POST(req: NextRequest, { params }: Params) {
         Bucket: "student-academictranscript",
         Key: fileName,
         Body: JSON.stringify({
-            studentId: studentId,
+            studentUpi: upi,
             studentName: student.name,
             fileName: fileName
         })
@@ -150,7 +149,7 @@ export async function POST(req: NextRequest, { params }: Params) {
 
         // If successful, store the file name under the student object in database
         console.log("Success! Response:\n" + response)
-        const updatedStudent = await StudentRepo.setTranscriptFilename(studentId, fileName)
+        const updatedStudent = await StudentRepo.setTranscriptFilename(upi, fileName)
 
         // Return the updated student with status 200 OK
         return NextResponse.json({ updatedStudent, response }, {
