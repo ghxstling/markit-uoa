@@ -6,17 +6,17 @@ import { Role } from '@/models/role'
 
 type Params = {
     params: {
-        studentId: string
+        studentUpi: string
     }
 }
 
-// GET /api/students/{studentId}
+// GET /api/students/{studentUpi}
 export async function GET(req: NextRequest, { params }: Params) {
-    // Store params.studentId into studentId for readability
-    const studentId = parseInt(params.studentId)
+    // Store params.studentUpi into upi for readability
+    const upi = params.studentUpi
 
-    // Get the student from the database by ID
-    const student = await StudentRepo.getStudentById(studentId)
+    // Get the student from the database by UPI
+    const student = await StudentRepo.getStudentByUpi(upi)
 
     // If it doesn't exist, return status code 404 NOT FOUND
     if (student == null) {
@@ -36,7 +36,7 @@ export async function GET(req: NextRequest, { params }: Params) {
     })
 }
 
-// PATCH /api/students/{studentId}
+// PATCH /api/students/{studentUpi}
 export async function PATCH(req: NextRequest, { params }: Params) {
     const token = await getToken({ req })
     if (token!.role != Role.Student) {
@@ -48,11 +48,11 @@ export async function PATCH(req: NextRequest, { params }: Params) {
             { status: 403, headers: { 'content-type': 'application/json' } }
         )
     }
-    // Store params.studentId into studentId for readability
-    const studentId = parseInt(params.studentId)
+    // Store params.studentUpi into studentUpi for readability
+    const studentUpi = params.studentUpi
 
-    // Get the student from the database by ID
-    const student = await StudentRepo.getStudentById(studentId)
+    // Get the student from the database by UPI
+    const student = await StudentRepo.getStudentByUpi(studentUpi)
 
     // If it doesn't exist, return status code 404 NOT FOUND
     if (student == null) {
@@ -67,6 +67,8 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
     // Get updated information from student
     const {
+        upi,
+        AUID,
         currentlyOverseas,
         citizenOrPermanentResident,
         workVisa,
@@ -76,12 +78,12 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     } = await req.json()
 
     const studentData = {
-        userId: Number(student?.id),
-        upi: student?.upi,
-        auid: student?.auid,
+        userId: student?.id,
+        upi: upi,
+        auid: AUID,
         overseas: currentlyOverseas === 'Yes',
-        residencyStatus: citizenOrPermanentResident == 'Yes',
-        validWorkVisa: workVisa == 'Yes',
+        residencyStatus: citizenOrPermanentResident === 'Yes',
+        validWorkVisa: workVisa === 'Yes',
         degreeType: degree,
         degreeYear: degreeYears,
         maxWorkHours: workHours,
@@ -98,11 +100,11 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     }
 
     // Update the student information
-    const updatedStudent = await StudentRepo.updateStudent(studentId, studentData)
+    const updatedStudent = await StudentRepo.updateStudent(upi, studentData)
 
     // Return the updated student with status code 200 OK
     return NextResponse.json(updatedStudent, {
         status: 200,
-        statusText: 'Updated student information',
+        statusText: 'Updated student information for student ' + upi,
     })
 }
