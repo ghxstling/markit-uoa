@@ -38,6 +38,6 @@ export const studentSchema = z.object({
         .int().positive({ message: 'Years into study should be greater than 0' }),
         maxWorkHours: z.number()
         .int().gte(5).positive({ message: 'Minimum work hours should be at least 5 hours' }),
-}).refine((data) => data.degreeType in DegreeType, {
+}).required().refine((data) => data.degreeType in DegreeType, {
     message: 'Internal error: name of degree does not match any DegreeType enums'
 })

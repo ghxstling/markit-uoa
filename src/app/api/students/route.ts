@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
         workHours,
     } = await req.json()
     
+    // Get User from repo via logged-in email to create association with new Student object
     const userFromEmail = await UserRepo.getUserbyEmail(String(token?.email))
 
     const studentData = {
@@ -72,6 +73,6 @@ export async function POST(req: NextRequest) {
     // Return the newly created student with status code 201 CREATED
     return NextResponse.json(newStudent, {
         status: 201,
-        statusText: 'Student successfully created!',
+        statusText: 'Student ' + newStudent.upi + ' successfully created!',
     })
 }

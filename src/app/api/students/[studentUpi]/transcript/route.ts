@@ -27,7 +27,7 @@ export async function GET(req: NextRequest, { params }: Params) {
     }
 
     // Store params.studentUpi into upi for readability
-    const upi = parseInt(params.studentUpi)
+    const upi = params.studentUpi
 
     // Get the student from the database by UPI
     const student = await StudentRepo.getStudentByUpi(upi)
@@ -101,7 +101,7 @@ export async function POST(req: NextRequest, { params }: Params) {
     }
 
     // Store params.studentUpi into upi for readability
-    const upi = parseInt(params.studentUpi)
+    const upi = params.studentUpi
 
     // Get the student from the database by UPI
     const student = await StudentRepo.getStudentByUpi(upi)
@@ -137,7 +137,7 @@ export async function POST(req: NextRequest, { params }: Params) {
         Key: fileName,
         Body: JSON.stringify({
             studentUpi: upi,
-            studentName: student.name,
+            studentName: token!.name,
             fileName: fileName
         })
     })
