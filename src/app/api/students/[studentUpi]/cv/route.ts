@@ -130,17 +130,19 @@ export async function POST(req: NextRequest, { params }: Params) {
         }, { status: 400 })
     }
 
+    // Convert PDF file to readable bytes
+    const bytes = await file.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+
     // Constuct the command object for sending the file to the bucket
     const fileName = file.name
     const command = new PutObjectCommand({
         Bucket: "student-cvs",
-        Key: fileName,
-        Body: JSON.stringify({
-            studentUpi: upi,
-            studentName: token!.name,
-            fileName: fileName
-        })
+        Key: upi + "-" + fileName,
+        Body: buffer,
+        ContentType: "application/pdf",
     })
+
 
     // Attempt to send the file to the bucket
     try {
