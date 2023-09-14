@@ -28,7 +28,7 @@ export const studentSchema = z.object({
     upi: z.string()
         .toLowerCase().nonempty(),
     auid: z.number()
-        .int().gte(100000000).lte(999999999).nonnegative({ message: "Please enter a valid AUID" }),
+        .int().gte(100000000, { message: "Please enter a valid AUID" }).lte(999999999, { message: "Please enter a valid AUID" }).nonnegative({ message: "Please enter a valid AUID" }),
     overseas: z.boolean(),
     residencyStatus: z.boolean(),
     validWorkVisa: z.boolean(),
@@ -37,7 +37,7 @@ export const studentSchema = z.object({
         degreeYear: z.number()
         .int().positive({ message: 'Years into study should be greater than 0' }),
         maxWorkHours: z.number()
-        .int().gte(5).positive({ message: 'Minimum work hours should be at least 5 hours' }),
+        .int().gte(5, { message: 'Minimum work hours should be at least 5 hours' }).positive({ message: 'Minimum work hours should be at least 5 hours' }),
 }).required().refine((data) => data.degreeType in DegreeType, {
     message: 'Internal error: name of degree does not match any DegreeType enums'
 })

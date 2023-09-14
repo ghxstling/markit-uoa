@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
 
     const studentData = {
         userId: Number(userFromEmail?.id),
-        upi,
+        upi: upi.toLowerCase(),
         auid: AUID,
         overseas: currentlyOverseas === 'Yes',
         residencyStatus: citizenOrPermanentResident == 'Yes',
