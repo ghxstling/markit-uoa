@@ -21,7 +21,7 @@ const DebugPage = () => {
                 degreeYears: 1,
                 workHours: 10,
             }
-            const response = await fetch('/api/students/test123/transcript', {
+            const response = await fetch('/api/students/test123/cv', {
                 method: 'GET',
                 // headers: {
                 //     'Content-Type': 'application/json',

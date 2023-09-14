@@ -58,21 +58,23 @@ export async function GET(req: NextRequest, { params }: Params) {
     // Construct the command object for retrieving the file from the bucket
     const command = new GetObjectCommand({
         Bucket: "student-cvs",
-        Key: fileName,
+        Key: upi+"-"+fileName,
+        ResponseContentType: "application/pdf",
     })
 
     // Attempt to retrieve the file from the bucket
     try {
-        console.log("Retrieving file " + fileName + " ...")
+        console.log("Retrieving file " + fileName + " from student " + upi + "...")
         const response = await s3Client.send(command)
 
         // If successful, return the file with status 200 OK
+        // TODO: Convert response body to bytes from file and return file
         const str = await response.Body?.transformToString()
         console.log("Success! Response body:\n" + str)
 
         return NextResponse.json(response, {
             status: 200,
-            statusText: 'File ' + fileName + ' successfuly sent to Bucket student-cvs',
+            statusText: 'File ' + fileName + ' successfuly retrieved from Bucket student-cvs for student ' + upi,
         })
     }
     // If unsuccessful, return 400 BAD REQUEST
@@ -146,7 +148,7 @@ export async function POST(req: NextRequest, { params }: Params) {
 
     // Attempt to send the file to the bucket
     try {
-        console.log("Sending file " + file.name + " ...")
+        console.log("Sending file " + file.name + " for student " + upi + "...")
         const response = await s3Client.send(command)
 
         // If successful, store the file name under the student object in database
@@ -156,7 +158,7 @@ export async function POST(req: NextRequest, { params }: Params) {
         // Return the updated student with status 200 OK
         return NextResponse.json({ updatedStudent, response }, {
             status: 200,
-            statusText: 'File ' + fileName + ' successfuly sent to Bucket student-cvs',
+            statusText: 'File ' + fileName + ' successfuly sent to Bucket student-cvs for student ' + upi,
         })
     }
 
