@@ -190,23 +190,25 @@ const Sidebar = () => {
         }
     }
 
-    let sidebarContent = content(
-        '',
-        '',
-        redirectToDashboard,
-        open,
-        handleClickOpen,
-        handleClose
-    )
+    let sidebarContent
 
-    //Get users name and email from session
+    // Get users name and email from session
     if (session && session.user && session.user.name && session.user.email) {
         const name: string =
             session.user.name.slice(0, session.user.name.lastIndexOf(' ') + 1) +
             session.user.name.slice(session.user.name.lastIndexOf(' '))[1] +
             '.'
         const email: string = session.user.email
-        let sidebarContent = content(
+        sidebarContent = content(
+            name,
+            email,
+            redirectToDashboard,
+            open,
+            handleClickOpen,
+            handleClose
+        )
+    } else {
+        sidebarContent = content(
             '',
             '',
             redirectToDashboard,
