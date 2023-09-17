@@ -4,8 +4,7 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import { useSession } from 'next-auth/react'
-import Sidebar from '../../components/Sidebar'
-import CourseTable from '../../components/courses/CourseTable'
+import CourseTable from '@/app/components/courses/CourseTable'
 import React from 'react'
 
 export default function CSHomepage() {
