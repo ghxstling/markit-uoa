@@ -13,7 +13,6 @@ export default function dashboardLayout(props: {
     student: React.ReactNode
 }) {
     const { data: session } = useSession()
-    console.log(session)
 
     if (session) {
         switch (session.role) {
@@ -24,9 +23,7 @@ export default function dashboardLayout(props: {
                             <Box sx={{ width: '15rem' }}>
                                 <Sidebar />
                             </Box>
-                            <Box sx={{ mt: '50px', ml: '96px' }}>
-                                {props.coordinator}
-                            </Box>
+                            <Box sx={{ mt: '50px', ml: '96px' }}>{props.coordinator}</Box>
                         </Stack>
                     </>
                 )
@@ -37,9 +34,7 @@ export default function dashboardLayout(props: {
                             <Box sx={{ width: '15rem' }}>
                                 <Sidebar />
                             </Box>
-                            <Box sx={{ mt: '50px', ml: '96px' }}>
-                                {props.supervisor}
-                            </Box>
+                            <Box sx={{ mt: '50px', ml: '96px' }}>{props.supervisor}</Box>
                         </Stack>
                     </>
                 )
@@ -50,9 +45,7 @@ export default function dashboardLayout(props: {
                             <Box sx={{ width: '15rem' }}>
                                 <Sidebar />
                             </Box>
-                            <Box sx={{ mt: '50px', ml: '96px' }}>
-                                {props.student}
-                            </Box>
+                            <Box sx={{ mt: '50px', ml: '96px' }}>{props.student}</Box>
                         </Stack>
                     </>
                 )
