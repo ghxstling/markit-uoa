@@ -61,17 +61,26 @@ export async function GET(req: NextRequest) {
         const response = await s3Client.send(command)
 
         // If successful, return the file with status 200 OK
-        // TODO: Convert response body to bytes from file and return file
-        const bytes = await response.Body?.transformToString()
-        console.log("Success! Response body:\n" + bytes)
+        const bytes = await response.Body?.transformToByteArray()
 
-        return NextResponse.json(response, {
-            status: 200,
-            statusText: 'File ' + fileName + ' successfuly retrieved from Bucket student-academictranscripts for student ' + student.upi,
-        })
+        const res = new Response(
+            new File([bytes!], fileName, {
+                type: 'application/pdf',
+            }),
+            {
+                status: 200,
+                statusText: 'File ' + fileName + ' successfuly retrieved from Bucket student-academictranscripts for student ' + student.upi,
+                headers: {
+                    'Content-Type': 'application/pdf',
+                }
+            }
+        )
+        console.log(res.body)
+        return res
     }
     // If unsuccessful, return 400 BAD REQUEST
     catch (err) {
+        console.error(err)
         return NextResponse.json({
             success: false,
             status: 400,
