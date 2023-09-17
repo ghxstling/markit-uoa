@@ -12,6 +12,12 @@ export default class StudentRepo {
         });
     }
 
+    static async getStudentByUserId(userId: number) {
+        return await prisma.student.findUnique({
+            where: { userId },
+        });
+    }
+
     static async addStudent(data: Prisma.StudentUncheckedCreateInput) {
         return await prisma.student.create({
             data,
