@@ -24,6 +24,8 @@ model Course {
   modifiedAt             DateTime     @default(now()) @updatedAt
   // one to one with Application
   application            Application?
+  // TODO: add course director (name, email)
+  // TODO: add course coordinator (name, email)
 }
 
 model User {
@@ -34,9 +36,6 @@ model User {
   // one to one with Student
   student Student?
 }
-
-// TODO: add course director (name, email)
-// TODO: add course coordinator (name, email)
 
 model Student {
   id                    Int           @id @default(autoincrement())
@@ -65,10 +64,10 @@ model Application {
   id                      Int     @id @default(autoincrement())
   applicationStatus       String  @default("pending") // refer to the applicationStatus enum in models/applicationStatus.ts
   // one to one with Student
-  student                 Student @relation(fields: [studentId], references: [id])
+  student                 Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
   studentId               Int     @unique
   // one to one with Course
-  course                  Course  @relation(fields: [courseId], references: [id])
+  course                  Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId                Int     @unique
   preferredEmail          String
   hasCompletedCourse      Boolean
