@@ -77,7 +77,7 @@ let content = (
                     {email}
                 </ListSubheader>
                 <ListItem disablePadding sx={{ mt: '1.5rem' }}>
-                    <Link href="./" passHref style={linkStyle}>
+                    <Link href="/dashboard" passHref style={linkStyle}>
                         <ListItemButton>
                             <ListItemIcon>
                                 <DashboardIcon style={IconStyle} />

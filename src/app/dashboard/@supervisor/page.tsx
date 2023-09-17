@@ -4,7 +4,6 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import { useSession } from 'next-auth/react'
-import DynamicBreadcrumb from '../../components/DynamicBreadcrumb'
 import Sidebar from '../../components/Sidebar'
 import CourseTable from '../../components/courses/CourseTable'
 import React from 'react'
@@ -15,10 +14,7 @@ export default function CSHomepage() {
     let firstName: string = ''
 
     if (session && session.user && session.user.name && session.user.email) {
-        firstName = session.user.name.slice(
-            0,
-            session.user.name.lastIndexOf(' ') + 1
-        )
+        firstName = session.user.name.slice(0, session.user.name.lastIndexOf(' ') + 1)
     }
 
     return (
@@ -31,7 +27,6 @@ export default function CSHomepage() {
                     marginBottom: 50,
                 }}
             > */}
-            <DynamicBreadcrumb />
             <Typography sx={{ mt: '28px' }} variant="h4" fontWeight="bold">
                 Welcome, {firstName}
             </Typography>
