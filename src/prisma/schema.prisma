@@ -22,10 +22,8 @@ model Course {
   markersNeeded          Int
   semester               String
   modifiedAt             DateTime     @default(now()) @updatedAt
-  // TODO: add course coordinator (name, email)
-  // TODO: add course director (name, email)
-  // One to Many with Preference
-  Preferences            Preference[]
+  // one to one with Application
+  application            Application?
 }
 
 model User {
@@ -37,49 +35,46 @@ model User {
   student Student?
 }
 
+// TODO: add course director (name, email)
+// TODO: add course coordinator (name, email)
+
 model Student {
-  id                    Int          @id @default(autoincrement())
+  id                    Int           @id @default(autoincrement())
   // one to one with User
-  user                  User         @relation(fields: [userID], references: [id], onDelete: Cascade)
-  userID                Int          @unique
+  user                  User          @relation(fields: [userID], references: [id], onDelete: Cascade)
+  userID                Int           @unique
   preferredEmail        String
-  upi                   String       @unique // ABCD123
-  auID                  Int          @unique // 111222333
-  overseas              Boolean      @default(false)
+  upi                   String        @unique // ABCD123
+  auid                  Int           @unique // 111222333
+  overseas              Boolean       @default(false)
   overseasStatus        String?
-  residencyStatus       Boolean      @default(true) //true for PR and Citizen, false for international
-  validWorkVisa         Boolean?     @default(true)
+  residencyStatus       Boolean       @default(true) //true for PR and Citizen, false for international
+  validWorkVisa         Boolean?      @default(true)
   degreeType            String // Refer to the degreeType enum in models/degreeType.ts
   degreeYear            Int
-  maxWorkHours          Int          @default(5) //minimum should be 5hrs
-  otherContracts        Boolean      @default(false) //refers to whether the student has other marker, tutor contracts
+  maxWorkHours          Int           @default(5) //minimum should be 5hrs
+  otherContracts        Boolean       @default(false) //refers to whether the student has other marker, tutor contracts
   otherContractsDetails String?
-  // one to one with Application
-  application           Application?
+  CV                    String? // Store the file resource URI from AWS S3 into CV field 
+  academicTranscript    String? // Store the file resource URI from AWS S3 into academicTranscript field 
+  // one to many with Application
+  applications          Application[]
 }
 
 model Application {
-  id                Int          @id @default(autoincrement())
-  applicationStatus String       @default("pending") // refer to the applicationStatus enum in models/applicationStatus.ts
+  id                      Int     @id @default(autoincrement())
+  applicationStatus       String  @default("pending") // refer to the applicationStatus enum in models/applicationStatus.ts
   // one to one with Student
-  student           Student      @relation(fields: [studentID], references: [id])
-  studentID         Int          @unique
-  // one to many with Preference
-  Preferences       Preference[]
-}
-
-model Preference {
-  id                      Int         @id @default(autoincrement())
-  // many to one with Application
-  application             Application @relation(fields: [applicationID], references: [id])
-  applicationID           Int         @unique
-  // many to one with Course
-  course                  Course      @relation(fields: [courseID], references: [id])
-  courseID                Int         @unique
+  student                 Student @relation(fields: [studentId], references: [id])
+  studentId               Int     @unique
+  // one to one with Course
+  course                  Course  @relation(fields: [courseId], references: [id])
+  courseId                Int     @unique
+  preferredEmail          String
   hasCompletedCourse      Boolean
   previouslyAchievedGrade String? // needed if hasCompletedCourse is true
   hasTutoredCourse        Boolean
   hasMarkedCourse         Boolean
-  notTakenExplanation     String? // needed if previouslyAchievedGrade is null or undefined
+  notTakenExplanation     String? // needed if hasCompletedCourse is false
   equivalentQualification String? // needed if hasTutoredCourse && hasMarkedCourse is false
 }
