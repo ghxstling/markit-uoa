@@ -23,11 +23,11 @@ export default function coordinatorDashboard() {
     return (
         <>
             <Stack sx={{ display: 'inline-block' }}>
-                <DynamicBreadcrumb />
+                {/* <DynamicBreadcrumb /> */}
                 <Typography sx={{ mt: '28px', mb: '53px' }} variant="h4" fontWeight="bold">
                     Welcome, {firstName}
                 </Typography>
-                <Link href="./" passHref>
+                <Link href="/dashboard/viewAllCoursespage" passHref>
                     <Button
                         variant="contained"
                         sx={{

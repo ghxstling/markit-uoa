@@ -71,7 +71,7 @@ const studentHomepage = () => {
                 <Typography sx={{ mt: '28px' }} variant="h4" fontWeight="bold">
                     Welcome, {firstName}
                 </Typography>
-                <Link href="./" passHref>
+                <Link href="./dashboard/Application" passHref>
                     <Button
                         variant="contained"
                         sx={{
