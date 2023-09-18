@@ -18,14 +18,14 @@ describe('StudentRepo', () => {
         const degreeType = DegreeType.Bachelor
         const degreeYear = 1
         const studentInput = {
+            userId: user.id,
             preferredEmail: email,
             upi,
-            auID: auid,
+            auid: auid,
             degreeType,
             degreeYear,
         }
-        const input = { body: studentInput, userId: user.id }
-        const data = await StudentRepo.createStudent(input)
+        const data = await StudentRepo.createStudent(studentInput)
         expect(await StudentRepo.getStudentByUpi(upi)).toMatchObject(data)
     })
 })
