@@ -24,4 +24,8 @@ export default class UserRepo {
         }
         return user.role === role
     }
+
+    static async getAllUsers() {
+        return await prisma.user.findMany();
+    }
 }
