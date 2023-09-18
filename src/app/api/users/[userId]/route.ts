@@ -87,4 +87,3 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         statusText: 'Updated user role',
     });
 }
-

@@ -27,21 +27,24 @@ export default function UserRolesTable() {
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(5)
     const [firstRender, setFirstRender] = useState(true)
+    const [isClient, setIsClient] = useState(false)
 
     useEffect(() => {
+        setIsClient(true)
+        async function fetchData() {
+            try {
+                const response = await fetch('/api/users', { method: 'GET' })
+                const jsonData = await response.json()
+                console.log('Fetched users data:', jsonData)
+                setUsers(jsonData)
+            } catch (error) {
+                console.error('Error fetching data:', error)
+            }
+        }
+
         setFirstRender(false)
         fetchData()
     }, [])
-
-    const fetchData = async () => {
-        try {
-            const response = await fetch('/api/users', { method: 'GET' })
-            const jsonData = await response.json()
-            setUsers(jsonData)
-        } catch (error) {
-            console.error('Error fetching data:', error)
-        }
-    }
 
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setPage(newPage)
@@ -80,6 +83,9 @@ export default function UserRolesTable() {
 
     if (firstRender) {
         return null
+    }
+    if (!isClient) {
+        return null // Render nothing if not on client
     }
 
     return (
