@@ -26,8 +26,10 @@ export default function UserRolesTable() {
     const [users, setUsers] = useState<User[]>([])
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(5)
+    const [firstRender, setFirstRender] = useState(true)
 
     useEffect(() => {
+        setFirstRender(false)
         fetchData()
     }, [])
 
@@ -71,6 +73,10 @@ export default function UserRolesTable() {
         } catch (error) {
             console.error('Error updating role:', error)
         }
+    }
+
+    if (firstRender) {
+        return null
     }
 
     return (
