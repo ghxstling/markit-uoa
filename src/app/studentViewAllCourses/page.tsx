@@ -29,6 +29,9 @@ export default function studentViewAllCourses(){
         applicants: number
         needMarkers: boolean
         id: number
+        courseDescription: string
+        markerResponsibilities: string
+        markerHours: number
     }
     
     const [data,setData] = useState<Course[]>([]);;
@@ -69,7 +72,13 @@ export default function studentViewAllCourses(){
         console.log(course.needMarkers)
         ))
     };
-    const [open, setOpen] = React.useState(false);
+    const [openRows, setOpenRows] = useState(Array(data.length).fill(false));
+
+    const toggleRow = (index : number) => {
+        const newOpenRows = [...openRows];
+        newOpenRows[index] = !newOpenRows[index];
+        setOpenRows(newOpenRows);
+    };    
 
     return(
         <>
@@ -86,31 +95,28 @@ export default function studentViewAllCourses(){
                     <TableContainer component={Paper} style={{marginTop:20}}>
                         <Table style={{paddingTop:40}}>
                             <TableHead>
-                                <div>
-                                    <TableRow>
-                                        <TableCell/>
-                                        <TableCell style={{textAlign:'center'}}><div style={{alignItems: 'center', flexWrap: 'wrap',}}>Course{/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}</div></TableCell>
-                                        <TableCell style={{textAlign:'center'}}><div style={{alignItems: 'center', flexWrap: 'wrap',}}>Semester {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}</div></TableCell>
-                                        <TableCell style={{textAlign:'center'}}><div style={{alignItems: 'center', flexWrap: 'wrap',}}>Markers Needed <Tooltip title="Markers"><InfoOutlinedIcon style={{marginLeft:5, verticalAlign:"middle"}}/></Tooltip> {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}</div></TableCell>
-                                        <TableCell style={{textAlign:'center'}}><div style={{alignItems: 'center', flexWrap: 'wrap',}}>PlaceHolder <Tooltip title="status"><InfoOutlinedIcon style={{marginLeft:5, verticalAlign:"middle"}}/></Tooltip></div></TableCell>
-                                    </TableRow>
-                                </div>
+                                <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+                                    <TableCell/>
+                                    <TableCell style={{textAlign:'center'}}><div style={{alignItems: 'center', flexWrap: 'wrap',}}>Course{/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}</div></TableCell>
+                                    <TableCell style={{textAlign:'center'}}><div style={{alignItems: 'center', flexWrap: 'wrap',}}>Semester {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}</div></TableCell>
+                                    <TableCell style={{textAlign:'center'}}><div style={{alignItems: 'center', flexWrap: 'wrap',}}>Markers Needed <Tooltip title="Markers"><InfoOutlinedIcon style={{marginLeft:5, verticalAlign:"middle"}}/></Tooltip> {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}</div></TableCell>
+                                    <TableCell style={{textAlign:'center'}}><div style={{alignItems: 'center', flexWrap: 'wrap',}}>PlaceHolder <Tooltip title="status"><InfoOutlinedIcon style={{marginLeft:5, verticalAlign:"middle"}}/></Tooltip></div></TableCell>
+                                </TableRow>
                             </TableHead>
-                            <TableBody>
                             {(rowsPerPage > 0
                                 ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 : data
                             ).map((course, index) => (
-                                <div>
-                                    <TableRow key={index} sx={{ '& > *': { borderBottom: 'unset' } }}>
+                                <TableBody>
+                                    <TableRow key={index}>
                                         <TableCell>
-                                            <IconButton
-                                                aria-label="expand row"
-                                                size="small"
-                                                onClick={() => setOpen(!open)}
-                                            >
-                                                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                                            </IconButton>
+                                        <IconButton
+                                            aria-label="expand row"
+                                            size="small"
+                                            onClick={() => toggleRow(index)}
+                                        >
+                                                {openRows[index] ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                                        </IconButton>
                                         </TableCell>
                                         <TableCell style={{textAlign:'center'}}>{course.courseCode}</TableCell>
                                         <TableCell style={{textAlign:'center'}}>{course.semester}</TableCell>
@@ -119,23 +125,31 @@ export default function studentViewAllCourses(){
                                     </TableRow>
                                     <TableRow>
                                         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                                            <Collapse in={open} timeout="auto" unmountOnExit>
+                                            <Collapse in={openRows[index]} timeout="auto" unmountOnExit>
                                                 <Box sx={{ margin: 1 }}>
-                                                    <Typography variant="h6" gutterBottom component="div">
-                                                        Details
+                                                    <Typography variant="h6" gutterBottom component="div" sx={{ whiteSpace: 'pre-line' }}>
+                                                        Details:
+                                                    </Typography>
+                                                    <Typography variant='body1'>
+                                                        Course Description: {course.courseDescription}
+                                                    </Typography> <br/>
+                                                    <Typography variant='body1'>
+                                                        Marker Responsibilities: {course.markerResponsibilities}
+                                                    </Typography> <br/>
+                                                    <Typography variant='body1'>
+                                                        Marker Hours: {course.markerHours}
                                                     </Typography>
                                                 </Box>
                                             </Collapse>
                                         </TableCell>
                                     </TableRow>
-                                </div>
+                                </TableBody>
                             ))}
                             {emptyRows > 0 && (
                                 <TableRow style={{ height: 69.5 * emptyRows }}>
                                 <TableCell colSpan={6} />
                                 </TableRow>
                             )}
-                            </TableBody>
                         </Table>
                         <TablePagination 
                         component='div'
