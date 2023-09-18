@@ -54,6 +54,7 @@ export default function UserRolesTable() {
 
     const handleRoleChange = async (event: SelectChangeEvent, userId: number) => {
         const newRole = event.target.value as Role
+
         try {
             const response = await fetch(`/api/users/${userId}`, {
                 method: 'PATCH',
@@ -68,7 +69,9 @@ export default function UserRolesTable() {
             if (response.status !== 200) {
                 console.error('Error updating role:', result.statusText || 'Unknown error')
             } else {
-                fetchData()
+                setUsers((prevUsers) =>
+                    prevUsers.map((user) => (user.id === userId ? { ...user, role: newRole } : user))
+                )
             }
         } catch (error) {
             console.error('Error updating role:', error)
@@ -91,8 +94,8 @@ export default function UserRolesTable() {
                 </TableHead>
                 <TableBody>
                     {(rowsPerPage > 0 ? users.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : users).map(
-                        (user, index) => (
-                            <TableRow key={index}>
+                        (user) => (
+                            <TableRow key={user.id}>
                                 <TableCell style={{ textAlign: 'center' }}>{user.name}</TableCell>
                                 <TableCell style={{ textAlign: 'center' }}>{user.email}</TableCell>
                                 <TableCell style={{ textAlign: 'center' }}>
