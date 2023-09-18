@@ -10,6 +10,7 @@ import {
     Select,
     MenuItem,
     SelectChangeEvent,
+    TableFooter,
 } from '@mui/material'
 import { Role } from '@/models/role'
 import React, { useEffect, useState } from 'react'
@@ -51,7 +52,25 @@ export default function UserRolesTable() {
 
     const handleRoleChange = async (event: SelectChangeEvent, userId: number) => {
         const newRole = event.target.value as Role
-        // TODO: Make an API call to update the role for this user
+        try {
+            const response = await fetch(`/api/users/${userId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ role: newRole }),
+            })
+
+            const result = await response.json()
+
+            if (response.status !== 200) {
+                console.error('Error updating role:', result.statusText || 'Unknown error')
+            } else {
+                fetchData()
+            }
+        } catch (error) {
+            console.error('Error updating role:', error)
+        }
     }
 
     return (
@@ -85,17 +104,23 @@ export default function UserRolesTable() {
                         )
                     )}
                 </TableBody>
+                <TableFooter>
+                    <TableRow>
+                        <TableCell colSpan={3}>
+                            <TablePagination
+                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                count={users.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                onPageChange={handleChangePage}
+                                onRowsPerPageChange={handleChangeRowsPerPage}
+                                showFirstButton={true}
+                                showLastButton={true}
+                            />
+                        </TableCell>
+                    </TableRow>
+                </TableFooter>
             </Table>
-            <TablePagination
-                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                count={users.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                showFirstButton={true}
-                showLastButton={true}
-            />
         </TableContainer>
     )
 }

@@ -28,4 +28,18 @@ export default class UserRepo {
     static async getAllUsers() {
         return await prisma.user.findMany();
     }
+
+    static async getUserById(id: number) {
+        return await prisma.user.findUnique({
+            where: { id },
+        });
+    }
+    
+    static async updateUserRole(id: number, role: string) {
+        return await prisma.user.update({
+            where: { id },
+            data: { role },
+        });
+    }
 }
+
