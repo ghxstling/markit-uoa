@@ -40,8 +40,8 @@ model User {
 model Student {
   id                    Int           @id @default(autoincrement())
   // one to one with User
-  user                  User          @relation(fields: [userID], references: [id], onDelete: Cascade)
-  userID                Int           @unique
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                Int           @unique
   preferredEmail        String
   upi                   String        @unique // ABCD123
   auid                  Int           @unique // 111222333
