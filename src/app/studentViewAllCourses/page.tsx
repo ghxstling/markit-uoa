@@ -103,53 +103,55 @@ export default function studentViewAllCourses(){
                                     <TableCell style={{textAlign:'center'}}><div style={{alignItems: 'center', flexWrap: 'wrap',}}>PlaceHolder <Tooltip title="status"><InfoOutlinedIcon style={{marginLeft:5, verticalAlign:"middle"}}/></Tooltip></div></TableCell>
                                 </TableRow>
                             </TableHead>
-                            {(rowsPerPage > 0
-                                ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                : data
-                            ).map((course, index) => (
-                                <TableBody>
-                                    <TableRow key={index}>
-                                        <TableCell>
-                                        <IconButton
-                                            aria-label="expand row"
-                                            size="small"
-                                            onClick={() => toggleRow(index)}
-                                        >
-                                                {openRows[index] ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                                        </IconButton>
-                                        </TableCell>
-                                        <TableCell style={{textAlign:'center'}}>{course.courseCode}</TableCell>
-                                        <TableCell style={{textAlign:'center'}}>{course.semester}</TableCell>
-                                        <TableCell style={{textAlign:'center'}}>{course.markersNeeded}</TableCell>
-                                        <TableCell style={{textAlign:'center'}}>PLACEHOLDER</TableCell>
+                            <TableBody>
+                                {(rowsPerPage > 0
+                                    ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                    : data
+                                ).map((course, index) => (
+                                    <>
+                                        <TableRow key={index}>
+                                            <TableCell>
+                                            <IconButton
+                                                aria-label="expand row"
+                                                size="small"
+                                                onClick={() => toggleRow(index)}
+                                            >
+                                                    {openRows[index] ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                                            </IconButton>
+                                            </TableCell>
+                                            <TableCell style={{textAlign:'center'}}>{course.courseCode}</TableCell>
+                                            <TableCell style={{textAlign:'center'}}>{course.semester}</TableCell>
+                                            <TableCell style={{textAlign:'center'}}>{course.markersNeeded}</TableCell>
+                                            <TableCell style={{textAlign:'center'}}>PLACEHOLDER</TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                                                <Collapse in={openRows[index]} timeout="auto" unmountOnExit>
+                                                    <Box sx={{ margin: 1 }}>
+                                                        <Typography variant="h6" gutterBottom component="div" sx={{ whiteSpace: 'pre-line' }}>
+                                                            Details:
+                                                        </Typography>
+                                                        <Typography variant='body1'>
+                                                            Course Description: {course.courseDescription}
+                                                        </Typography> <br/>
+                                                        <Typography variant='body1'>
+                                                            Marker Responsibilities: {course.markerResponsibilities}
+                                                        </Typography> <br/>
+                                                        <Typography variant='body1'>
+                                                            Marker Hours: {course.markerHours}
+                                                        </Typography>
+                                                    </Box>
+                                                </Collapse>
+                                            </TableCell>
+                                        </TableRow>
+                                    </>
+                                ))}
+                                {emptyRows > 0 && (
+                                    <TableRow style={{ height: 69.5 * emptyRows }}>
+                                    <TableCell colSpan={6} />
                                     </TableRow>
-                                    <TableRow>
-                                        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                                            <Collapse in={openRows[index]} timeout="auto" unmountOnExit>
-                                                <Box sx={{ margin: 1 }}>
-                                                    <Typography variant="h6" gutterBottom component="div" sx={{ whiteSpace: 'pre-line' }}>
-                                                        Details:
-                                                    </Typography>
-                                                    <Typography variant='body1'>
-                                                        Course Description: {course.courseDescription}
-                                                    </Typography> <br/>
-                                                    <Typography variant='body1'>
-                                                        Marker Responsibilities: {course.markerResponsibilities}
-                                                    </Typography> <br/>
-                                                    <Typography variant='body1'>
-                                                        Marker Hours: {course.markerHours}
-                                                    </Typography>
-                                                </Box>
-                                            </Collapse>
-                                        </TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            ))}
-                            {emptyRows > 0 && (
-                                <TableRow style={{ height: 69.5 * emptyRows }}>
-                                <TableCell colSpan={6} />
-                                </TableRow>
-                            )}
+                                )}
+                            </TableBody>
                         </Table>
                         <TablePagination 
                         component='div'
