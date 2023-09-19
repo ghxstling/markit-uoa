@@ -8,7 +8,7 @@ export default function ManageUsersPage() {
         <>
             <Sidebar />
             <div>
-                <div style={{ marginLeft: '30px' }}>
+                <div>
                     <DynamicBreadcrumb />
                 </div>
                 <UserRolesTable />
