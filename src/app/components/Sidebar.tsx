@@ -21,11 +21,15 @@ import React, { useState } from 'react'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import ArchiveIcon from '@mui/icons-material/Archive'
 import NotificationsIcon from '@mui/icons-material/Notifications'
-import SettingsIcon from '@mui/icons-material/Settings'
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
+import CalendarViewDayIcon from '@mui/icons-material/CalendarViewDay'
 import LogoutIcon from '@mui/icons-material/Logout'
 import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { SvgIconTypeMap } from '@mui/material'
+import { OverridableComponent } from '@mui/material/OverridableComponent'
 
 //Styling
 const linkStyle = {
@@ -38,10 +42,18 @@ const IconStyle = {
     fill: 'white',
 }
 
+const icons: Record<string, OverridableComponent<SvgIconTypeMap<{}, 'svg'>>> = {
+    ArchiveIcon: ArchiveIcon,
+    ManageAccountsIcon: ManageAccountsIcon,
+    CreateNewFolderIcon: CreateNewFolderIcon,
+    CalendarViewDayIcon: CalendarViewDayIcon,
+}
+
 //Create Sidebar Content
 let content = (
     username: string,
     email: string,
+    Links: string[][],
     // redirectToDashboard: string,
     open: boolean,
     handleClickOpen: () => void,
@@ -91,17 +103,6 @@ let content = (
                     <Link href="./" passHref style={linkStyle}>
                         <ListItemButton>
                             <ListItemIcon>
-                                <ArchiveIcon style={IconStyle} />
-                            </ListItemIcon>
-                            <ListItemText>My Applications</ListItemText>
-                        </ListItemButton>
-                    </Link>
-                </ListItem>
-
-                <ListItem disablePadding>
-                    <Link href="./" passHref style={linkStyle}>
-                        <ListItemButton>
-                            <ListItemIcon>
                                 <NotificationsIcon style={IconStyle} />
                             </ListItemIcon>
                             <ListItemText>Notifications</ListItemText>
@@ -109,16 +110,16 @@ let content = (
                     </Link>
                 </ListItem>
 
-                <ListItem disablePadding>
-                    <Link href="./" passHref style={linkStyle}>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <SettingsIcon style={IconStyle} />
-                            </ListItemIcon>
-                            <ListItemText>Settings</ListItemText>
-                        </ListItemButton>
-                    </Link>
-                </ListItem>
+                {Links.map((link) => (
+                    <ListItem disablePadding>
+                        <Link href={link[1]} passHref style={linkStyle}>
+                            <ListItemButton>
+                                <ListItemIcon>{React.createElement(icons[link[2]], { style: IconStyle })}</ListItemIcon>
+                                <ListItemText>{link[0]}</ListItemText>
+                            </ListItemButton>
+                        </Link>
+                    </ListItem>
+                ))}
             </List>
 
             <List>
@@ -184,9 +185,45 @@ const Sidebar = () => {
             session.user.name.slice(session.user.name.lastIndexOf(' '))[1] +
             '.'
         const email: string = session.user.email
-        sidebarContent = content(name, email, open, handleClickOpen, handleClose)
+        console.log(session.role)
+        switch (session.role) {
+            case 'coordinator':
+                sidebarContent = content(
+                    name,
+                    email,
+                    [
+                        ['Create New Course', '/dashboard/courses', 'CreateNewFolderIcon'],
+                        ['View All Courses', '/dashboard/viewAllCoursespage', 'CalendarViewDayIcon'],
+                        ['Manage User Roles', '/dashboard/manageUserRoles', 'ManageAccountsIcon'],
+                    ],
+                    open,
+                    handleClickOpen,
+                    handleClose
+                )
+                break
+            case 'supervisor':
+                sidebarContent = content(
+                    name,
+                    email,
+                    [['Create New Course', '/dashboard/courses', 'CreateNewFolderIcon']],
+                    open,
+                    handleClickOpen,
+                    handleClose
+                )
+                break
+            case 'student':
+                sidebarContent = content(
+                    name,
+                    email,
+                    [['Apply Now', '/dashboard/Application', 'ArchiveIcon']],
+                    open,
+                    handleClickOpen,
+                    handleClose
+                )
+                break
+        }
     } else {
-        sidebarContent = content('', '', open, handleClickOpen, handleClose)
+        sidebarContent = content('', '', [[]], open, handleClickOpen, handleClose)
     }
 
     return (
