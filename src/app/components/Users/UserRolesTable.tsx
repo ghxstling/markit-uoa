@@ -26,23 +26,24 @@ export default function UserRolesTable() {
     const [users, setUsers] = useState<User[]>([])
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(5)
-    const [firstRender, setFirstRender] = useState(true)
-    const [isClient, setIsClient] = useState(false)
+
+    const isClient = typeof window !== 'undefined'
+
+    if (!isClient) {
+        return null
+    }
 
     useEffect(() => {
-        setIsClient(true)
         async function fetchData() {
             try {
                 const response = await fetch('/api/users', { method: 'GET' })
                 const jsonData = await response.json()
-                console.log('Fetched users data:', jsonData)
                 setUsers(jsonData)
             } catch (error) {
                 console.error('Error fetching data:', error)
             }
         }
 
-        setFirstRender(false)
         fetchData()
     }, [])
 
@@ -81,13 +82,6 @@ export default function UserRolesTable() {
         }
     }
 
-    if (firstRender) {
-        return null
-    }
-    if (!isClient) {
-        return null // Render nothing if not on client
-    }
-
     return (
         <TableContainer component={Paper} style={{ marginTop: 20 }}>
             <Table style={{ paddingTop: 40 }}>
@@ -123,6 +117,7 @@ export default function UserRolesTable() {
                     <TableRow>
                         <TableCell colSpan={3}>
                             <TablePagination
+                                component="div" // ensures TablePagination renders as a div, not a TableCell
                                 rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
                                 count={users.length}
                                 rowsPerPage={rowsPerPage}
