@@ -42,7 +42,7 @@ const IconStyle = {
 let content = (
     username: string,
     email: string,
-    redirectToDashboard: () => void,
+    // redirectToDashboard: string,
     open: boolean,
     handleClickOpen: () => void,
     handleClose: () => void
@@ -77,12 +77,14 @@ let content = (
                     {email}
                 </ListSubheader>
                 <ListItem disablePadding sx={{ mt: '1.5rem' }}>
-                    <ListItemButton onClick={redirectToDashboard}>
-                        <ListItemIcon>
-                            <DashboardIcon style={IconStyle} />
-                        </ListItemIcon>
-                        <ListItemText>Dashboard</ListItemText>
-                    </ListItemButton>
+                    <Link href="/dashboard" passHref style={linkStyle}>
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <DashboardIcon style={IconStyle} />
+                            </ListItemIcon>
+                            <ListItemText>Dashboard</ListItemText>
+                        </ListItemButton>
+                    </Link>
                 </ListItem>
 
                 <ListItem disablePadding>
@@ -134,9 +136,7 @@ let content = (
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <DialogTitle id="alert-dialog-title">
-                        {'Confirm Logout'}
-                    </DialogTitle>
+                    <DialogTitle id="alert-dialog-title">{'Confirm Logout'}</DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
                             Are you sure you want to log out?
@@ -174,21 +174,6 @@ const Sidebar = () => {
     const handleClose = () => {
         setOpen(false)
     }
-    const redirectToDashboard = () => {
-        if (session) {
-            switch (session.role) {
-                case 'coordinator':
-                    router.push('/coordinatorDashboard')
-                    break
-                case 'supervisor':
-                    router.push('/courseSupervisorHomepage')
-                    break
-                default:
-                    router.push('/studentHomepage')
-                    break
-            }
-        }
-    }
 
     let sidebarContent
 
@@ -199,23 +184,9 @@ const Sidebar = () => {
             session.user.name.slice(session.user.name.lastIndexOf(' '))[1] +
             '.'
         const email: string = session.user.email
-        sidebarContent = content(
-            name,
-            email,
-            redirectToDashboard,
-            open,
-            handleClickOpen,
-            handleClose
-        )
+        sidebarContent = content(name, email, open, handleClickOpen, handleClose)
     } else {
-        sidebarContent = content(
-            '',
-            '',
-            redirectToDashboard,
-            open,
-            handleClickOpen,
-            handleClose
-        )
+        sidebarContent = content('', '', open, handleClickOpen, handleClose)
     }
 
     return (
