@@ -8,8 +8,7 @@ export default function CreateCoursePage() {
         <>
             {/* <Sidebar />
             <div> */}
-            <div style={{ marginLeft: '300px' }}>
-                {' '}
+            <div>
                 <DynamicBreadcrumb />
             </div>
             <CourseDetails />

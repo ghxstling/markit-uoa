@@ -194,7 +194,7 @@ const Sidebar = () => {
                     [
                         ['Create New Course', '/dashboard/courses', 'CreateNewFolderIcon'],
                         ['View All Courses', '/dashboard/viewAllCoursespage', 'CalendarViewDayIcon'],
-                        ['Manage User Roles', '/dashboard/manageUserRoles', 'ManageAccountsIcon'],
+                        ['Manage User Roles', '/dashboard/manageUsers', 'ManageAccountsIcon'],
                     ],
                     open,
                     handleClickOpen,
