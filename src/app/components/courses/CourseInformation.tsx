@@ -131,7 +131,6 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                             <TableRow key={index}>
                                 <TableCell style={{ textAlign: 'center' }}>
                                     {/*function that returns name based on user id*/}
-                                    Student Name
                                 </TableCell>
                                 <TableCell style={{ textAlign: 'center' }}>
                                     {/*(student.applications.filter((application: any) => application.courseId === courseId)).previouslyAchievedGrade*/}
