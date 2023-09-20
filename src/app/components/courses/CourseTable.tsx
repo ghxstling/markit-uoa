@@ -10,6 +10,7 @@ import TableHead from '@mui/material/TableHead'
 import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import Tooltip from '@mui/material/Tooltip'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
@@ -41,6 +42,7 @@ export default function CourseTable() {
 
     const [page, setPage] = React.useState(0)
     const [rowsPerPage, setRowsPerPage] = React.useState(5)
+    const [isCoordinator, setIsCoordinator] = useState(false)
 
     const emptyRows = page >= 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0
 
@@ -53,6 +55,14 @@ export default function CourseTable() {
         setPage(0)
         data.map((course, index) => console.log(course.needMarkers))
     }
+
+    const { data: session } = useSession()
+
+    useEffect(() => {
+        if (session && session.role === 'coordinator') {
+            setIsCoordinator(true)
+        }
+    }, [session])
 
     return (
         <TableContainer component={Paper} style={{ marginTop: 20 }}>
@@ -72,7 +82,11 @@ export default function CourseTable() {
                             </div>
                         </TableCell>
                         <TableCell style={{ textAlign: 'center' }}>
-                            <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>Edit Course Details</div>
+                            {isCoordinator ? (
+                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>View Course Details</div>
+                            ) : (
+                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>Edit Course Details</div>
+                            )}
                         </TableCell>
                         <TableCell style={{ textAlign: 'center' }}>
                             <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
@@ -105,7 +119,7 @@ export default function CourseTable() {
                                         href="src/app/dashboard/courses/[courseId]/page.tsx"
                                         as={`/dashboard/courses/${course.id}`}
                                     >
-                                        <Button>Edit</Button>
+                                        {isCoordinator ? <Button>View</Button> : <Button>Edit</Button>}
                                     </Link>
                                 </TableCell>
                                 <TableCell style={{ textAlign: 'center' }}>{course.markersNeeded}</TableCell>
@@ -113,12 +127,12 @@ export default function CourseTable() {
                                 <TableCell style={{ textAlign: 'center' }}>
                                     {' '}
                                     {course.needMarkers ? (
-                                        <Button variant="contained" color="error" style={{ width: '75%' }}>
-                                            Incomplete
-                                        </Button>
-                                    ) : (
                                         <Button variant="contained" color="success" style={{ width: '75%' }}>
                                             Complete
+                                        </Button>
+                                    ) : (
+                                        <Button variant="contained" color="error" style={{ width: '75%' }}>
+                                            Incomplete
                                         </Button>
                                     )}
                                 </TableCell>
