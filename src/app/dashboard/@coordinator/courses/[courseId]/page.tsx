@@ -3,6 +3,7 @@ import EditCourseDetails from '@/app/components/courses/EditCourseDetails'
 import Sidebar from '../../../../components/Sidebar'
 import DynamicBreadcrumb from '@/app/components/DynamicBreadcrumb'
 import { usePathname } from 'next/navigation'
+import CourseInformation from '@/app/components/courses/CourseInformation'
 
 export default function CreateCoursePage() {
     const pathname = usePathname()
@@ -15,7 +16,7 @@ export default function CreateCoursePage() {
             <div style={{ marginLeft: '300px' }}>
                 <DynamicBreadcrumb />
             </div>
-            <EditCourseDetails courseId={courseId} />
+            <CourseInformation courseId={courseId} />
             {/* </div> */}
         </>
     )
