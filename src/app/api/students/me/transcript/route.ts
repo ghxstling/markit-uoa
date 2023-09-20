@@ -62,11 +62,8 @@ export async function GET(req: NextRequest) {
 
         // If successful, return the file with status 200 OK
         const bytes = await response.Body?.transformToByteArray()
-
-        const res = new Response(
-            new File([bytes!], fileName, {
-                type: 'application/pdf',
-            }),
+        const res = new NextResponse(
+            new File([bytes!], fileName, { type: "application/pdf" }),
             {
                 status: 200,
                 statusText: 'File ' + fileName + ' successfuly retrieved from Bucket student-academictranscripts for student ' + student.upi,
@@ -75,7 +72,7 @@ export async function GET(req: NextRequest) {
                 }
             }
         )
-        console.log(res.body)
+        console.log("Success! Response body:\n" + res.body)
         return res
     }
     // If unsuccessful, return 400 BAD REQUEST
