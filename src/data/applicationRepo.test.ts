@@ -53,4 +53,5 @@ describe('ApplicationRepo', () => {
         const data = await ApplicationRepo.createApplication(input)
         expect(await ApplicationRepo.getApplicationById(data.id)).toMatchObject(data)
     })
+    it('can get all applications', async () => {})
 })
