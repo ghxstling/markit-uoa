@@ -109,6 +109,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     <Tooltip title="Is the student overseas">
                                         <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
                                     </Tooltip>
+                                    {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
                                 </div>
                             </TableCell>
                             <TableCell style={{ textAlign: 'center' }}>
@@ -117,6 +118,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     <Tooltip title="Is the student qualified to mark the course">
                                         <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
                                     </Tooltip>
+                                    {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
                                 </div>
                             </TableCell>
                         </TableRow>
