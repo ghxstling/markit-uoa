@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
             { status: 403, headers: { 'content-type': 'application/json' } }
         )
     }
-    // Wait for supervisor to send course information
+    // Wait for supervisor/coordinator to send course information
     const {
         courseCode,
         courseDescription,

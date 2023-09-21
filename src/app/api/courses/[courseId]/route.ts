@@ -66,7 +66,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         )
     }
 
-    // Get updated course information from supervisor
+    // Get updated course information from supervisor/coordinator
     const {
         courseCode,
         courseDescription,
