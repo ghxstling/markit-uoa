@@ -17,20 +17,18 @@ import { Card } from '@mui/material'
 import EditCourseDetails from './EditCourseDetails'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { CourseApplicationType } from '@/types/CourseApplicationType'
+import Link from 'next/link'
 
 type CourseInformationProps = {
     courseId: string // Assuming courseId is a string
 }
 
 const CourseInformation = ({ courseId }: CourseInformationProps) => {
-    interface Student {
-        userId: number
-        overseas: string
-        application: CourseApplicationType[]
-        qualification: string
+    interface StudentData {
+        //some array thing of applications + student name
     }
 
-    const [data, setData] = useState<Student[]>([])
+    const [data, setData] = useState<StudentData[]>([])
     const [open, setOpen] = React.useState(false)
     const [page, setPage] = React.useState(0)
     const [rowsPerPage, setRowsPerPage] = React.useState(5)
@@ -145,20 +143,27 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {(rowsPerPage > 0
+                        {/*(rowsPerPage > 0
                             ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             : data
                         ).map((student, index) => (
                             <TableRow key={index}>
                                 <TableCell style={{ textAlign: 'center' }}>
-                                    {/*function that returns name based on user id*/}
+                                    <Link href="src/app/dashboard/students/[studentId]/page.tsx" as={`/dashboard/students/${student.id}`} passHref>
+                                        <Button>{function that returns name based on user id}</Button>
+                                    </Link>
                                 </TableCell>
-                                <TableCell style={{ textAlign: 'center' }}>{/*get grade*/}</TableCell>
-                                <TableCell style={{ textAlign: 'center' }}>{/*get has marked course*/}</TableCell>
-                                <TableCell style={{ textAlign: 'center' }}>{/*student.overseas*/}</TableCell>
-                                <TableCell style={{ textAlign: 'center' }}>{/*qualified/unqualified*/}</TableCell>
+                                <TableCell style={{ textAlign: 'center' }}>{get grade}</TableCell>
+                                <TableCell style={{ textAlign: 'center' }}>{get has marked course}</TableCell>
+                                <TableCell style={{ textAlign: 'center' }}>{student.overseas}</TableCell>
+                                <TableCell style={{ textAlign: 'center' }}>
+                                    <Button variant="contained" sx={{ backgroundColor: 'green' }}>
+                                    {qualified/unqualified}
+                                    </Button>
+                                </TableCell>
                             </TableRow>
-                        ))}
+                        ))*/}
+
                         {emptyRows > 0 && (
                             <TableRow style={{ height: 69.5 * emptyRows }}>
                                 <TableCell colSpan={6} />
