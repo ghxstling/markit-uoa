@@ -28,16 +28,7 @@ export default function dashboardLayout(props: {
                     </>
                 )
             case 'supervisor':
-                return (
-                    <>
-                        <Stack direction={'row'}>
-                            <Box sx={{ width: '15rem' }}>
-                                <Sidebar />
-                            </Box>
-                            <Box sx={{ mt: '50px', ml: '96px' }}>{props.supervisor}</Box>
-                        </Stack>
-                    </>
-                )
+                return <>{props.supervisor}</>
             case 'student':
                 return <>{props.student}</>
         }
