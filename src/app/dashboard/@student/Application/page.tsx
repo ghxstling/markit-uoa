@@ -3,7 +3,6 @@
 import CVAndTranscript from '@/app/components/ApplicationForms/CVAndTranscript'
 import EmploymentDetails from '@/app/components/ApplicationForms/EmploymentDetails'
 import PersonalDetails from '@/app/components/ApplicationForms/PersonalDetails'
-import Sidebar from '@/app/components/Sidebar'
 import { IFormValues } from '@/types/IFormValues'
 import { Box, Button, Container, Paper, Snackbar, Step, StepLabel, Stepper, Typography } from '@mui/material'
 import React, { useState } from 'react'
@@ -128,9 +127,7 @@ const Application = () => {
             <>
                 <Box sx={{ display: 'flex' }}>
                     {/* Create basic layout */}
-                    <Box sx={{ width: '15rem' }}>
-                        <Sidebar />
-                    </Box>
+                    <Box sx={{ width: '15rem' }}></Box>
                     <Container component="main" maxWidth="md" sx={{ mb: 4 }}>
                         <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
                             <Typography component="h1" variant="h4" align="center">

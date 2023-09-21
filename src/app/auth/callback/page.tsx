@@ -9,17 +9,7 @@ function AuthCallback() {
 
     useEffect(() => {
         if (session) {
-            switch (session.role) {
-                case 'coordinator':
-                    router.push('/coordinatorDashboard')
-                    break
-                case 'supervisor':
-                    router.push('/courseSupervisorHomepage')
-                    break
-                default:
-                    router.push('/studentHomepage')
-                    break
-            }
+            router.push('/dashboard')
         }
     }, [session, router])
 
