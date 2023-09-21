@@ -9,17 +9,8 @@ import CourseTable from '@/app/components/courses/CourseTable'
 export default function AllCourseView() {
     return (
         <>
-            {/* <Sidebar /> */}
-            <Box
-                style={{
-                    paddingTop: 50,
-                    paddingLeft: 350,
-                    paddingRight: 100,
-                    marginBottom: 50,
-                }}
-            >
-                <DynamicBreadcrumb />
-                <div style={{ height: 70 }}></div>
+            <Box>
+                <h2>Course View</h2>
                 <CourseTable />
             </Box>
         </>
