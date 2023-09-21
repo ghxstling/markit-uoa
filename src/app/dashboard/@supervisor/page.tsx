@@ -18,14 +18,6 @@ export default function CSHomepage() {
 
     return (
         <>
-            {/* <Box
-                style={{
-                    paddingTop: 50,
-                    paddingLeft: 350,
-                    paddingRight: 100,
-                    marginBottom: 50,
-                }}
-            > */}
             <Typography sx={{ mt: '28px' }} variant="h4" fontWeight="bold">
                 Welcome, {firstName}
             </Typography>
@@ -37,7 +29,6 @@ export default function CSHomepage() {
                 CREATE NEW COURSE
             </Button>
             <CourseTable />
-            {/* </Box> */}
         </>
     )
 }

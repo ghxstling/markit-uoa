@@ -17,16 +17,7 @@ export default function dashboardLayout(props: {
     if (session) {
         switch (session.role) {
             case 'coordinator':
-                return (
-                    <>
-                        <Stack direction={'row'}>
-                            <Box sx={{ width: '15rem' }}>
-                                <Sidebar />
-                            </Box>
-                            <Box sx={{ mt: '50px', ml: '96px' }}>{props.coordinator}</Box>
-                        </Stack>
-                    </>
-                )
+                return <>{props.coordinator}</>
             case 'supervisor':
                 return <>{props.supervisor}</>
             case 'student':
