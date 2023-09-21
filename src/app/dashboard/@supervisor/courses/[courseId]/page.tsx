@@ -10,13 +10,7 @@ export default function CreateCoursePage() {
 
     return (
         <>
-            {/* <Sidebar />
-            <div> */}
-            <div style={{ marginLeft: '300px' }}>
-                <DynamicBreadcrumb />
-            </div>
             <EditCourseDetails courseId={courseId} />
-            {/* </div> */}
         </>
     )
 }

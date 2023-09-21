@@ -6,14 +6,7 @@ import DynamicBreadcrumb from '@/app/components/DynamicBreadcrumb'
 export default function CreateCoursePage() {
     return (
         <>
-            {/* <Sidebar />
-            <div> */}
-            <div style={{ marginLeft: '300px' }}>
-                {' '}
-                <DynamicBreadcrumb />
-            </div>
             <CourseDetails />
-            {/* </div> */}
         </>
     )
 }
