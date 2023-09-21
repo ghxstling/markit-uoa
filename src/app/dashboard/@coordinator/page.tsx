@@ -31,7 +31,7 @@ export default function coordinatorDashboard() {
                     <Button
                         variant="contained"
                         sx={{
-                            backgroundColor: '#00467F',
+                            backgroundColor: '#01579B',
                         }}
                     >
                         VIEW ALL COURSES

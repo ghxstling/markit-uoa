@@ -31,7 +31,7 @@ export default function CSHomepage() {
             </Typography>
             <Button
                 variant="contained"
-                sx={{ backgroundColor: '#00467F', mt: '53px', mb: '58px' }}
+                sx={{ backgroundColor: '#01579B', mt: '53px', mb: '58px' }}
                 href="/dashboard/courses"
             >
                 CREATE NEW COURSE
