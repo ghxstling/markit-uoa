@@ -1,7 +1,7 @@
 import { Box, Stack } from '@mui/material'
 import Sidebar from '@/app/components/Sidebar'
 
-export default function coordinatorDashboardLayout({ children }: { children: React.ReactNode }) {
+export default function studentDashboardLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en">
             <body>
