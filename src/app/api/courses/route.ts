@@ -19,11 +19,12 @@ export async function GET(req: NextRequest) {
 // POST /api/courses/
 export async function POST(req: NextRequest) {
     const token = await getToken({ req })
-    if (token!.role != Role.Supervisor) {
+    if (token!.role != Role.Supervisor &&
+        token!.role != Role.Coordinator) {
         return new NextResponse(
             JSON.stringify({
                 success: false,
-                message: 'Only supervisors can add courses',
+                message: 'Only supervisors and coordinators can add courses',
             }),
             { status: 403, headers: { 'content-type': 'application/json' } }
         )
