@@ -24,25 +24,20 @@ import { useRouter } from 'next/navigation'
 export default function CourseDetails() {
     const [courseCode, setCourseCode] = useState('')
     const [courseDescription, setCourseDescription] = useState('')
-    const [selectedYear, setSelectedYear] = useState<number>(
-        new Date().getFullYear()
-    )
+    const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
     const [selectedSemester, setSelectedSemester] = useState<string>('SS')
 
     const [sliderValue, setSliderValue] = useState(0)
-    const [manualInputValue, setManualInputValue] = useState<string>(
-        sliderValue.toString()
-    )
+    const [manualInputValue, setManualInputValue] = useState<string>(sliderValue.toString())
     const [enrolledSliderValue, setEnrolledSliderValue] = useState(0)
-    const [enrolledManualInputValue, setEnrolledManualInputValue] =
-        useState<string>(enrolledSliderValue.toString())
+    const [enrolledManualInputValue, setEnrolledManualInputValue] = useState<string>(enrolledSliderValue.toString())
 
     const [markerHoursSliderValue, setMarkerHoursSliderValue] = useState(0)
-    const [markerHoursManualInputValue, setMarkerHoursManualInputValue] =
-        useState<string>(markerHoursSliderValue.toString())
+    const [markerHoursManualInputValue, setMarkerHoursManualInputValue] = useState<string>(
+        markerHoursSliderValue.toString()
+    )
     const [markerSliderValue, setMarkerSliderValue] = useState(0)
-    const [markerManualInputValue, setMarkerManualInputValue] =
-        useState<string>(markerSliderValue.toString())
+    const [markerManualInputValue, setMarkerManualInputValue] = useState<string>(markerSliderValue.toString())
     const [description, setDescription] = useState<string>('')
     const [wordCount, setWordCount] = useState<number>(0)
     const currentYear = new Date().getFullYear()
@@ -50,23 +45,19 @@ export default function CourseDetails() {
     const semesterOptions = ['SS', 'S1', 'S2']
     const [openSnackbar, setOpenSnackbar] = React.useState(false)
     const [snackbarMessage, setSnackbarMessage] = React.useState('')
-    const [snackbarSeverity, setSnackbarSeverity] = React.useState<
-        'success' | 'error'
-    >('success')
+    const [snackbarSeverity, setSnackbarSeverity] = React.useState<'success' | 'error'>('success')
     const router = useRouter()
 
-    const handleManualInputChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleManualInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         let inputValue = event.target.value
         if (inputValue === '') {
             inputValue = '0'
         }
         let numValue = parseInt(inputValue)
         inputValue = numValue.toString()
-        if (numValue > 800) {
-            inputValue = '800'
-            numValue = 800
+        if (numValue > 2000) {
+            inputValue = '2000'
+            numValue = 2000
         }
         setManualInputValue(inputValue)
         setSliderValue(numValue)
@@ -79,36 +70,29 @@ export default function CourseDetails() {
         }
     }
 
-    const handleEnrolledManualInputChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleEnrolledManualInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         let inputValue = event.target.value
         if (inputValue === '') {
             inputValue = '0'
         }
         let numValue = parseInt(inputValue)
         inputValue = numValue.toString()
-        if (numValue > 800) {
-            inputValue = '800'
-            numValue = 800
+        if (numValue > 2000) {
+            inputValue = '2000'
+            numValue = 2000
         }
         setEnrolledManualInputValue(inputValue)
         setEnrolledSliderValue(numValue)
     }
 
-    const handleEnrolledSliderChange = (
-        event: Event,
-        newValue: number | number[]
-    ) => {
+    const handleEnrolledSliderChange = (event: Event, newValue: number | number[]) => {
         if (typeof newValue === 'number') {
             setEnrolledSliderValue(newValue)
             setEnrolledManualInputValue(newValue.toString())
         }
     }
 
-    const handleMarkerHoursManualInputChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleMarkerHoursManualInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         let inputValue = event.target.value
         if (inputValue === '') {
             inputValue = '0'
@@ -123,19 +107,14 @@ export default function CourseDetails() {
         setMarkerHoursSliderValue(numValue)
     }
 
-    const handleMarkerHoursSliderChange = (
-        event: Event,
-        newValue: number | number[]
-    ) => {
+    const handleMarkerHoursSliderChange = (event: Event, newValue: number | number[]) => {
         if (typeof newValue === 'number') {
             setMarkerHoursSliderValue(newValue)
             setMarkerHoursManualInputValue(newValue.toString())
         }
     }
 
-    const handleMarkerManualInputChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleMarkerManualInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         let inputValue = event.target.value
         if (inputValue === '') {
             inputValue = '0'
@@ -150,19 +129,14 @@ export default function CourseDetails() {
         setMarkerSliderValue(numValue)
     }
 
-    const handleMarkerSliderChange = (
-        event: Event,
-        newValue: number | number[]
-    ) => {
+    const handleMarkerSliderChange = (event: Event, newValue: number | number[]) => {
         if (typeof newValue === 'number') {
             setMarkerSliderValue(newValue)
             setMarkerManualInputValue(newValue.toString())
         }
     }
 
-    const handleDescriptionChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newDescription = event.target.value
         const newWordCount = newDescription.split(/\s+/).filter(Boolean).length
 
@@ -225,12 +199,7 @@ export default function CourseDetails() {
     return (
         <Container maxWidth="sm" style={{ marginTop: '2em' }}>
             <Paper elevation={3} style={{ padding: '2em' }}>
-                <Typography
-                    variant="h4"
-                    gutterBottom
-                    align="center"
-                    style={{ fontWeight: 700 }}
-                >
+                <Typography variant="h4" gutterBottom align="center" style={{ fontWeight: 700 }}>
                     Course Details
                 </Typography>
                 <Grid container spacing={3} justifyContent="center">
@@ -249,9 +218,7 @@ export default function CourseDetails() {
                             variant="outlined"
                             style={{ width: '350px' }}
                             value={courseDescription}
-                            onChange={(e) =>
-                                setCourseDescription(e.target.value)
-                            }
+                            onChange={(e) => setCourseDescription(e.target.value)}
                         />
                     </Grid>
                     <Grid item>
@@ -262,9 +229,7 @@ export default function CourseDetails() {
                                 id="year-select"
                                 value={selectedYear}
                                 label="Year"
-                                onChange={(event) =>
-                                    setSelectedYear(Number(event.target.value))
-                                }
+                                onChange={(event) => setSelectedYear(Number(event.target.value))}
                             >
                                 {yearOptions.map((year) => (
                                     <MenuItem key={year} value={year}>
@@ -276,19 +241,13 @@ export default function CourseDetails() {
                     </Grid>
                     <Grid item>
                         <FormControl fullWidth style={{ width: '350px' }}>
-                            <InputLabel id="semester-select-label">
-                                Semester
-                            </InputLabel>
+                            <InputLabel id="semester-select-label">Semester</InputLabel>
                             <Select
                                 labelId="semester-select-label"
                                 id="semester-select"
                                 value={selectedSemester}
                                 label="Semester"
-                                onChange={(event) =>
-                                    setSelectedSemester(
-                                        String(event.target.value)
-                                    )
-                                }
+                                onChange={(event) => setSelectedSemester(String(event.target.value))}
                             >
                                 {semesterOptions.map((semester) => (
                                     <MenuItem key={semester} value={semester}>
@@ -299,17 +258,8 @@ export default function CourseDetails() {
                         </FormControl>
                     </Grid>
 
-                    <Grid
-                        container
-                        item
-                        xs={12}
-                        justifyContent="center"
-                        spacing={3}
-                    >
-                        <Typography
-                            variant="subtitle1"
-                            style={{ marginTop: '20px' }}
-                        >
+                    <Grid container item xs={12} justifyContent="center" spacing={3}>
+                        <Typography variant="subtitle1" style={{ marginTop: '20px' }}>
                             Estimated number of students to enrol:
                         </Typography>
                         <Grid item xs={12}>
@@ -321,31 +271,26 @@ export default function CourseDetails() {
                                     step={10}
                                     marks={[
                                         { value: 0, label: '0' },
-                                        { value: 800, label: '800' },
+                                        { value: 2000, label: '2000' },
                                     ]}
                                     min={0}
-                                    max={800}
+                                    max={2000}
                                     value={sliderValue}
                                     onChange={handleSliderChange}
                                 />
                                 <Grid container justifyContent="center">
                                     <Grid item xs={6}>
-                                        <Box
-                                            display="flex"
-                                            justifyContent="center"
-                                        >
+                                        <Box display="flex" justifyContent="center">
                                             {' '}
                                             <TextField
                                                 type="number"
                                                 value={manualInputValue}
-                                                onChange={
-                                                    handleManualInputChange
-                                                }
+                                                onChange={handleManualInputChange}
                                                 style={{ width: '90px' }}
                                                 InputProps={{
                                                     inputProps: {
                                                         min: 0,
-                                                        max: 800,
+                                                        max: 2000,
                                                     },
                                                 }}
                                             />
@@ -356,17 +301,8 @@ export default function CourseDetails() {
                         </Grid>
                     </Grid>
 
-                    <Grid
-                        container
-                        item
-                        xs={12}
-                        justifyContent="center"
-                        spacing={3}
-                    >
-                        <Typography
-                            variant="subtitle1"
-                            style={{ marginTop: '20px' }}
-                        >
+                    <Grid container item xs={12} justifyContent="center" spacing={3}>
+                        <Typography variant="subtitle1" style={{ marginTop: '20px' }}>
                             Number of students currently enrolled:
                         </Typography>
                         <Grid item xs={12}>
@@ -378,31 +314,26 @@ export default function CourseDetails() {
                                     step={10}
                                     marks={[
                                         { value: 0, label: '0' },
-                                        { value: 800, label: '800' },
+                                        { value: 2000, label: '2000' },
                                     ]}
                                     min={0}
-                                    max={800}
+                                    max={2000}
                                     value={enrolledSliderValue}
                                     onChange={handleEnrolledSliderChange}
                                 />
                                 <Grid container justifyContent="center">
                                     <Grid item xs={6}>
-                                        <Box
-                                            display="flex"
-                                            justifyContent="center"
-                                        >
+                                        <Box display="flex" justifyContent="center">
                                             {' '}
                                             <TextField
                                                 type="number"
                                                 value={enrolledManualInputValue}
-                                                onChange={
-                                                    handleEnrolledManualInputChange
-                                                }
+                                                onChange={handleEnrolledManualInputChange}
                                                 style={{ width: '90px' }}
                                                 InputProps={{
                                                     inputProps: {
                                                         min: 0,
-                                                        max: 800,
+                                                        max: 2000,
                                                     },
                                                 }}
                                             />
@@ -413,17 +344,8 @@ export default function CourseDetails() {
                         </Grid>
                     </Grid>
 
-                    <Grid
-                        container
-                        item
-                        xs={12}
-                        justifyContent="center"
-                        spacing={3}
-                    >
-                        <Typography
-                            variant="subtitle1"
-                            style={{ marginTop: '20px' }}
-                        >
+                    <Grid container item xs={12} justifyContent="center" spacing={3}>
+                        <Typography variant="subtitle1" style={{ marginTop: '20px' }}>
                             Estimated number of marker hours required:
                         </Typography>
                         <Grid item xs={12}>
@@ -444,19 +366,12 @@ export default function CourseDetails() {
                                 />
                                 <Grid container justifyContent="center">
                                     <Grid item xs={6}>
-                                        <Box
-                                            display="flex"
-                                            justifyContent="center"
-                                        >
+                                        <Box display="flex" justifyContent="center">
                                             {' '}
                                             <TextField
                                                 type="number"
-                                                value={
-                                                    markerHoursManualInputValue
-                                                }
-                                                onChange={
-                                                    handleMarkerHoursManualInputChange
-                                                }
+                                                value={markerHoursManualInputValue}
+                                                onChange={handleMarkerHoursManualInputChange}
                                                 style={{ width: '90px' }}
                                                 InputProps={{
                                                     inputProps: {
@@ -472,17 +387,8 @@ export default function CourseDetails() {
                         </Grid>
                     </Grid>
 
-                    <Grid
-                        container
-                        item
-                        xs={12}
-                        justifyContent="center"
-                        spacing={3}
-                    >
-                        <Typography
-                            variant="subtitle1"
-                            style={{ marginTop: '20px' }}
-                        >
+                    <Grid container item xs={12} justifyContent="center" spacing={3}>
+                        <Typography variant="subtitle1" style={{ marginTop: '20px' }}>
                             Preferred number of markers:
                         </Typography>
                         <Grid item xs={12}>
@@ -503,17 +409,12 @@ export default function CourseDetails() {
                                 />
                                 <Grid container justifyContent="center">
                                     <Grid item xs={6}>
-                                        <Box
-                                            display="flex"
-                                            justifyContent="center"
-                                        >
+                                        <Box display="flex" justifyContent="center">
                                             {' '}
                                             <TextField
                                                 type="number"
                                                 value={markerManualInputValue}
-                                                onChange={
-                                                    handleMarkerManualInputChange
-                                                }
+                                                onChange={handleMarkerManualInputChange}
                                                 style={{ width: '90px' }}
                                                 InputProps={{
                                                     inputProps: {
@@ -528,13 +429,7 @@ export default function CourseDetails() {
                             </Box>
                         </Grid>
                     </Grid>
-                    <Grid
-                        container
-                        item
-                        xs={12}
-                        justifyContent="center"
-                        spacing={3}
-                    >
+                    <Grid container item xs={12} justifyContent="center" spacing={3}>
                         <Grid item>
                             <TextField
                                 label="Description of marker responsibilities"
@@ -548,28 +443,14 @@ export default function CourseDetails() {
                             <FormHelperText>{`${wordCount}/100`}</FormHelperText>
                         </Grid>
                     </Grid>
-                    <Grid
-                        container
-                        item
-                        alignItems="center"
-                        spacing={1}
-                        style={{ marginTop: '1em' }}
-                    >
+                    <Grid container item alignItems="center" spacing={1} style={{ marginTop: '1em' }}>
                         <Grid item>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={handleSubmit}
-                            >
+                            <Button variant="contained" color="primary" onClick={handleSubmit}>
                                 CREATE
                             </Button>
                         </Grid>
                         <Grid item>
-                            <Button
-                                variant="outlined"
-                                color="primary"
-                                onClick={handleCancel}
-                            >
+                            <Button variant="outlined" color="primary" onClick={handleCancel}>
                                 BACK
                             </Button>
                         </Grid>
@@ -583,11 +464,7 @@ export default function CourseDetails() {
                 message={snackbarMessage}
                 anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                 action={
-                    <IconButton
-                        size="small"
-                        color="inherit"
-                        onClick={() => setOpenSnackbar(false)}
-                    >
+                    <IconButton size="small" color="inherit" onClick={() => setOpenSnackbar(false)}>
                         <CloseIcon fontSize="small" />
                     </IconButton>
                 }
