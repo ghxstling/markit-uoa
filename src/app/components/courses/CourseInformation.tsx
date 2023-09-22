@@ -133,8 +133,6 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
             .then((response) => {
                 if (response.ok) {
                     console.log('Students submitted successfully')
-                    // Clear the checked students after successful submission
-                    setCheckedStudents([])
                 } else {
                     console.log('Failed to submit students')
                 }
