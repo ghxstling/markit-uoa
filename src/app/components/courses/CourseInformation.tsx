@@ -11,6 +11,7 @@ import {
     TableBody,
     TablePagination,
     TableFooter,
+    Checkbox,
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { Card } from '@mui/material'
@@ -33,8 +34,11 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     const [page, setPage] = React.useState(0)
     const [rowsPerPage, setRowsPerPage] = React.useState(5)
     const [courseName, setCourseName] = useState('')
+    const [checked, setChecked] = useState({})
 
     const emptyRows = page >= 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0
+
+    //fetch the applicants
 
     /* useEffect(() => {
         fetchStudentData()
@@ -50,6 +54,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         }
     }*/
 
+    //fetch the course name
     useEffect(() => {
         fetchCourseName()
     }, [])
@@ -59,6 +64,21 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
             const response = await fetch('/api/courses', { method: 'GET' })
             const jsonData = await response.json()
             setCourseName(jsonData.filter((course: any) => course.id == courseId)[0].courseCode)
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
+    }
+
+    //fetch checked students
+    useEffect(() => {
+        fetchCheckedStudents()
+    }, [])
+
+    const fetchCheckedStudents = async () => {
+        try {
+            const response = await fetch('url', { method: 'GET' })
+            const jsonData = await response.json()
+            setChecked(jsonData)
         } catch (error) {
             console.error('Error fetching data:', error)
         }
@@ -104,6 +124,9 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                             <TableCell style={{ textAlign: 'center' }}>
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
                                     Applicant
+                                    <Tooltip title="Click on student name to view student information">
+                                        <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
+                                    </Tooltip>
                                     {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
                                 </div>
                             </TableCell>
@@ -148,6 +171,27 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                             : data
                         ).map((student, index) => (
                             <TableRow key={index}>
+                                <TableCell padding="checkbox">
+                                    <Checkbox 
+                                    checked={checked[student.id] || false}
+                                    onChange={(event) => {
+                                        const isChecked = event.target.checked;
+                                        // Update the local state
+                                        setChecked({ ...checked, [student.name]: isChecked });
+                                        // Send a request to the backend to update the checked status in the database
+                                        fetch('/api/students/update-checked-status', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                            },
+                                            body: JSON.stringify({
+                                                id: student.id,
+                                                isChecked: isChecked,
+                                            }),
+                                        });
+                                    }}
+                                    />
+                                </TableCell>
                                 <TableCell style={{ textAlign: 'center' }}>
                                     <Link href="src/app/dashboard/students/[studentId]/page.tsx" as={`/dashboard/students/${student.id}`} passHref>
                                         <Button>{function that returns name based on user id}</Button>
@@ -164,6 +208,23 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                             </TableRow>
                         ))*/}
 
+                        <TableRow>
+                            <TableCell padding="checkbox">
+                                <Checkbox />
+                            </TableCell>
+                            <TableCell style={{ textAlign: 'center' }}>
+                                <Button>Marwa Yang</Button>
+                            </TableCell>
+                            <TableCell style={{ textAlign: 'center' }}>A</TableCell>
+                            <TableCell style={{ textAlign: 'center' }}>Yes</TableCell>
+                            <TableCell style={{ textAlign: 'center' }}>No</TableCell>
+                            <TableCell style={{ textAlign: 'center' }}>
+                                <Button variant="contained" sx={{ backgroundColor: 'green' }}>
+                                    Qualified
+                                </Button>
+                            </TableCell>
+                        </TableRow>
+
                         {emptyRows > 0 && (
                             <TableRow style={{ height: 69.5 * emptyRows }}>
                                 <TableCell colSpan={6} />
@@ -175,7 +236,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                     <TableRow>
                         <TableCell>
                             <Button variant="contained" sx={{ backgroundColor: '#01579B' }}>
-                                Assign Markers
+                                Assign Marker Hours
                             </Button>
                         </TableCell>
                         <TableCell>
