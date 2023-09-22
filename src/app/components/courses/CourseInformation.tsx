@@ -34,7 +34,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     const [page, setPage] = React.useState(0)
     const [rowsPerPage, setRowsPerPage] = React.useState(5)
     const [courseName, setCourseName] = useState('')
-    const [checked, setChecked] = useState({})
+    const [checkedStudents, setCheckedStudents] = useState<number[]>([])
 
     const emptyRows = page >= 0 ? Math.max(0, (1 + page) * rowsPerPage - studentData.length) : 0
 
@@ -105,6 +105,44 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         setPage(0)
     }
 
+    const handleCheckedStudents = (studentId: number) => {
+        if (checkedStudents.includes(studentId)) {
+            setCheckedStudents(checkedStudents.filter((id) => id !== studentId))
+        } else {
+            setCheckedStudents([...checkedStudents, studentId])
+        }
+    }
+
+    const handleMarkerSubmit = () => {
+        if (checkedStudents.length === 0) {
+            //no students selected error
+            return
+        }
+
+        const payload = {
+            students: checkedStudents,
+        }
+
+        fetch('url for submitting checked students', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        })
+            .then((response) => {
+                if (response.ok) {
+                    console.log('Students submitted successfully')
+                    // Clear the checked students after successful submission
+                    setCheckedStudents([])
+                } else {
+                    console.log('Failed to submit students')
+                }
+            })
+            .catch((error) => {
+                console.log('Error submitting students:', error)
+            })
+    }
     return (
         <>
             <Card sx={{ p: '20px' }}>
@@ -182,24 +220,11 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                             ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             : data
                         ).map((student, index) => (
-                            <TableRow key={index}>
+                            <TableRow key={student.id}>
                                 <TableCell padding="checkbox" style={{ textAlign: 'center' }}>
                                     <Checkbox 
-                                    checked={checked[student.id] || false}
-                                    onChange={(event) => {
-                                        const isChecked = event.target.checked;
-                                        setChecked({ ...checked, [student.name]: isChecked });
-                                        fetch('url to update checked status', {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                            },
-                                            body: JSON.stringify({
-                                                id: student.id,
-                                                isChecked: isChecked,
-                                            }),
-                                        });
-                                    }}
+                                        checked={checkedStudents.includes(student.id) || false}
+                                        onChange={() => handleCheckedStudents(student.id)}
                                     />
                                 </TableCell>
                                 <TableCell style={{ textAlign: 'center' }}>
@@ -244,12 +269,21 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                 </Table>
                 <TableFooter>
                     <TableRow>
-                        <TableCell>
+                        <TableCell sx={{ width: '324px' }} colSpan={2}>
+                            <Button
+                                variant="contained"
+                                sx={{ backgroundColor: '#01579B' }}
+                                onClick={handleMarkerSubmit}
+                            >
+                                Submit Marker Assignment
+                            </Button>
+                        </TableCell>
+                        <TableCell sx={{ width: '324px' }} colSpan={2}>
                             <Button variant="contained" sx={{ backgroundColor: '#01579B' }}>
                                 Assign Marker Hours
                             </Button>
                         </TableCell>
-                        <TableCell>
+                        <TableCell sx={{ width: '600px' }} colSpan={4}>
                             <TablePagination
                                 component="div"
                                 sx={{ width: '100%' }}
