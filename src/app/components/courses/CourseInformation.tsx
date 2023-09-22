@@ -29,30 +29,32 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         //some array thing of applications + student name
     }
 
-    const [data, setData] = useState<StudentData[]>([])
+    const [studentData, setStudentData] = useState<StudentData[]>([])
     const [open, setOpen] = React.useState(false)
     const [page, setPage] = React.useState(0)
     const [rowsPerPage, setRowsPerPage] = React.useState(5)
     const [courseName, setCourseName] = useState('')
     const [checked, setChecked] = useState({})
 
-    const emptyRows = page >= 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0
+    const emptyRows = page >= 0 ? Math.max(0, (1 + page) * rowsPerPage - studentData.length) : 0
 
     //fetch the applicants
 
-    /* useEffect(() => {
+    /*
+    useEffect(() => {
         fetchStudentData()
     }, [])
 
     const fetchStudentData = async () => {
         try {
-            const response = await fetch('/api/', { method: 'GET' })
+            const response = await fetch('url to get applciants', { method: 'GET' })
             const jsonData = await response.json()
-            setData(jsonData)
+            setStudentData(jsonData)
         } catch (error) {
             console.error('Error fetching data:', error)
         }
-    }*/
+    }
+    */
 
     //fetch the course name
     useEffect(() => {
@@ -70,19 +72,21 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     }
 
     //fetch checked students
+    /*
     useEffect(() => {
         fetchCheckedStudents()
     }, [])
 
     const fetchCheckedStudents = async () => {
         try {
-            const response = await fetch('url', { method: 'GET' })
+            const response = await fetch('url to fetch checked students', { method: 'GET' })
             const jsonData = await response.json()
             setChecked(jsonData)
         } catch (error) {
             console.error('Error fetching data:', error)
         }
     }
+    */
 
     const openEdit = () => {
         setOpen(true)
@@ -118,10 +122,18 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                     </Button>
                 </Box>
 
-                <Table style={{ paddingTop: 40 }}>
+                <Table sx={{ mt: 4 }}>
                     <TableHead>
                         <TableRow>
-                            <TableCell style={{ textAlign: 'center' }}>
+                            <TableCell style={{ textAlign: 'center', width: '130px' }}>
+                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                    Select Markers
+                                    <Tooltip title="Click on checkboxes to assign markers">
+                                        <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
+                                    </Tooltip>
+                                </div>
+                            </TableCell>
+                            <TableCell style={{ textAlign: 'center', width: '130px' }}>
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
                                     Applicant
                                     <Tooltip title="Click on student name to view student information">
@@ -130,13 +142,13 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
                                 </div>
                             </TableCell>
-                            <TableCell style={{ textAlign: 'center' }}>
+                            <TableCell style={{ textAlign: 'center', width: '130px' }}>
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
                                     Grade
                                     {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
                                 </div>
                             </TableCell>
-                            <TableCell style={{ textAlign: 'center' }}>
+                            <TableCell style={{ textAlign: 'center', width: '130px' }}>
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
                                     Marked Before
                                     <Tooltip title="Has the student marked the course before">
@@ -145,7 +157,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
                                 </div>
                             </TableCell>
-                            <TableCell style={{ textAlign: 'center' }}>
+                            <TableCell style={{ textAlign: 'center', width: '130px' }}>
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
                                     Overseas
                                     <Tooltip title="Is the student overseas">
@@ -154,7 +166,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
                                 </div>
                             </TableCell>
-                            <TableCell style={{ textAlign: 'center' }}>
+                            <TableCell style={{ textAlign: 'center', width: '130px' }}>
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
                                     Qualification
                                     <Tooltip title="Is the student qualified to mark the course">
@@ -171,15 +183,13 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                             : data
                         ).map((student, index) => (
                             <TableRow key={index}>
-                                <TableCell padding="checkbox">
+                                <TableCell padding="checkbox" style={{ textAlign: 'center' }}>
                                     <Checkbox 
                                     checked={checked[student.id] || false}
                                     onChange={(event) => {
                                         const isChecked = event.target.checked;
-                                        // Update the local state
                                         setChecked({ ...checked, [student.name]: isChecked });
-                                        // Send a request to the backend to update the checked status in the database
-                                        fetch('/api/students/update-checked-status', {
+                                        fetch('url to update checked status', {
                                             method: 'POST',
                                             headers: {
                                                 'Content-Type': 'application/json',
@@ -209,7 +219,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                         ))*/}
 
                         <TableRow>
-                            <TableCell padding="checkbox">
+                            <TableCell padding="checkbox" style={{ textAlign: 'center' }}>
                                 <Checkbox />
                             </TableCell>
                             <TableCell style={{ textAlign: 'center' }}>
@@ -245,7 +255,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                 sx={{ width: '100%' }}
                                 rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
                                 colSpan={3}
-                                count={data.length}
+                                count={studentData.length}
                                 rowsPerPage={rowsPerPage}
                                 page={page}
                                 onPageChange={handleChangePage}
