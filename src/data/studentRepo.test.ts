@@ -28,4 +28,24 @@ describe('StudentRepo', () => {
         const data = await StudentRepo.createStudent(studentInput)
         expect(await StudentRepo.getStudentByUpi(upi)).toMatchObject(data)
     })
+    it('can create a student from email', async () => {
+        const email = 'example@gmail.com'
+        const userInput = { email }
+        const user = await UserRepo.createUser(userInput)
+        const upi = 'abc123'
+        const auid = 123456789
+        const degreeType = DegreeType.Bachelor
+        const degreeYear = 1
+        const studentInput = {
+            preferredEmail: email,
+            upi,
+            auid: auid,
+            degreeType,
+            degreeYear,
+        }
+        const data = await StudentRepo.createStudentFromEmail(email, studentInput)
+        const student = await StudentRepo.getStudentByUpi(upi)
+        expect(student).toMatchObject(data)
+        expect(student?.userId).toBe(user.id)
+    })
 })
