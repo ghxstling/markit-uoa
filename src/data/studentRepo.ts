@@ -1,40 +1,55 @@
-import prisma from "@/libs/prisma";
-import type { Prisma } from "@prisma/client";
+import prisma from '@/libs/prisma'
+import type { Prisma } from '@prisma/client'
+
+// FIXME: Modify to use more safer inputs
 
 export default class StudentRepo {
     static async getAllStudents() {
-        return await prisma.student.findMany();
+        return await prisma.student.findMany()
     }
 
     static async getStudentByUpi(upi: string) {
         return await prisma.student.findUnique({
             where: { upi },
-        });
+        })
+    }
+
+    static async createStudent(data: Prisma.StudentUncheckedCreateInput) {
+        return await prisma.student.create({
+            data,
+        })
+    }
+
+    static async updateStudentDetails(upi: string, data: Prisma.StudentUpdateInput) {
+        return await prisma.student.update({
+            where: { upi },
+            data,
+        })
     }
 
     static async getStudentByUserId(userId: number) {
         return await prisma.student.findUnique({
             where: { userId },
-        });
+        })
     }
 
     static async addStudent(data: Prisma.StudentUncheckedCreateInput) {
         return await prisma.student.create({
             data,
-        });
+        })
     }
 
     static async setCVFilename(upi: string, fileName: string) {
         return await prisma.student.update({
             where: { upi },
-            data: { CV: fileName}
+            data: { CV: fileName },
         })
     }
 
     static async setTranscriptFilename(upi: string, fileName: string) {
         return await prisma.student.update({
             where: { upi },
-            data: { academicTranscript: fileName}
+            data: { academicTranscript: fileName },
         })
     }
 
@@ -42,6 +57,6 @@ export default class StudentRepo {
         return await prisma.student.update({
             where: { upi },
             data,
-        });
+        })
     }
 }
