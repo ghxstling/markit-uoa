@@ -98,7 +98,9 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
                             onBlur={handleApplicationUpdate}
                         >
                             {courseData.map((course) => (
-                                <MenuItem value={course.id}>{course.courseCode}</MenuItem>
+                                <MenuItem key={course.id} value={course.id}>
+                                    {course.courseCode}
+                                </MenuItem>
                             ))}
                         </TextField>
                     </Grid>

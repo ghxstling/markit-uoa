@@ -21,11 +21,15 @@ import React, { useState } from 'react'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import ArchiveIcon from '@mui/icons-material/Archive'
 import NotificationsIcon from '@mui/icons-material/Notifications'
-import SettingsIcon from '@mui/icons-material/Settings'
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
+import CalendarViewDayIcon from '@mui/icons-material/CalendarViewDay'
 import LogoutIcon from '@mui/icons-material/Logout'
 import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { SvgIconTypeMap } from '@mui/material'
+import { OverridableComponent } from '@mui/material/OverridableComponent'
 
 //Styling
 const linkStyle = {
@@ -38,11 +42,19 @@ const IconStyle = {
     fill: 'white',
 }
 
+const icons: Record<string, OverridableComponent<SvgIconTypeMap<{}, 'svg'>>> = {
+    ArchiveIcon: ArchiveIcon,
+    ManageAccountsIcon: ManageAccountsIcon,
+    CreateNewFolderIcon: CreateNewFolderIcon,
+    CalendarViewDayIcon: CalendarViewDayIcon,
+}
+
 //Create Sidebar Content
 let content = (
     username: string,
     email: string,
-    redirectToDashboard: () => void,
+    Links: string[][],
+    // redirectToDashboard: string,
     open: boolean,
     handleClickOpen: () => void,
     handleClose: () => void
@@ -77,21 +89,12 @@ let content = (
                     {email}
                 </ListSubheader>
                 <ListItem disablePadding sx={{ mt: '1.5rem' }}>
-                    <ListItemButton onClick={redirectToDashboard}>
-                        <ListItemIcon>
-                            <DashboardIcon style={IconStyle} />
-                        </ListItemIcon>
-                        <ListItemText>Dashboard</ListItemText>
-                    </ListItemButton>
-                </ListItem>
-
-                <ListItem disablePadding>
-                    <Link href="./" passHref style={linkStyle}>
+                    <Link href="/dashboard" passHref style={linkStyle}>
                         <ListItemButton>
                             <ListItemIcon>
-                                <ArchiveIcon style={IconStyle} />
+                                <DashboardIcon style={IconStyle} />
                             </ListItemIcon>
-                            <ListItemText>My Applications</ListItemText>
+                            <ListItemText>Dashboard</ListItemText>
                         </ListItemButton>
                     </Link>
                 </ListItem>
@@ -107,16 +110,16 @@ let content = (
                     </Link>
                 </ListItem>
 
-                <ListItem disablePadding>
-                    <Link href="./" passHref style={linkStyle}>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <SettingsIcon style={IconStyle} />
-                            </ListItemIcon>
-                            <ListItemText>Settings</ListItemText>
-                        </ListItemButton>
-                    </Link>
-                </ListItem>
+                {Links.map((link, index) => (
+                    <ListItem disablePadding key={index}>
+                        <Link href={link[1]} passHref style={linkStyle}>
+                            <ListItemButton>
+                                <ListItemIcon>{React.createElement(icons[link[2]], { style: IconStyle })}</ListItemIcon>
+                                <ListItemText>{link[0]}</ListItemText>
+                            </ListItemButton>
+                        </Link>
+                    </ListItem>
+                ))}
             </List>
 
             <List>
@@ -134,9 +137,7 @@ let content = (
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <DialogTitle id="alert-dialog-title">
-                        {'Confirm Logout'}
-                    </DialogTitle>
+                    <DialogTitle id="alert-dialog-title">{'Confirm Logout'}</DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
                             Are you sure you want to log out?
@@ -174,21 +175,6 @@ const Sidebar = () => {
     const handleClose = () => {
         setOpen(false)
     }
-    const redirectToDashboard = () => {
-        if (session) {
-            switch (session.role) {
-                case 'coordinator':
-                    router.push('/coordinatorDashboard')
-                    break
-                case 'supervisor':
-                    router.push('/courseSupervisorHomepage')
-                    break
-                default:
-                    router.push('/studentHomepage')
-                    break
-            }
-        }
-    }
 
     let sidebarContent
 
@@ -199,23 +185,45 @@ const Sidebar = () => {
             session.user.name.slice(session.user.name.lastIndexOf(' '))[1] +
             '.'
         const email: string = session.user.email
-        sidebarContent = content(
-            name,
-            email,
-            redirectToDashboard,
-            open,
-            handleClickOpen,
-            handleClose
-        )
+        console.log(session.role)
+        switch (session.role) {
+            case 'coordinator':
+                sidebarContent = content(
+                    name,
+                    email,
+                    [
+                        ['Create New Course', '/dashboard/courses', 'CreateNewFolderIcon'],
+                        ['View All Courses', '/dashboard/viewAllCoursespage', 'CalendarViewDayIcon'],
+                        ['Manage User Roles', '/dashboard/manageUsers', 'ManageAccountsIcon'],
+                    ],
+                    open,
+                    handleClickOpen,
+                    handleClose
+                )
+                break
+            case 'supervisor':
+                sidebarContent = content(
+                    name,
+                    email,
+                    [['Create New Course', '/dashboard/courses', 'CreateNewFolderIcon']],
+                    open,
+                    handleClickOpen,
+                    handleClose
+                )
+                break
+            case 'student':
+                sidebarContent = content(
+                    name,
+                    email,
+                    [['Apply Now', '/dashboard/Application', 'ArchiveIcon']],
+                    open,
+                    handleClickOpen,
+                    handleClose
+                )
+                break
+        }
     } else {
-        sidebarContent = content(
-            '',
-            '',
-            redirectToDashboard,
-            open,
-            handleClickOpen,
-            handleClose
-        )
+        sidebarContent = content('', '', [[]], open, handleClickOpen, handleClose)
     }
 
     return (

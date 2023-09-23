@@ -54,8 +54,8 @@ model Student {
   maxWorkHours          Int           @default(5) //minimum should be 5hrs
   otherContracts        Boolean       @default(false) //refers to whether the student has other marker, tutor contracts
   otherContractsDetails String?
-  CV                    String? // Store the file resource URI from AWS S3 into CV field 
-  academicTranscript    String? // Store the file resource URI from AWS S3 into academicTranscript field 
+  CV                    String? // File name of CV
+  academicTranscript    String? // File name of Academic Transcript
   // one to many with Application
   applications          Application[]
 }
