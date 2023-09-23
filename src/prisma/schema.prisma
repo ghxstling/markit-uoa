@@ -69,7 +69,6 @@ model Application {
   // one to one with Course
   course                  Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId                Int     @unique
-  preferredEmail          String
   hasCompletedCourse      Boolean
   previouslyAchievedGrade String? // needed if hasCompletedCourse is true
   hasTutoredCourse        Boolean

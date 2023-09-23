@@ -39,7 +39,6 @@ const createApplicationInput = (studentId: number, courseId: number): Prisma.App
         applicationStatus: 'pending',
         studentId,
         courseId,
-        preferredEmail: 'example@email.com',
         hasCompletedCourse: true,
         previouslyAchievedGrade: 'B+',
         hasTutoredCourse: true,
