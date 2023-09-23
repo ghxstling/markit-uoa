@@ -39,11 +39,12 @@ export async function GET(req: NextRequest, { params }: Params) {
 // PATCH /api/courses/{courseId}
 export async function PATCH(req: NextRequest, { params }: Params) {
     const token = await getToken({ req })
-    if (token!.role != Role.Supervisor) {
+    if (token!.role != Role.Supervisor &&
+        token!.role != Role.Coordinator) {
         return new NextResponse(
             JSON.stringify({
                 success: false,
-                message: 'Only supervisors can update courses',
+                message: 'Only supervisors and coordinators can update courses',
             }),
             { status: 403, headers: { 'content-type': 'application/json' } }
         )
@@ -65,7 +66,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         )
     }
 
-    // Get updated course information from supervisor
+    // Get updated course information from supervisor/coordinator
     const {
         courseCode,
         courseDescription,

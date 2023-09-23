@@ -10,9 +10,22 @@ const DebugPage = () => {
     const [file, setFile] = useState<File>()
 
     const makeApiCall = async () => {
+        // Use this variable for sending relevant data to API
+        const formData = {
+            courseCode: 'updated test course',
+            courseDescription: 'fngdsljkghsdfghjg this is a test course for feature/kan-120',
+            numOfEstimatedStudents: 100,
+            numOfEnrolledStudents: 10,
+            markerHours: 10,
+            markerResponsibilities: 'dont just mark shit',
+            needMarkers: false,
+            markersNeeded: 10,
+            semester: '2030S1',
+        }
+
         try {
             const formData = {
-                upi: "TEST123",
+                upi: 'TEST123',
                 AUID: 123456789,
                 currentlyOverseas: false,
                 citizenOrPermanentResident: true,
@@ -68,11 +81,8 @@ const DebugPage = () => {
                 </pre>
             )}
             <form onSubmit={uploadFile}>
-                <input
-                    type="file"
-                    name="file"
-                    onChange={(e) => setFile(e.target.files?.[0])}
-                /><input type="submit" value="Upload to Server" />
+                <input type="file" name="file" onChange={(e) => setFile(e.target.files?.[0])} />
+                <input type="submit" value="Upload to Server" />
             </form>
         </div>
     )
