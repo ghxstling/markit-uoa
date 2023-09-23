@@ -9,6 +9,7 @@ import React, { useState } from 'react'
 import validator from 'validator'
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
 import CoursePreferences from '@/app/components/ApplicationForms/CoursePreferences'
+import { useSession } from 'next-auth/react'
 
 const steps = ['Personal Details', 'Employment Details', 'CV and Academic Transcript Upload', 'Course Preferences']
 
@@ -38,11 +39,12 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props,
 
 const Application = () => {
     //initialise use states
+    const { data: session } = useSession()
     const [activeStep, setActiveStep] = useState(0)
     const [formValues, setFormValues] = useState<IFormValues>({
         name: '',
         upi: '',
-        email: '',
+        email: session?.user?.email ?? '',
         AUID: '',
         currentlyOverseas: 'No',
         citizenOrPermanentResident: 'Yes',
