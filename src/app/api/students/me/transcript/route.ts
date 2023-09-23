@@ -3,12 +3,11 @@ import StudentRepo from '@/data/studentRepo'
 import UserRepo from '@/data/userRepo'
 import { getToken } from 'next-auth/jwt'
 import { Role } from '@/models/role'
-import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3"
+import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
 import s3Client from '@/libs/s3client'
 
 // GET /api/students/me/transcript
 export async function GET(req: NextRequest) {
-
     // Check user token for authorised credentials
     const token = await getToken({ req })
     if (token!.role != Role.Student) {
@@ -41,54 +40,61 @@ export async function GET(req: NextRequest) {
 
     // If no file name exists under student, return 404 NOT FOUND
     if (!fileName) {
-        return NextResponse.json({
-            success: false,
-            status: 404,
-            statusText: 'Transcript file not found'
-        }, { status: 404 })
+        return NextResponse.json(
+            {
+                success: false,
+                status: 404,
+                statusText: 'Transcript file not found',
+            },
+            { status: 404 }
+        )
     }
 
     // Construct the command object for retrieving the file from the bucket
     const command = new GetObjectCommand({
-        Bucket: "student-academictranscripts",
-        Key: student.upi+"-"+fileName,
-        ResponseContentType: "application/pdf",
+        Bucket: 'student-academictranscripts',
+        Key: student.upi + '-' + fileName,
+        ResponseContentType: 'application/pdf',
     })
 
     // Attempt to retrieve the file from the bucket
     try {
-        console.log("Retrieving file " + fileName + " from student " + student.upi + "...")
+        console.log('Retrieving file ' + fileName + ' from student ' + student.upi + '...')
         const response = await s3Client.send(command)
 
         // If successful, return the file with status 200 OK
+        const contentType = response.ContentType
         const bytes = await response.Body?.transformToByteArray()
-        const res = new NextResponse(
-            new File([bytes!], fileName, { type: "application/pdf" }),
-            {
-                status: 200,
-                statusText: 'File ' + fileName + ' successfuly retrieved from Bucket student-academictranscripts for student ' + student.upi,
-                headers: {
-                    'Content-Type': 'application/pdf',
-                }
-            }
-        )
-        console.log("Success! Response body:\n" + res.body)
-        return res
-    }
-    // If unsuccessful, return 400 BAD REQUEST
-    catch (err) {
+        // const res = new NextResponse(
+        //     new File([bytes!], fileName, { type: "application/pdf" }),
+        //     {
+        //         status: 200,
+        //         statusText: 'File ' + fileName + ' successfuly retrieved from Bucket student-academictranscripts for student ' + student.upi,
+        //         headers: {
+        //             'Content-Type': 'application/pdf',
+        //         }
+        //     }
+        // )
+        // console.log("Success! Response body:\n" + res.body)
+        const outResponse = new NextResponse(bytes)
+        outResponse.headers.set('Content-Type', contentType!)
+        return outResponse
+    } catch (err) {
+        // If unsuccessful, return 400 BAD REQUEST
         console.error(err)
-        return NextResponse.json({
-            success: false,
-            status: 400,
-            statusText: err
-        }, { status: 400 })
+        return NextResponse.json(
+            {
+                success: false,
+                status: 400,
+                statusText: err,
+            },
+            { status: 400 }
+        )
     }
 }
 
 // POST /api/students/me/transcript
 export async function POST(req: NextRequest) {
-
     // Check user token for authorised credentials
     const token = await getToken({ req })
     if (token!.role != Role.Student) {
@@ -122,11 +128,14 @@ export async function POST(req: NextRequest) {
 
     // If file cannot be found, return 400 BAD REQUEST
     if (!file) {
-        return NextResponse.json({
-            success: false,
-            status: 400,
-            statusText: "Error while fetching the file"
-        }, { status: 400 })
+        return NextResponse.json(
+            {
+                success: false,
+                status: 400,
+                statusText: 'Error while fetching the file',
+            },
+            { status: 400 }
+        )
     }
 
     // Convert PDF file to readable bytes
@@ -136,34 +145,38 @@ export async function POST(req: NextRequest) {
     // Constuct the command object for sending the file to the bucket
     const fileName = file.name
     const command = new PutObjectCommand({
-        Bucket: "student-academictranscripts",
-        Key: student.upi + "-" + fileName,
+        Bucket: 'student-academictranscripts',
+        Key: student.upi + '-' + fileName,
         Body: buffer,
-        ContentType: "application/pdf",
+        ContentType: 'application/pdf',
     })
 
     // Attempt to send the file to the bucket
     try {
-        console.log("Sending file " + file.name + " for student " + student.upi + "...")
+        console.log('Sending file ' + file.name + ' for student ' + student.upi + '...')
         const response = await s3Client.send(command)
 
         // If successful, store the file name under the student object in database
-        console.log("Success! Response:\n" + response)
+        console.log('Success! Response:\n' + response)
         const updatedStudent = await StudentRepo.setTranscriptFilename(student.upi, fileName)
 
         // Return the updated student with status 200 OK
-        return NextResponse.json({ updatedStudent, response }, {
-            status: 200,
-            statusText: 'File ' + fileName + ' successfuly sent to Bucket student-cvs for student ' + student.upi,
-        })
-    }
-
-    // If unsuccessful, return 400 BAD REQUEST
-    catch (err) {
-        return NextResponse.json({
-            success: false,
-            status: 400,
-            statusText: err
-        }, { status: 400 })
+        return NextResponse.json(
+            { updatedStudent, response },
+            {
+                status: 200,
+                statusText: 'File ' + fileName + ' successfuly sent to Bucket student-cvs for student ' + student.upi,
+            }
+        )
+    } catch (err) {
+        // If unsuccessful, return 400 BAD REQUEST
+        return NextResponse.json(
+            {
+                success: false,
+                status: 400,
+                statusText: err,
+            },
+            { status: 400 }
+        )
     }
 }
