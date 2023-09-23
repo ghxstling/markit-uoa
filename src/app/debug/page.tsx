@@ -3,6 +3,7 @@
 'use client'
 import { useState } from 'react'
 import { UserStatus } from '../components/UserStatus'
+import { DegreeType } from '@/models/degreeType'
 
 const DebugPage = () => {
     const [apiResponse, setApiResponse] = useState(null)
@@ -10,40 +11,29 @@ const DebugPage = () => {
     const [file, setFile] = useState<File>()
 
     const makeApiCall = async () => {
-        // Use this variable for sending relevant data to API
-        const formData = {
-            courseCode: 'updated test course',
-            courseDescription: 'fngdsljkghsdfghjg this is a test course for feature/kan-120',
-            numOfEstimatedStudents: 100,
-            numOfEnrolledStudents: 10,
-            markerHours: 10,
-            markerResponsibilities: 'dont just mark shit',
-            needMarkers: false,
-            markersNeeded: 10,
-            semester: '2030S1',
-        }
-
         try {
-            const formData = {
-                upi: 'TEST123',
-                AUID: 123456789,
-                currentlyOverseas: false,
-                citizenOrPermanentResident: true,
-                workVisa: true,
-                degree: 'Masters',
-                degreeYears: 1,
-                workHours: 10,
-            }
-            const response = await fetch('/api/students/me/transcript', {
-                method: 'GET',
-                // headers: {
-                //     'Content-Type': 'application/json',
-                // },
-                // body: JSON.stringify(formData)
+            const upi = 'abc123'
+            const auid = 123456789
+            const degreeType = DegreeType.Bachelor
+            const degreeYear = 1
+            const res = await fetch('/api/students', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    preferredEmail: 'example@email.com',
+                    upi,
+                    auid: auid,
+                    overseas: false,
+                    degreeType,
+                    degreeYear,
+                    residencyStatus: true,
+                    validWorkVisa: true,
+                    maxWorkHours: 20,
+                }),
             })
-
-            const data = await response.json()
-            setApiResponse(data)
+            setApiResponse(await res.json())
             setError(null)
         } catch (err) {
             setError('Error fetching data from the API')

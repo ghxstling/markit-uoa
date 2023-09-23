@@ -41,8 +41,6 @@ export const courseSchema = z
 
 export const studentSchema = z
     .object({
-        user: z.any(),
-        userId: z.number().int(),
         upi: z.string().toLowerCase().nonempty(),
         auid: z
             .number()
@@ -53,7 +51,7 @@ export const studentSchema = z
         overseas: z.boolean(),
         residencyStatus: z.boolean(),
         validWorkVisa: z.boolean(),
-        degreeType: z.string().nonempty(),
+        degreeType: z.nativeEnum(DegreeType),
         degreeYear: z.number().int().positive({ message: 'Years into study should be greater than 0' }),
         maxWorkHours: z
             .number()
@@ -62,6 +60,3 @@ export const studentSchema = z
             .positive({ message: 'Minimum work hours should be at least 5 hours' }),
     })
     .required()
-    .refine((data) => data.degreeType in DegreeType, {
-        message: 'Internal error: name of degree does not match any DegreeType enums',
-    })
