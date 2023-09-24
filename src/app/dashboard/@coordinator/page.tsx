@@ -19,7 +19,7 @@ export default function CoordinatorDashboard() {
     }
 
     return (
-        <Box sx={{ mt: '100px', ml: '120px' }}>
+        <Box sx={{ mt: '50px', ml: '120px' }}>
             <Typography sx={{ mt: '28px', mb: '53px' }} variant="h4" fontWeight="bold">
                 Welcome, {firstName}
             </Typography>

@@ -14,7 +14,7 @@ export default function AllCourseView() {
             <Stack>
                 <Box
                     sx={{
-                        mt: '100px',
+                        mt: '50px',
                         ml: { sm: '50px', md: '100px', lg: '150px', xl: '200px', xxl: '250px', xxxl: '300px' },
                     }}
                 >
