@@ -24,8 +24,14 @@ export default class StudentRepo {
         const user = await prisma.user.findUnique({
             where: { email },
         })
-        return await prisma.student.create({
-            data: {
+        return await prisma.student.upsert({
+            where: {
+                userId: user!.id,
+            },
+            update: {
+                ...data,
+            },
+            create: {
                 ...data,
                 userId: user!.id,
             },
@@ -72,3 +78,5 @@ export default class StudentRepo {
         })
     }
 }
+
+//TODO: application Id to student
