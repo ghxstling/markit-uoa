@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react'
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-export default function dashboardLayout(props: {
+export default function DashboardLayout(props: {
     children: React.ReactNode
     coordinator: React.ReactNode
     supervisor: React.ReactNode
