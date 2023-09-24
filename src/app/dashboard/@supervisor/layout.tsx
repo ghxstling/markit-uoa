@@ -9,7 +9,7 @@ export default function SupervisorDashboardLayout({ children }: { children: Reac
                     <Box sx={{ width: '15rem' }}>
                         <Sidebar />
                     </Box>
-                    <Box sx={{ mt: '100px', m: '120px' }}>{children}</Box>
+                    <Box sx={{ mt: '100px', ml: '120px' }}>{children}</Box>
                 </Stack>
             </body>
         </html>
