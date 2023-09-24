@@ -19,3 +19,11 @@ export const courseSchema = z.object({
         .int().nonnegative(),
     semester: z.string(),
 }).required()
+
+export const emailSchema = z.object({
+    to: z.array(z.string().email()).nonempty(),
+    from: z.string().email().nonempty(),
+    subject: z.string().nonempty(),
+    text: z.string().nonempty(),
+    html: z.string(),
+}).required()
