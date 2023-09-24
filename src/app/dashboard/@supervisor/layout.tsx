@@ -1,7 +1,7 @@
 import { Box, Stack } from '@mui/material'
 import Sidebar from '@/app/components/Sidebar'
 
-export default function supervisorDashboardLayout({ children }: { children: React.ReactNode }) {
+export default function SupervisorDashboardLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en">
             <body>
@@ -9,7 +9,7 @@ export default function supervisorDashboardLayout({ children }: { children: Reac
                     <Box sx={{ width: '15rem' }}>
                         <Sidebar />
                     </Box>
-                    <Box sx={{ mt: '100px', ml: '120px' }}>{children}</Box>
+                    <Box sx={{ mt: '100px', m: '120px' }}>{children}</Box>
                 </Stack>
             </body>
         </html>
