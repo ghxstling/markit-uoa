@@ -17,7 +17,7 @@ import {
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 
-const studentHomepage = () => {
+const StudentHomepage = () => {
     //initialise use states
     const [rows, rowChange] = useState([])
     const [page, setPage] = useState(0)
@@ -65,8 +65,7 @@ const studentHomepage = () => {
     }
 
     return (
-        <>
-            {/* <Box sx={{ mt: '50px', ml: '96px' }}> */}
+        <Box sx={{ mt: '100px', ml: '120px' }}>
             <Typography sx={{ mt: '28px' }} variant="h4" fontWeight="bold">
                 Welcome, {firstName}
             </Typography>
@@ -125,9 +124,8 @@ const studentHomepage = () => {
                     onRowsPerPageChange={handleRowsPerPage}
                 ></TablePagination>
             </Card>
-            {/* </Box> */}
-        </>
+        </Box>
     )
 }
 
-export default studentHomepage
+export default StudentHomepage
