@@ -26,7 +26,6 @@ export async function GET(req: NextRequest) {
 }
 
 // POST /api/students/ (For students to submit their details)
-// TODO: modify to support upsert
 export async function POST(req: NextRequest) {
     const token = await getToken({ req })
     if (token!.role != Role.Student) {
