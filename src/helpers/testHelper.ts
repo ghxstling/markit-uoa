@@ -1,6 +1,13 @@
 import prisma from '@/libs/prisma'
 import { DegreeType } from '@/models/degreeType'
 import { Prisma, User } from '@prisma/client'
+import { randomBytes } from 'crypto';
+
+const generateRandomNumber = (n: number): number => {
+    const min = Math.pow(10, n - 1);
+    const max = Math.pow(10, n) - 1;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};
 
 export const resetDatabase = async () => {
     const deleteCourse = prisma.course.deleteMany()
@@ -24,12 +31,12 @@ export const courseInputHelper = (courseCode: string, courseDescription: string)
     }
 }
 
-export const studentInputHelper = (user: User) => {
+export const studentInputHelper = (user: User): Prisma.StudentUncheckedCreateInput => {
     return {
         userId: user.id,
         preferredEmail: user.email,
-        upi: 'abc123',
-        auid: 123456789,
+        upi: randomBytes(6).toString('hex').slice(0, 6),
+        auid: generateRandomNumber(9),
         degreeType: DegreeType.Bachelor,
         degreeYear: 1,
     }
