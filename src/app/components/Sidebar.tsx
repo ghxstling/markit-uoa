@@ -110,8 +110,8 @@ let content = (
                     </Link>
                 </ListItem>
 
-                {Links.map((link) => (
-                    <ListItem disablePadding>
+                {Links.map((link, index) => (
+                    <ListItem disablePadding key={index}>
                         <Link href={link[1]} passHref style={linkStyle}>
                             <ListItemButton>
                                 <ListItemIcon>{React.createElement(icons[link[2]], { style: IconStyle })}</ListItemIcon>
