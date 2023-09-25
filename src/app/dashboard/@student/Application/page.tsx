@@ -9,6 +9,8 @@ import React, { useState } from 'react'
 import validator from 'validator'
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
 import CoursePreferences from '@/app/components/ApplicationForms/CoursePreferences'
+import { useSession } from 'next-auth/react'
+import type { Prisma } from '@prisma/client'
 import CustomTheme from '@/app/CustomTheme'
 import { ThemeProvider } from '@mui/material/styles'
 import Sidebar from '@/app/components/Sidebar'
@@ -39,20 +41,47 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props,
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
 })
 
+const mapFormValuesToStudentDetails = (formValues: IFormValues): Prisma.StudentUncheckedCreateWithoutUserInput => {
+    return {
+        preferredEmail: formValues.email,
+        upi: formValues.upi,
+        auid: Number(formValues.AUID),
+        overseas: formValues.currentlyOverseas === 'Yes',
+        residencyStatus: formValues.citizenOrPermanentResident === 'Yes',
+        validWorkVisa: formValues.workVisa === 'Yes',
+        degreeType: formValues.degree,
+        degreeYear: formValues.degreeYears,
+        maxWorkHours: formValues.workHours,
+    }
+}
+
+const postStudentDetails = async (formValues: IFormValues) => {
+    const studentDetails = mapFormValuesToStudentDetails(formValues)
+    const res = await fetch('/api/students', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(studentDetails),
+    })
+    return res
+}
+
 const Application = () => {
     //initialise use states
+    const { data: session } = useSession()
     const [activeStep, setActiveStep] = useState(0)
     const [formValues, setFormValues] = useState<IFormValues>({
         name: '',
         upi: '',
-        email: '',
+        email: session?.user?.email ?? '',
         AUID: '',
         currentlyOverseas: 'No',
         citizenOrPermanentResident: 'Yes',
         workVisa: 'Yes',
         degree: '',
         degreeYears: 1,
-        workHours: 1,
+        workHours: 5,
         coursePreferences: [],
     })
     const [hasPreferences, setHasPreferences] = useState(true)
@@ -61,6 +90,7 @@ const Application = () => {
 
     const [snackbarMessage, setSnackbarMessage] = useState('Please enter 9 digits for your student ID')
     const [openSnackBar, setOpenSnackBar] = useState(false)
+    const [openSnackBarSuccess, setOpenSnackBarSuccess] = useState(false)
 
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
@@ -70,7 +100,13 @@ const Application = () => {
         setOpenSnackBar(false)
     }
 
-    const handleNext = () => {
+    const handleCloseSuccess = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return
+        }
+        setOpenSnackBarSuccess(false)
+    }
+    const handleNext = async () => {
         //if case = 0, check id and email
         if (activeStep === 0) {
             if (validator.isEmail(formValues.email) === false) {
@@ -84,10 +120,18 @@ const Application = () => {
             }
         }
 
-        //if activeStep === 1 check Degree is entered
+        // if activeStep === 1 check Degree is entered
         else if (activeStep === 1) {
             if (formValues.degree === '') {
                 setSnackbarMessage('Please select a degree type')
+                setOpenSnackBar(true)
+                return
+            }
+            const res = await postStudentDetails(formValues)
+            if (res.ok) {
+                setOpenSnackBarSuccess(true)
+            } else {
+                setSnackbarMessage('Error submitting student details, please try again')
                 setOpenSnackBar(true)
                 return
             }
@@ -178,7 +222,11 @@ const Application = () => {
                                                 Back
                                             </Button>
                                         )}
-                                        {activeStep === steps.length - 1 ? (
+                                        {activeStep === 1 ? (
+                                            <Button variant="contained" onClick={handleNext} sx={{ mt: 3, ml: 1 }}>
+                                                Submit student details
+                                            </Button>
+                                        ) : activeStep === steps.length - 1 ? (
                                             formValues.coursePreferences.length === 0 ? (
                                                 <Button
                                                     variant="contained"
@@ -210,6 +258,19 @@ const Application = () => {
                                     >
                                         <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
                                             {snackbarMessage}
+                                        </Alert>
+                                    </Snackbar>
+                                    <Snackbar
+                                        anchorOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'right',
+                                        }}
+                                        open={openSnackBarSuccess}
+                                        autoHideDuration={6000}
+                                        onClose={handleCloseSuccess}
+                                    >
+                                        <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
+                                            Student submitted successfully!
                                         </Alert>
                                     </Snackbar>
                                 </>

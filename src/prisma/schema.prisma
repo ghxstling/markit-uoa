@@ -24,6 +24,8 @@ model Course {
   modifiedAt             DateTime     @default(now()) @updatedAt
   // one to one with Application
   application            Application?
+  // TODO: add course director (name, email)
+  // TODO: add course coordinator (name, email)
 }
 
 model User {
@@ -35,41 +37,38 @@ model User {
   student Student?
 }
 
-// TODO: add course director (name, email)
-// TODO: add course coordinator (name, email)
-
 model Student {
-  id                    Int          @id @default(autoincrement())
+  id                    Int           @id @default(autoincrement())
   // one to one with User
-  user                  User         @relation(fields: [userId], references: [id])
-  userId                Int          @unique
-  upi                   String       @unique // ABCD123
-  auid                  Int          @unique // 111222333
-  overseas              Boolean      @default(false)
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                Int           @unique
+  preferredEmail        String
+  upi                   String        @unique // ABCD123
+  auid                  Int           @unique // 111222333
+  overseas              Boolean       @default(false)
   overseasStatus        String?
-  residencyStatus       Boolean      @default(true) //true for PR and Citizen, false for international
-  validWorkVisa         Boolean?     @default(true)
+  residencyStatus       Boolean       @default(true) //true for PR and Citizen, false for international
+  validWorkVisa         Boolean?      @default(true)
   degreeType            String // Refer to the degreeType enum in models/degreeType.ts
   degreeYear            Int
-  maxWorkHours          Int          @default(5) //minimum should be 5hrs
-  otherContracts        Boolean      @default(false) //refers to whether the student has other marker, tutor contracts
+  maxWorkHours          Int           @default(5) //minimum should be 5hrs
+  otherContracts        Boolean       @default(false) //refers to whether the student has other marker, tutor contracts
   otherContractsDetails String?
-  CV                    String?      // Store the file resource URI from AWS S3 into CV field 
-  academicTranscript    String?      // Store the file resource URI from AWS S3 into academicTranscript field 
+  CV                    String? // File name of CV
+  academicTranscript    String? // File name of Academic Transcript
   // one to many with Application
   applications          Application[]
 }
 
 model Application {
-  id                      Int         @id @default(autoincrement())
-  applicationStatus       String      @default("pending") // refer to the applicationStatus enum in models/applicationStatus.ts
+  id                      Int     @id @default(autoincrement())
+  applicationStatus       String  @default("pending") // refer to the applicationStatus enum in models/applicationStatus.ts
   // one to one with Student
-  student                 Student     @relation(fields: [studentId], references: [id])
-  studentId               Int         @unique
+  student                 Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId               Int     @unique
   // one to one with Course
-  course                  Course      @relation(fields: [courseId], references: [id])
-  courseId                Int         @unique
-  preferredEmail          String
+  course                  Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId                Int     @unique
   hasCompletedCourse      Boolean
   previouslyAchievedGrade String? // needed if hasCompletedCourse is true
   hasTutoredCourse        Boolean

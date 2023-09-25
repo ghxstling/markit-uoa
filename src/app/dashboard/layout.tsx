@@ -3,8 +3,6 @@
 import { Box, Stack } from '@mui/material'
 import Sidebar from '../components/Sidebar'
 import { useSession } from 'next-auth/react'
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 
 export default function DashboardLayout(props: {
     children: React.ReactNode

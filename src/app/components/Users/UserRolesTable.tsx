@@ -33,12 +33,7 @@ export default function UserRolesTable() {
     const [sortConfig, setSortConfig] = useState<{ key: keyof User; direction: 'ascending' | 'descending' } | null>(
         null
     )
-
-    const isClient = typeof window !== 'undefined'
-
-    if (!isClient) {
-        return null
-    }
+    const [searchTerm, setSearchTerm] = useState('')
 
     useEffect(() => {
         async function fetchData() {
@@ -53,6 +48,12 @@ export default function UserRolesTable() {
 
         fetchData()
     }, [])
+
+    const isClient = typeof window !== 'undefined'
+
+    if (!isClient) {
+        return null
+    }
 
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setPage(newPage)
@@ -107,8 +108,6 @@ export default function UserRolesTable() {
         }
         return 0
     })
-
-    const [searchTerm, setSearchTerm] = useState('')
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value)
