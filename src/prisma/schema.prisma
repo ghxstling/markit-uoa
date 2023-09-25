@@ -22,8 +22,8 @@ model Course {
   markersNeeded          Int
   semester               String
   modifiedAt             DateTime     @default(now()) @updatedAt
-  // one to one with Application
-  application            Application?
+  // one to many with Application
+  applications            Application[]
   // TODO: add course director (name, email)
   // TODO: add course coordinator (name, email)
 }
@@ -63,16 +63,20 @@ model Student {
 model Application {
   id                      Int     @id @default(autoincrement())
   applicationStatus       String  @default("pending") // refer to the applicationStatus enum in models/applicationStatus.ts
-  // one to one with Student
+  allocatedHours          Int     @default(5) // needed if applicationStatus is 'accepted'
+  preferenceId            Int
+  // many to one with Student
   student                 Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  studentId               Int     @unique
-  // one to one with Course
+  studentId               Int     
+  // many to one with Course
   course                  Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId                Int     @unique
+  courseId                Int     
   hasCompletedCourse      Boolean
   previouslyAchievedGrade String? // needed if hasCompletedCourse is true
   hasTutoredCourse        Boolean
   hasMarkedCourse         Boolean
   notTakenExplanation     String? // needed if hasCompletedCourse is false
   equivalentQualification String? // needed if hasTutoredCourse && hasMarkedCourse is false
+
+  @@unique([studentId, courseId], name: "student_application_for_course")
 }
