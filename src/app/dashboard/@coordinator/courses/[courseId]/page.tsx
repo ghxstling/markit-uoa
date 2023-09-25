@@ -1,4 +1,5 @@
 'use client'
+
 import EditCourseDetails from '@/app/components/courses/EditCourseDetails'
 import Sidebar from '../../../../components/Sidebar'
 import DynamicBreadcrumb from '@/app/components/DynamicBreadcrumb'
