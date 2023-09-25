@@ -8,6 +8,9 @@ import Button from '@mui/material/Button'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { Box } from '@mui/material'
+import Sidebar from '@/app/components/Sidebar'
+import CustomTheme from '@/app/CustomTheme'
+import { ThemeProvider } from '@mui/material/styles'
 
 export default function CoordinatorDashboard() {
     const { data: session } = useSession()
@@ -19,25 +22,45 @@ export default function CoordinatorDashboard() {
     }
 
     return (
-        <Box sx={{ mt: '50px', ml: '120px' }}>
-            <Typography sx={{ mt: '28px', mb: '53px' }} variant="h4" fontWeight="bold">
-                Welcome, {firstName}
-            </Typography>
-            <Link href="/dashboard/viewAllCoursespage" passHref>
-                <Button
-                    variant="contained"
+        <ThemeProvider theme={CustomTheme}>
+            <Sidebar />
+            <Box
+                sx={{
+                    height: '100vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'safe center',
+                    ml: '240px',
+                }}
+            >
+                <Box
                     sx={{
-                        backgroundColor: '#00467F',
+                        mt: '20px',
+                        ml: { sm: '60px', lg: '120px' },
+                        mr: { sm: '25px', lg: '50px' },
+                        mb: '20px',
                     }}
                 >
-                    VIEW ALL COURSES
-                </Button>
-            </Link>
-            <Typography variant="h5" fontWeight="bold" sx={{ mt: '58px' }}>
-                Recent Activity
-            </Typography>
-            <Divider variant="fullWidth" sx={{ mb: '40px' }} />
-            <RecentActivityTable />
-        </Box>
+                    <Typography sx={{ mt: '28px', mb: '53px' }} variant="h4" fontWeight="bold">
+                        Welcome, {firstName}
+                    </Typography>
+                    <Link href="/dashboard/viewAllCoursespage" passHref>
+                        <Button
+                            variant="contained"
+                            sx={{
+                                backgroundColor: '#00467F',
+                            }}
+                        >
+                            VIEW ALL COURSES
+                        </Button>
+                    </Link>
+                    <Typography variant="h5" fontWeight="bold" sx={{ mt: '58px' }}>
+                        Recent Activity
+                    </Typography>
+                    <Divider variant="fullWidth" sx={{ mb: '40px' }} />
+                    <RecentActivityTable />
+                </Box>
+            </Box>
+        </ThemeProvider>
     )
 }
