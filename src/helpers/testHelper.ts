@@ -1,5 +1,6 @@
 import prisma from '@/libs/prisma'
-import { Prisma } from '@prisma/client'
+import { DegreeType } from '@/models/degreeType'
+import { Prisma, User } from '@prisma/client'
 
 export const resetDatabase = async () => {
     const deleteCourse = prisma.course.deleteMany()
@@ -20,5 +21,16 @@ export const courseInputHelper = (courseCode: string, courseDescription: string)
         markersNeeded: 9,
         semester: '2022S1',
         markerResponsibilities: 'Marker responsibilities',
+    }
+}
+
+export const studentInputHelper = (user: User) => {
+    return {
+        userId: user.id,
+        preferredEmail: user.email,
+        upi: 'abc123',
+        auid: 123456789,
+        degreeType: DegreeType.Bachelor,
+        degreeYear: 1,
     }
 }
