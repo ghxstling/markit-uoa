@@ -1,10 +1,8 @@
 'use client'
 
-import { DegreeType } from '@/models/degreeType';
 import { Box, Divider } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { TabContainer } from 'react-bootstrap';
 
 
 export default function viewStudentInformation(){
