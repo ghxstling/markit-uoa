@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 import { Role } from '@/models/role'
-import sgMail from '@/libs/sgMail'
+import sgMail from '@/app/service/emailService'
 
 // POST /api/mail
 export async function POST(req: NextRequest) {
@@ -25,18 +25,12 @@ export async function POST(req: NextRequest) {
         msg: object = {
             to: array[string],  The recipient(s) of the email
             from: string,       Our verified sender on SendGrid (default: dcho282@aucklanduni.ac.nz)
-            subject: string,    The subject of the email
-            text: string,       The body of the email
-            html: string        [OPTIONAL] Any HTML code to include in the email for formatting
+            // subject: string,    The subject of the email
+            // text: string,       The body of the email
+            html: string        [OPTIONAL] Any HTML code to include in the email for formatting 
         }
         emails: array[objects] = [msg1, msg2, ...]
     */
-    const emails = await req.json()
- 
-    try {
-        const res = sgMail.send(emails)
-    }
-    catch (err) {
+    const data = await req.json()
 
-    }
 }
