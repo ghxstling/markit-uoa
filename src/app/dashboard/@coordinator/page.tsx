@@ -6,12 +6,10 @@ import Stack from '@mui/material/Stack'
 import Divider from '@mui/material/Divider'
 import RecentActivityTable from '@/app/components/RecentActivityTable'
 import Button from '@mui/material/Button'
-import DynamicBreadcrumb from '@/app/components/DynamicBreadcrumb'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { Box } from '@mui/material'
+import { useSession } from 'next-auth/react'
 
-export default function coordinatorDashboard() {
+export default function CoordinatorDashboard() {
     const { data: session } = useSession()
 
     let firstName: string = ''

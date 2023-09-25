@@ -17,7 +17,7 @@ import {
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 
-const studentHomepage = () => {
+const StudentHomepage = () => {
     //initialise use states
     const [rows, rowChange] = useState([])
     const [page, setPage] = useState(0)
@@ -132,4 +132,4 @@ const studentHomepage = () => {
     )
 }
 
-export default studentHomepage
+export default StudentHomepage
