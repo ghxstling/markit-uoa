@@ -314,7 +314,7 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
     }
 
     function handleCancel() {
-        router.back() // this navigates the user to the previous page in history
+        router.push('/dashboard')
     }
 
     return (

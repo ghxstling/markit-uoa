@@ -183,6 +183,22 @@ export default function CourseDetails() {
             setSnackbarMessage('Course successfully added!')
             setSnackbarSeverity('success')
             setOpenSnackbar(true)
+
+            // Clear form fields
+            setCourseCode('')
+            setCourseDescription('')
+            setSelectedYear(new Date().getFullYear())
+            setSelectedSemester('SS')
+            setSliderValue(0)
+            setManualInputValue('0')
+            setEnrolledSliderValue(0)
+            setEnrolledManualInputValue('0')
+            setMarkerHoursSliderValue(0)
+            setMarkerHoursManualInputValue('0')
+            setMarkerSliderValue(0)
+            setMarkerManualInputValue('0')
+            setDescription('')
+            setWordCount(0)
         } catch (error) {
             // Handle network or other unknown errors
             console.error('Error:', error)
@@ -193,7 +209,7 @@ export default function CourseDetails() {
     }
 
     function handleCancel() {
-        router.back() // this navigates the user to the previous page in history
+        router.push('/dashboard')
     }
 
     return (
