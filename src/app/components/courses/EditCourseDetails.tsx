@@ -502,7 +502,7 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
                                                 InputProps={{
                                                     inputProps: {
                                                         min: 0,
-                                                        max: 200,
+                                                        max: 500,
                                                     },
                                                 }}
                                             />
@@ -546,7 +546,7 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
                                                 InputProps={{
                                                     inputProps: {
                                                         min: 0,
-                                                        max: 20,
+                                                        max: 50,
                                                     },
                                                 }}
                                             />
