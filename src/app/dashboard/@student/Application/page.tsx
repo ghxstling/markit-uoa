@@ -11,6 +11,9 @@ import MuiAlert, { AlertProps } from '@mui/material/Alert'
 import CoursePreferences from '@/app/components/ApplicationForms/CoursePreferences'
 import { useSession } from 'next-auth/react'
 import type { Prisma } from '@prisma/client'
+import CustomTheme from '@/app/CustomTheme'
+import { ThemeProvider } from '@mui/material/styles'
+import Sidebar from '@/app/components/Sidebar'
 
 const steps = ['Personal Details', 'Employment Details', 'CV and Academic Transcript Upload', 'Course Preferences']
 
@@ -167,11 +170,26 @@ const Application = () => {
     }
 
     return (
-        <div>
-            <>
-                <Box sx={{ display: 'flex' }}>
+        <ThemeProvider theme={CustomTheme}>
+            <Sidebar />
+            <Box
+                sx={{
+                    height: '100vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'safe center',
+                    ml: '240px',
+                }}
+            >
+                <Box
+                    sx={{
+                        mt: '20px',
+                        ml: { sm: '60px', lg: '120px' },
+                        mr: { sm: '60px', lg: '120px' },
+                        mb: '20px',
+                    }}
+                >
                     {/* Create basic layout */}
-                    <Box sx={{ width: '15rem' }}></Box>
                     <Container component="main" maxWidth="md" sx={{ mb: 4 }}>
                         <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
                             <Typography component="h1" variant="h4" align="center">
@@ -260,8 +278,8 @@ const Application = () => {
                         </Paper>
                     </Container>
                 </Box>
-            </>
-        </div>
+            </Box>
+        </ThemeProvider>
     )
 }
 
