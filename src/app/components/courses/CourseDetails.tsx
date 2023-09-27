@@ -41,7 +41,7 @@ export default function CourseDetails() {
     const router = useRouter()
 
     const handleManualInputChange = (
-        event: React.ChangeEvent<HTMLInputElement>,
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
         setState: React.Dispatch<React.SetStateAction<{ slider: number; manual: string }>>,
         max: number
     ) => {
@@ -64,7 +64,7 @@ export default function CourseDetails() {
         setState({ slider: numValue, manual: inputValue })
     }
 
-    const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const newDescription = event.target.value
         const newWordCount = newDescription.split(/\s+/).filter(Boolean).length
 
