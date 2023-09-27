@@ -22,7 +22,7 @@ export default class S3Service {
         console.log('Sending file ' + file.name + ' to bucket ' + bucketName + '...')
         await s3Client.send(command)
         const response = await s3Client.send(command)
-        console.log('Success! Response:\n' + response)
+        console.log("File '" + file.name + "' successfully uploaded to bucket '" + bucketName + "'.")
         return response
     }
 
