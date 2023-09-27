@@ -12,27 +12,7 @@ const DebugPage = () => {
 
     const makeApiCall = async () => {
         try {
-            const upi = 'abc123'
-            const auid = 123456789
-            const degreeType = DegreeType.Bachelor
-            const degreeYear = 1
-            const res = await fetch('/api/students', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    preferredEmail: 'example@email.com',
-                    upi,
-                    auid: auid,
-                    overseas: false,
-                    degreeType,
-                    degreeYear,
-                    residencyStatus: true,
-                    validWorkVisa: true,
-                    maxWorkHours: 20,
-                }),
-            })
+            const res = await fetch('/api/students/me/transcript')
             setApiResponse(await res.json())
             setError(null)
         } catch (err) {

@@ -1,6 +1,6 @@
 import type { Prisma } from '@prisma/client'
 import StudentRepo from '@/data/studentRepo'
-import { PutObjectCommand } from '@aws-sdk/client-s3'
+import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
 import s3Client from '@/libs/s3client'
 import { BucketNames } from '@/models/bucketNames'
 
@@ -24,6 +24,31 @@ export default class S3Service {
         const response = await s3Client.send(command)
         console.log("File '" + file.name + "' successfully uploaded to bucket '" + bucketName + "'.")
         return response
+    }
+
+    static async _getFile(keyName: string, bucketName: BucketNames, contentType: string) {
+        const command = new GetObjectCommand({
+            Bucket: bucketName,
+            Key: keyName,
+            ResponseContentType: contentType,
+        })
+        console.log('Retrieving file ' + keyName + ' from bucket ' + bucketName + '...')
+        const response = await s3Client.send(command)
+        const outContentType = response.ContentType
+        const outData = await response.Body?.transformToByteArray()
+        return { contentType: outContentType, data: outData }
+    }
+
+    static async getTranscript(student: Student) {
+        const keyName = student.upi + '-transcript'
+        const { contentType, data } = await this._getFile(keyName, BucketNames.transcripts, 'application/pdf')
+        return { contentType, data }
+    }
+
+    static async getCV(student: Student) {
+        const keyName = student.upi + '-cv'
+        const { contentType, data } = await this._getFile(keyName, BucketNames.cvs, 'application/pdf')
+        return { contentType, data }
     }
 
     static async uploadTranscript(student: Student, file: File) {

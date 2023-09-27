@@ -22,8 +22,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Get respective Student object from database using client's logged in email
-    const user = await UserRepo.getUserbyEmail(String(token!.email))
-    const student = await StudentRepo.getStudentByUserId(user!.id)
+    const student = await StudentRepo.getStudentByEmail(String(token!.email))
 
     // If it doesn't exist, return status code 404 NOT FOUND
     if (student == null) {
@@ -51,33 +50,10 @@ export async function GET(req: NextRequest) {
         )
     }
 
-    // Construct the command object for retrieving the file from the bucket
-    const command = new GetObjectCommand({
-        Bucket: 'student-academictranscripts',
-        Key: student.upi + '-' + fileName,
-        ResponseContentType: 'application/pdf',
-    })
-
     // Attempt to retrieve the file from the bucket
     try {
-        console.log('Retrieving file ' + fileName + ' from student ' + student.upi + '...')
-        const response = await s3Client.send(command)
-
-        // If successful, return the file with status 200 OK
-        const contentType = response.ContentType
-        const bytes = await response.Body?.transformToByteArray()
-        // const res = new NextResponse(
-        //     new File([bytes!], fileName, { type: "application/pdf" }),
-        //     {
-        //         status: 200,
-        //         statusText: 'File ' + fileName + ' successfuly retrieved from Bucket student-academictranscripts for student ' + student.upi,
-        //         headers: {
-        //             'Content-Type': 'application/pdf',
-        //         }
-        //     }
-        // )
-        // console.log("Success! Response body:\n" + res.body)
-        const outResponse = new NextResponse(bytes)
+        const { contentType, data } = await S3Service.getTranscript(student)
+        const outResponse = new NextResponse(data)
         outResponse.headers.set('Content-Type', contentType!)
         return outResponse
     } catch (err) {
