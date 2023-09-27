@@ -1,26 +1,18 @@
 'use client'
 
-import { Box, Divider } from '@mui/material';
-import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { TableBody } from '@mui/material';
-import Button from '@mui/material/Button';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { Box, Divider, TableBody } from '@mui/material';
+import Collapse from '@mui/material/Collapse';
+import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import Tooltip from '@mui/material/Tooltip';
-import Typography from '@mui/material/Typography';
-import Link from 'next/link';
-import Collapse from '@mui/material/Collapse';
-import IconButton from '@mui/material/IconButton';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import React from 'react'
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function viewStudentInformation(){
   interface Course {
