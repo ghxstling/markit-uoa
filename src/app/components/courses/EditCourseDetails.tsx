@@ -9,15 +9,14 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    Slider,
-    Box,
     FormHelperText,
     Button,
     Snackbar,
+    Input,
+    TextField,
+    IconButton,
 } from '@mui/material'
-import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
-import TextField from '@mui/material/TextField'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -31,34 +30,25 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
     const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
     const [selectedSemester, setSelectedSemester] = useState<string>('SS')
 
-    const [sliderValue, setSliderValue] = useState(0)
-    const [manualInputValue, setManualInputValue] = useState<string>(sliderValue.toString())
-    const [enrolledSliderValue, setEnrolledSliderValue] = useState(0)
-    const [enrolledManualInputValue, setEnrolledManualInputValue] = useState<string>(enrolledSliderValue.toString())
+    const [estimatedStudents, setEstimatedStudents] = useState({ slider: 0, manual: '0' })
+    const [enrolledStudents, setEnrolledStudents] = useState({ slider: 0, manual: '0' })
+    const [markerHours, setMarkerHours] = useState({ slider: 0, manual: '0' })
+    const [markersNeeded, setMarkersNeeded] = useState({ slider: 0, manual: '0' })
 
-    const [markerHoursSliderValue, setMarkerHoursSliderValue] = useState(0)
-    const [markerHoursManualInputValue, setMarkerHoursManualInputValue] = useState<string>(
-        markerHoursSliderValue.toString()
-    )
-    const [markerSliderValue, setMarkerSliderValue] = useState(0)
-    const [markerManualInputValue, setMarkerManualInputValue] = useState<string>(markerSliderValue.toString())
     const [description, setDescription] = useState<string>('')
     const [wordCount, setWordCount] = useState<number>(0)
     const currentYear = new Date().getFullYear()
     const yearOptions = [currentYear, currentYear + 1]
     const semesterOptions = ['SS', 'S1', 'S2']
-    const [openSnackbar, setOpenSnackbar] = useState(false)
-    const [snackbarMessage, setSnackbarMessage] = useState('')
-    const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success')
+    const [openSnackbar, setOpenSnackbar] = React.useState(false)
+    const [snackbarMessage, setSnackbarMessage] = React.useState('')
+    const [snackbarSeverity, setSnackbarSeverity] = React.useState<'success' | 'error'>('success')
     const router = useRouter()
+
     const [isEditing, setIsEditing] = useState(true)
     const [isSaved, setIsSaved] = useState(false)
 
     const originalCourseDataRef = React.useRef<OriginalCourseData | null>(null)
-
-    const toggleEdit = () => {
-        setIsEditing(!isEditing)
-    }
 
     const revertChanges = () => {
         const originalData = originalCourseDataRef.current
@@ -68,10 +58,16 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
             setCourseDescription(originalData.courseDescription)
             setSelectedYear(originalData.selectedYear)
             setSelectedSemester(originalData.selectedSemester)
-            setSliderValue(originalData.sliderValue)
-            setEnrolledSliderValue(originalData.enrolledSliderValue)
-            setMarkerHoursSliderValue(originalData.markerHoursSliderValue)
-            setMarkerSliderValue(originalData.markerSliderValue)
+            setEstimatedStudents({
+                slider: originalData.estimatedStudents,
+                manual: originalData.estimatedStudents.toString(),
+            })
+            setEnrolledStudents({
+                slider: originalData.enrolledStudents,
+                manual: originalData.enrolledStudents.toString(),
+            })
+            setMarkerHours({ slider: originalData.markerHours, manual: originalData.markerHours.toString() })
+            setMarkersNeeded({ slider: originalData.markersNeeded, manual: originalData.markersNeeded.toString() })
             setDescription(originalData.description)
 
             setIsEditing(false)
@@ -83,10 +79,10 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
         courseDescription: string
         selectedYear: number
         selectedSemester: string
-        sliderValue: number
-        enrolledSliderValue: number
-        markerHoursSliderValue: number
-        markerSliderValue: number
+        estimatedStudents: number
+        enrolledStudents: number
+        markerHours: number
+        markersNeeded: number
         description: string
     }
 
@@ -105,35 +101,34 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
         try {
             // Store the original data of the course
             originalCourseDataRef.current = {
-                courseCode: course.courseCode,
+                courseCode: course.courseCode.substring(8),
                 courseDescription: course.courseDescription,
                 selectedYear: parseInt(course.semester.substring(0, 4)),
                 selectedSemester: course.semester.substring(4),
-                sliderValue: course.numOfEstimatedStudents,
-                enrolledSliderValue: course.numOfEnrolledStudents,
-                markerHoursSliderValue: course.markerHours,
-                markerSliderValue: course.markersNeeded,
+                estimatedStudents: course.numOfEstimatedStudents,
+                enrolledStudents: course.numOfEnrolledStudents,
+                markerHours: course.markerHours,
+                markersNeeded: course.markersNeeded,
                 description: course.markerResponsibilities,
             }
 
-            setCourseCode(course.courseCode)
+            setCourseCode(course.courseCode.substring(8))
             setCourseDescription(course.courseDescription)
-
             const year = parseInt(course.semester.substring(0, 4))
             const semester = course.semester.substring(4)
-
             setSelectedYear(year)
             setSelectedSemester(semester)
-            setSliderValue(course.numOfEstimatedStudents)
-            setManualInputValue(course.numOfEstimatedStudents.toString())
-            setEnrolledSliderValue(course.numOfEnrolledStudents)
-            setEnrolledManualInputValue(course.numOfEnrolledStudents.toString())
-            setMarkerHoursSliderValue(course.markerHours)
-            setMarkerHoursManualInputValue(course.markerHours.toString())
-            setMarkerSliderValue(course.markersNeeded)
-            setMarkerManualInputValue(course.markersNeeded.toString())
+            setEstimatedStudents({
+                slider: course.numOfEstimatedStudents,
+                manual: course.numOfEstimatedStudents.toString(),
+            })
+            setEnrolledStudents({
+                slider: course.numOfEnrolledStudents,
+                manual: course.numOfEnrolledStudents.toString(),
+            })
+            setMarkerHours({ slider: course.markerHours, manual: course.markerHours.toString() })
+            setMarkersNeeded({ slider: course.markersNeeded, manual: course.markersNeeded.toString() })
             setDescription(course.markerResponsibilities)
-
             const wordCount = course.markerResponsibilities.split(/\s+/).filter(Boolean).length
             setWordCount(wordCount)
         } catch (error) {
@@ -170,92 +165,31 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
         fetchCourseDetails()
     }, [courseId])
 
-    const handleManualInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleManualInputChange = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+        setState: React.Dispatch<React.SetStateAction<{ slider: number; manual: string }>>,
+        max: number
+    ) => {
         let inputValue = event.target.value
+
+        if (inputValue !== '0' && inputValue[0] === '0') {
+            inputValue = inputValue.slice(1)
+        }
+
         if (inputValue === '') {
             inputValue = '0'
         }
+
         let numValue = parseInt(inputValue)
-        inputValue = numValue.toString()
-        if (numValue > 2000) {
-            inputValue = '2000'
-            numValue = 2000
+        if (numValue > max) {
+            numValue = max
+            inputValue = max.toString()
         }
-        setManualInputValue(inputValue)
-        setSliderValue(numValue)
-    }
-    const handleSliderChange = (event: Event, newValue: number | number[]) => {
-        if (typeof newValue === 'number') {
-            setSliderValue(newValue)
-            setManualInputValue(newValue.toString())
-        }
+
+        setState({ slider: numValue, manual: inputValue })
     }
 
-    const handleEnrolledManualInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        let inputValue = event.target.value
-        if (inputValue === '') {
-            inputValue = '0'
-        }
-        let numValue = parseInt(inputValue)
-        inputValue = numValue.toString()
-        if (numValue > 2000) {
-            inputValue = '2000'
-            numValue = 2000
-        }
-        setEnrolledManualInputValue(inputValue)
-        setEnrolledSliderValue(numValue)
-    }
-    const handleEnrolledSliderChange = (event: Event, newValue: number | number[]) => {
-        if (typeof newValue === 'number') {
-            setEnrolledSliderValue(newValue)
-            setEnrolledManualInputValue(newValue.toString())
-        }
-    }
-
-    const handleMarkerHoursManualInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        let inputValue = event.target.value
-        if (inputValue === '') {
-            inputValue = '0'
-        }
-        let numValue = parseInt(inputValue)
-        inputValue = numValue.toString()
-        if (numValue > 200) {
-            inputValue = '200'
-            numValue = 200
-        }
-        setMarkerHoursManualInputValue(inputValue)
-        setMarkerHoursSliderValue(numValue)
-    }
-    const handleMarkerHoursSliderChange = (event: Event, newValue: number | number[]) => {
-        if (typeof newValue === 'number') {
-            setMarkerHoursSliderValue(newValue)
-            setMarkerHoursManualInputValue(newValue.toString())
-        }
-    }
-
-    const handleMarkerManualInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        let inputValue = event.target.value
-        if (inputValue === '') {
-            inputValue = '0'
-        }
-        let numValue = parseInt(inputValue)
-        inputValue = numValue.toString()
-        if (numValue > 200) {
-            inputValue = '200'
-            numValue = 200
-        }
-        setMarkerManualInputValue(inputValue)
-        setMarkerSliderValue(numValue)
-    }
-
-    const handleMarkerSliderChange = (event: Event, newValue: number | number[]) => {
-        if (typeof newValue === 'number') {
-            setMarkerSliderValue(newValue)
-            setMarkerManualInputValue(newValue.toString())
-        }
-    }
-
-    const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const newDescription = event.target.value
         const newWordCount = newDescription.split(/\s+/).filter(Boolean).length
 
@@ -264,22 +198,79 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
     }
 
     async function handleSubmit() {
+        if (!courseCode.trim()) {
+            setSnackbarMessage('Course Code cannot be empty.')
+            setSnackbarSeverity('error')
+            setOpenSnackbar(true)
+            return
+        }
+        if (courseCode.length !== 3) {
+            setSnackbarMessage('Course Code must be 3 digits long.')
+            setSnackbarSeverity('error')
+            setOpenSnackbar(true)
+            return
+        }
+
+        if (!courseDescription.trim()) {
+            setSnackbarMessage('Course Description cannot be empty.')
+            setSnackbarSeverity('error')
+            setOpenSnackbar(true)
+            return
+        }
+
+        if (estimatedStudents.slider <= 0) {
+            setSnackbarMessage('Estimated Number of Students to Enrol should be greater than 0.')
+            setSnackbarSeverity('error')
+            setOpenSnackbar(true)
+            return
+        }
+
+        if (enrolledStudents.slider <= 0) {
+            setSnackbarMessage('Number of Students Currently Enrolled should be greater than 0.')
+            setSnackbarSeverity('error')
+            setOpenSnackbar(true)
+            return
+        }
+
+        if (markerHours.slider <= 0) {
+            setSnackbarMessage('Estimated Number of Marker Hours Required should be greater than 0.')
+            setSnackbarSeverity('error')
+            setOpenSnackbar(true)
+            return
+        }
+
+        if (markersNeeded.slider <= 0) {
+            setSnackbarMessage('Preferred Number of Markers should be greater than 0.')
+            setSnackbarSeverity('error')
+            setOpenSnackbar(true)
+            return
+        }
+
+        if (!description.trim()) {
+            setSnackbarMessage('Description of Marker Responsibilities cannot be empty.')
+            setSnackbarSeverity('error')
+            setOpenSnackbar(true)
+            return
+        }
+
+        const finalCourseCode = `COMPSCI ${courseCode}`
+
         const formData = {
-            courseCode,
+            courseCode: finalCourseCode,
             courseDescription,
-            numOfEstimatedStudents: sliderValue,
-            numOfEnrolledStudents: enrolledSliderValue,
-            markerHours: markerHoursSliderValue,
-            needMarkers: markerSliderValue > 0,
-            markersNeeded: markerSliderValue,
+            numOfEstimatedStudents: estimatedStudents.slider,
+            numOfEnrolledStudents: enrolledStudents.slider,
+            markerHours: markerHours.slider,
+            needMarkers: markersNeeded.slider > 0,
+            markersNeeded: markersNeeded.slider,
             semester: `${selectedYear}${selectedSemester}`,
             markerResponsibilities: description,
         }
-
-        console.log('Submitting form with updated data:', formData)
+        //Test to check submission
+        //console.log('Submitting form with updated data:', formData)
         try {
             const response = await fetch(`/api/courses/${courseId}`, {
-                method: 'PATCH', // Use PATCH since your endpoint is using PATCH
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -324,16 +315,38 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
                     Edit Course Details
                 </Typography>
                 <Grid container spacing={3} justifyContent="center">
-                    <Grid item>
-                        <TextField
-                            label="Course Code"
-                            variant="outlined"
-                            style={{ width: '350px' }}
-                            value={courseCode}
-                            onChange={(e) => setCourseCode(e.target.value)}
-                            disabled={!isEditing}
-                        />
+                    <Grid item style={{ width: '350px' }}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={6}>
+                                <TextField
+                                    variant="outlined"
+                                    style={{ width: '100%' }}
+                                    value="COMPSCI"
+                                    disabled
+                                    InputProps={{
+                                        readOnly: true,
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <TextField
+                                    label="Course Code"
+                                    variant="outlined"
+                                    style={{ width: '100%' }}
+                                    value={courseCode}
+                                    onChange={(e) => {
+                                        const val = e.target.value
+                                        // Allow only digits and up to 3 characters
+                                        if (/^\d{0,3}$/.test(val)) {
+                                            setCourseCode(val)
+                                        }
+                                    }}
+                                    disabled={!isEditing}
+                                />
+                            </Grid>
+                        </Grid>
                     </Grid>
+
                     <Grid item>
                         <TextField
                             label="Course Description"
@@ -380,197 +393,124 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
                             </Select>
                         </FormControl>
                     </Grid>
+                    <Grid item xs={12}>
+                        <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
+                            <Grid item>
+                                <Typography gutterBottom>Estimated Number of Students to Enrol:</Typography>
+                            </Grid>
 
-                    <Grid container item xs={12} justifyContent="center" spacing={3}>
-                        <Typography variant="subtitle1" style={{ marginTop: '20px' }}>
-                            Estimated number of students to enrol:
-                        </Typography>
-                        <Grid item xs={12}>
-                            <Box sx={{ width: '350px', margin: '0 auto' }}>
-                                <Slider
-                                    aria-label="Number of students"
-                                    defaultValue={0}
-                                    valueLabelDisplay="auto"
-                                    step={10}
-                                    marks={[
-                                        { value: 0, label: '0' },
-                                        { value: 2000, label: '2000' },
-                                    ]}
-                                    min={0}
-                                    max={2000}
-                                    value={sliderValue}
-                                    onChange={isEditing ? handleSliderChange : undefined}
+                            <Grid item>
+                                <Input
+                                    id="students-enrol-input"
+                                    type="number"
+                                    value={estimatedStudents.manual}
+                                    onChange={(e) => handleManualInputChange(e, setEstimatedStudents, 2000)}
+                                    inputProps={{
+                                        min: 0,
+                                        max: 2000,
+                                        'aria-labelledby': 'input-slider',
+                                    }}
+                                    size="small"
+                                    style={{ width: '80px' }}
+                                    disabled={!isEditing}
                                 />
-                                <Grid container justifyContent="center">
-                                    <Grid item xs={6}>
-                                        <Box display="flex" justifyContent="center">
-                                            {' '}
-                                            <TextField
-                                                type="number"
-                                                value={manualInputValue}
-                                                onChange={handleManualInputChange}
-                                                style={{ width: '90px' }}
-                                                disabled={!isEditing}
-                                                InputProps={{
-                                                    inputProps: {
-                                                        min: 0,
-                                                        max: 2000,
-                                                    },
-                                                }}
-                                            />
-                                        </Box>
-                                    </Grid>
-                                </Grid>
-                            </Box>
+                            </Grid>
                         </Grid>
                     </Grid>
 
-                    <Grid container item xs={12} justifyContent="center" spacing={3}>
-                        <Typography variant="subtitle1" style={{ marginTop: '20px' }}>
-                            Number of students currently enrolled:
-                        </Typography>
-                        <Grid item xs={12}>
-                            <Box sx={{ width: '350px', margin: '0 auto' }}>
-                                <Slider
-                                    aria-label="Number of currently enrolled students"
-                                    defaultValue={0}
-                                    valueLabelDisplay="auto"
-                                    step={10}
-                                    marks={[
-                                        { value: 0, label: '0' },
-                                        { value: 2000, label: '2000' },
-                                    ]}
-                                    min={0}
-                                    max={2000}
-                                    value={enrolledSliderValue}
-                                    onChange={isEditing ? handleEnrolledSliderChange : undefined}
+                    <Grid item xs={12}>
+                        <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
+                            <Grid item>
+                                <Typography gutterBottom>Number of Students Currently Enrolled:</Typography>
+                            </Grid>
+
+                            <Grid item>
+                                <Input
+                                    id="students-currently-enrolled-input"
+                                    type="number"
+                                    value={enrolledStudents.manual}
+                                    onChange={(e) => handleManualInputChange(e, setEnrolledStudents, 2000)}
+                                    inputProps={{
+                                        min: 0,
+                                        max: 2000,
+                                        'aria-labelledby': 'input-slider',
+                                    }}
+                                    size="small"
+                                    style={{ width: '80px' }}
+                                    disabled={!isEditing}
                                 />
-                                <Grid container justifyContent="center">
-                                    <Grid item xs={6}>
-                                        <Box display="flex" justifyContent="center">
-                                            {' '}
-                                            <TextField
-                                                type="number"
-                                                value={enrolledManualInputValue}
-                                                onChange={handleEnrolledManualInputChange}
-                                                style={{ width: '90px' }}
-                                                disabled={!isEditing}
-                                                InputProps={{
-                                                    inputProps: {
-                                                        min: 0,
-                                                        max: 2000,
-                                                    },
-                                                }}
-                                            />
-                                        </Box>
-                                    </Grid>
-                                </Grid>
-                            </Box>
+                            </Grid>
                         </Grid>
                     </Grid>
 
-                    <Grid container item xs={12} justifyContent="center" spacing={3}>
-                        <Typography variant="subtitle1" style={{ marginTop: '20px' }}>
-                            Estimated number of marker hours required:
-                        </Typography>
-                        <Grid item xs={12}>
-                            <Box sx={{ width: '350px', margin: '0 auto' }}>
-                                <Slider
-                                    aria-label="Number of hours"
-                                    defaultValue={0}
-                                    valueLabelDisplay="auto"
-                                    step={10}
-                                    marks={[
-                                        { value: 0, label: '0' },
-                                        { value: 200, label: '200' },
-                                    ]}
-                                    min={0}
-                                    max={200}
-                                    value={markerHoursSliderValue}
-                                    onChange={isEditing ? handleMarkerHoursSliderChange : undefined}
+                    <Grid item xs={12}>
+                        <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
+                            <Grid item>
+                                <Typography gutterBottom>Estimated Number of Marker Hours Required:</Typography>
+                            </Grid>
+
+                            <Grid item>
+                                <Input
+                                    id="marker-hours-input"
+                                    type="number"
+                                    value={markerHours.manual}
+                                    onChange={(e) => handleManualInputChange(e, setMarkerHours, 500)}
+                                    inputProps={{
+                                        min: 0,
+                                        max: 500,
+                                        'aria-labelledby': 'input-slider',
+                                    }}
+                                    size="small"
+                                    style={{ width: '80px' }}
+                                    disabled={!isEditing}
                                 />
-                                <Grid container justifyContent="center">
-                                    <Grid item xs={6}>
-                                        <Box display="flex" justifyContent="center">
-                                            {' '}
-                                            <TextField
-                                                type="number"
-                                                value={markerHoursManualInputValue}
-                                                onChange={handleMarkerHoursManualInputChange}
-                                                style={{ width: '90px' }}
-                                                disabled={!isEditing}
-                                                InputProps={{
-                                                    inputProps: {
-                                                        min: 0,
-                                                        max: 500,
-                                                    },
-                                                }}
-                                            />
-                                        </Box>
-                                    </Grid>
-                                </Grid>
-                            </Box>
+                            </Grid>
                         </Grid>
                     </Grid>
 
-                    <Grid container item xs={12} justifyContent="center" spacing={3}>
-                        <Typography variant="subtitle1" style={{ marginTop: '20px' }}>
-                            Preferred number of markers:
-                        </Typography>
-                        <Grid item xs={12}>
-                            <Box sx={{ width: '350px', margin: '0 auto' }}>
-                                <Slider
-                                    aria-label="Number of markers"
-                                    defaultValue={0}
-                                    valueLabelDisplay="auto"
-                                    step={1}
-                                    marks={[
-                                        { value: 0, label: '0' },
-                                        { value: 20, label: '20' },
-                                    ]}
-                                    min={0}
-                                    max={20}
-                                    value={markerSliderValue}
-                                    onChange={isEditing ? handleMarkerSliderChange : undefined}
+                    <Grid item xs={12}>
+                        <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
+                            <Grid item>
+                                <Typography gutterBottom>Preferred Number of Markers:</Typography>
+                            </Grid>
+
+                            <Grid item>
+                                <Input
+                                    id="preferred-markers-input"
+                                    type="number"
+                                    value={markersNeeded.manual}
+                                    onChange={(e) => handleManualInputChange(e, setMarkersNeeded, 50)}
+                                    inputProps={{
+                                        min: 0,
+                                        max: 50,
+                                        'aria-labelledby': 'input-slider',
+                                    }}
+                                    size="small"
+                                    style={{ width: '80px' }}
+                                    disabled={!isEditing}
                                 />
-                                <Grid container justifyContent="center">
-                                    <Grid item xs={6}>
-                                        <Box display="flex" justifyContent="center">
-                                            {' '}
-                                            <TextField
-                                                type="number"
-                                                value={markerManualInputValue}
-                                                onChange={handleMarkerManualInputChange}
-                                                style={{ width: '90px' }}
-                                                disabled={!isEditing}
-                                                InputProps={{
-                                                    inputProps: {
-                                                        min: 0,
-                                                        max: 50,
-                                                    },
-                                                }}
-                                            />
-                                        </Box>
-                                    </Grid>
-                                </Grid>
-                            </Box>
+                            </Grid>
                         </Grid>
                     </Grid>
-                    <Grid container item xs={12} justifyContent="center" spacing={3}>
-                        <Grid item>
-                            <TextField
-                                label="Description of marker responsibilities"
-                                variant="outlined"
-                                style={{ width: '350px' }}
-                                multiline
-                                rows={4}
-                                value={description}
-                                onChange={handleDescriptionChange}
-                                disabled={!isEditing}
-                            />
-                            <FormHelperText>{`${wordCount}/100`}</FormHelperText>
+
+                    <Grid item xs={12}>
+                        <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
+                            <Grid item>
+                                <TextField
+                                    label="Description of Marker Responsibilities"
+                                    variant="outlined"
+                                    style={{ width: '350px' }}
+                                    multiline
+                                    rows={4}
+                                    value={description}
+                                    onChange={handleDescriptionChange}
+                                    disabled={!isEditing}
+                                />
+                                <FormHelperText>{`${wordCount}/100`}</FormHelperText>
+                            </Grid>
                         </Grid>
                     </Grid>
+
                     <Grid container item alignItems="center" spacing={1} style={{ marginTop: '1em' }}>
                         {!isEditing ? (
                             // Not in editing mode

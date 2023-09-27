@@ -13,10 +13,10 @@ import {
     Button,
     Snackbar,
     Input,
+    TextField,
+    IconButton,
 } from '@mui/material'
-import IconButton from '@mui/material/IconButton'
 import CloseIcon from '@mui/icons-material/Close'
-import TextField from '@mui/material/TextField'
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -143,7 +143,8 @@ export default function CourseDetails() {
             semester: `${selectedYear}${selectedSemester}`,
             markerResponsibilities: description,
         }
-        console.log('Submitting form with data:', formData)
+        //Test to check submission data
+        //console.log('Submitting form with data:', formData)
         try {
             const response = await fetch('/api/courses', {
                 method: 'POST',
