@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import StudentRepo from '@/data/studentRepo'
-import UserRepo from '@/data/userRepo'
 import { getToken } from 'next-auth/jwt'
 import { Role } from '@/models/role'
-import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
-import s3Client from '@/libs/s3client'
 import S3Service from '@/services/s3Service'
 
 // GET /api/students/me/cv
@@ -22,8 +19,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Get respective Student object from database using client's logged in email
-    const user = await UserRepo.getUserbyEmail(String(token!.email))
-    const student = await StudentRepo.getStudentByUserId(user!.id)
+    const student = await StudentRepo.getStudentByEmail(String(token!.email))
 
     // If it doesn't exist, return status code 404 NOT FOUND
     if (student == null) {
@@ -51,28 +47,12 @@ export async function GET(req: NextRequest) {
         )
     }
 
-    // Construct the command object for retrieving the file from the bucket
-    const command = new GetObjectCommand({
-        Bucket: 'student-cvs',
-        Key: student.upi + '-' + fileName,
-        ResponseContentType: 'application/pdf',
-    })
-
     // Attempt to retrieve the file from the bucket
     try {
-        console.log('Retrieving file ' + fileName + ' from student ' + student.upi + '...')
-        const response = await s3Client.send(command)
-
-        // If successful, return the file with status 200 OK
-        // TODO: Convert response body to bytes from file and return file
-        const str = await response.Body?.transformToString()
-        console.log('Success! Response body:\n' + str)
-
-        return NextResponse.json(response, {
-            status: 200,
-            statusText:
-                'File ' + fileName + ' successfuly retrieved from Bucket student-cvs for student ' + student.upi,
-        })
+        const { contentType, data } = await S3Service.getCV(student)
+        const outResponse = new NextResponse(data)
+        outResponse.headers.set('Content-Type', contentType!)
+        return outResponse
     } catch (err) {
         // If unsuccessful, return 400 BAD REQUEST
         return NextResponse.json(

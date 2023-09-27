@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import StudentRepo from '@/data/studentRepo'
-import UserRepo from '@/data/userRepo'
 import { getToken } from 'next-auth/jwt'
 import { Role } from '@/models/role'
-import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
-import s3Client from '@/libs/s3client'
 import S3Service from '@/services/s3Service'
 
 // GET /api/students/me/transcript
