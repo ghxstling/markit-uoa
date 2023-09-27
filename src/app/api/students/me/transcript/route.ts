@@ -5,6 +5,7 @@ import { getToken } from 'next-auth/jwt'
 import { Role } from '@/models/role'
 import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
 import s3Client from '@/libs/s3client'
+import S3Service from '@/services/s3Service'
 
 // GET /api/students/me/transcript
 export async function GET(req: NextRequest) {
@@ -108,8 +109,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Get respective Student object from database using client's logged in email
-    const user = await UserRepo.getUserbyEmail(String(token!.email))
-    const student = await StudentRepo.getStudentByUserId(user!.id)
+    const student = await StudentRepo.getStudentByEmail(String(token!.email))
 
     // If it doesn't exist, return status code 404 NOT FOUND
     if (student == null) {
@@ -124,7 +124,7 @@ export async function POST(req: NextRequest) {
 
     // Fetch the file from the incoming request
     const data = req.formData()
-    const file: File | null = (await data).get('file') as unknown as File
+    const file: File | null = (await data).get('file') as File
 
     // If file cannot be found, return 400 BAD REQUEST
     if (!file) {
@@ -138,34 +138,13 @@ export async function POST(req: NextRequest) {
         )
     }
 
-    // Convert PDF file to readable bytes
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-
-    // Constuct the command object for sending the file to the bucket
-    const fileName = file.name
-    const command = new PutObjectCommand({
-        Bucket: 'student-academictranscripts',
-        Key: student.upi + '-' + fileName,
-        Body: buffer,
-        ContentType: 'application/pdf',
-    })
-
-    // Attempt to send the file to the bucket
     try {
-        console.log('Sending file ' + file.name + ' for student ' + student.upi + '...')
-        const response = await s3Client.send(command)
-
-        // If successful, store the file name under the student object in database
-        console.log('Success! Response:\n' + response)
-        const updatedStudent = await StudentRepo.setTranscriptFilename(student.upi, fileName)
-
-        // Return the updated student with status 200 OK
+        const { response, updatedStudent } = await S3Service.uploadTranscript(student, file)
         return NextResponse.json(
             { updatedStudent, response },
             {
                 status: 200,
-                statusText: 'File ' + fileName + ' successfuly sent to Bucket student-cvs for student ' + student.upi,
+                statusText: 'File ' + file.name + ' successfuly sent to Bucket student-cvs for student ' + student.upi,
             }
         )
     } catch (err) {

@@ -69,20 +69,6 @@ export async function POST(req: NextRequest) {
     }
 
     const email = token!.email!
-
-    // FIXME: Move to this to frontend
-    // const studentData = {
-    //     userId: Number(userFromEmail?.id),
-    //     upi: upi.toLowerCase(),
-    //     auid: AUID,
-    //     overseas: currentlyOverseas === 'Yes',
-    //     residencyStatus: citizenOrPermanentResident == 'Yes',
-    //     validWorkVisa: workVisa == 'Yes',
-    //     degreeType: degree,
-    //     degreeYear: degreeYears,
-    //     maxWorkHours: workHours,
-    // }
-
     // If some information is missing, return code 400 BAD REQUEST
     const result = studentSchema.safeParse(studentData)
 
