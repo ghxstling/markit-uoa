@@ -1,27 +1,45 @@
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Typography from '@mui/material/Typography'
-import { useSession } from 'next-auth/react'
+'use client'
+
 import DynamicBreadcrumb from '@/app/components/DynamicBreadcrumb'
 import Sidebar from '@/app/components/Sidebar'
 import CourseTable from '@/app/components/courses/CourseTable'
+import { Box, Stack } from '@mui/material'
+import CustomTheme from '@/app/CustomTheme'
+import { ThemeProvider } from '@mui/material/styles'
 
 export default function AllCourseView() {
     return (
-        <>
-            {/* <Sidebar /> */}
+        <ThemeProvider theme={CustomTheme}>
+            <Sidebar />
             <Box
-                style={{
-                    paddingTop: 50,
-                    paddingLeft: 350,
-                    paddingRight: 100,
-                    marginBottom: 50,
+                sx={{
+                    height: '100vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'safe center',
+                    ml: '240px',
                 }}
             >
-                <DynamicBreadcrumb />
-                <div style={{ height: 70 }}></div>
-                <CourseTable />
+                <Box
+                    sx={{
+                        mt: '20px',
+                        ml: { xs: '5px', lg: '100px', xl: '200px' },
+                    }}
+                >
+                    <DynamicBreadcrumb />
+                </Box>
+                <Box
+                    sx={{
+                        mt: '50px',
+                        ml: { xs: '5px', lg: '150px', xl: '250px' },
+                        mr: { xs: '5px', lg: '150px', xl: '250px' },
+                        mb: '100px',
+                    }}
+                >
+                    <h2>Course View</h2>
+                    <CourseTable />
+                </Box>
             </Box>
-        </>
+        </ThemeProvider>
     )
 }

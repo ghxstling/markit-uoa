@@ -1,13 +1,16 @@
 'use client'
 
-import * as React from 'react'
+import React from 'react'
 import Typography from '@mui/material/Typography'
-import Stack from '@mui/material/Stack'
 import Divider from '@mui/material/Divider'
 import RecentActivityTable from '@/app/components/RecentActivityTable'
 import Button from '@mui/material/Button'
-import Link from 'next/link'
 import { useSession } from 'next-auth/react'
+import Link from 'next/link'
+import { Box } from '@mui/material'
+import Sidebar from '@/app/components/Sidebar'
+import CustomTheme from '@/app/CustomTheme'
+import { ThemeProvider } from '@mui/material/styles'
 
 export default function CoordinatorDashboard() {
     const { data: session } = useSession()
@@ -19,28 +22,45 @@ export default function CoordinatorDashboard() {
     }
 
     return (
-        <>
-            <Stack sx={{ display: 'inline-block' }}>
-                {/* <DynamicBreadcrumb /> */}
-                <Typography sx={{ mt: '28px', mb: '53px' }} variant="h4" fontWeight="bold">
-                    Welcome, {firstName}
-                </Typography>
-                <Link href="/dashboard/viewAllCoursespage" passHref>
-                    <Button
-                        variant="contained"
-                        sx={{
-                            backgroundColor: '#00467F',
-                        }}
-                    >
-                        VIEW ALL COURSES
-                    </Button>
-                </Link>
-                <Typography variant="h5" fontWeight="bold" sx={{ mt: '58px' }}>
-                    Recent Activity
-                </Typography>
-                <Divider variant="fullWidth" sx={{ mb: '40px' }} />
-                <RecentActivityTable />
-            </Stack>
-        </>
+        <ThemeProvider theme={CustomTheme}>
+            <Sidebar />
+            <Box
+                sx={{
+                    height: '100vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'safe center',
+                    ml: '240px',
+                }}
+            >
+                <Box
+                    sx={{
+                        mt: '20px',
+                        ml: { sm: '60px', lg: '120px' },
+                        mr: { sm: '25px', lg: '50px' },
+                        mb: '20px',
+                    }}
+                >
+                    <Typography sx={{ mt: '28px', mb: '53px' }} variant="h4" fontWeight="bold">
+                        Welcome, {firstName}
+                    </Typography>
+                    <Link href="/dashboard/viewAllCoursespage" passHref>
+                        <Button
+                            variant="contained"
+                            sx={{
+                                backgroundColor: '#00467F',
+                            }}
+                        >
+                            VIEW ALL COURSES
+                        </Button>
+                    </Link>
+                    <Typography variant="h5" fontWeight="bold" sx={{ mt: '58px' }}>
+                        Recent Activity
+                    </Typography>
+                    <Divider variant="fullWidth" sx={{ mb: '40px' }} />
+                    <RecentActivityTable />
+                </Box>
+            </Box>
+        </ThemeProvider>
     )
 }
