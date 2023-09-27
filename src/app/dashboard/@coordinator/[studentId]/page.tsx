@@ -183,6 +183,7 @@ export default function viewStudentInformation(){
 
     return(
         <>
+          <div style={{ display: 'flex', justifyContent: 'center', width: '100%'}}>
             <Box>
                 <h1>{data?.upi}-{data?.auid}</h1>
                 <h2>Student Info</h2>
@@ -257,5 +258,6 @@ export default function viewStudentInformation(){
                         </Table>
                     </TableContainer>
             </Box>
+          </div>
         </>     
 )}
