@@ -314,7 +314,7 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
     }
 
     function handleCancel() {
-        router.push('/dashboard')
+        router.push('/dashboard/viewAllCoursespage')
     }
 
     return (
