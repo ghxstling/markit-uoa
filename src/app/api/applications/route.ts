@@ -6,6 +6,7 @@ import { getToken } from 'next-auth/jwt'
 import { Role } from '@/models/role'
 import UserRepo from '@/data/userRepo'
 import { Application } from '@prisma/client'
+import prisma from '@/libs/prisma'
 
 // GET /api/applications/
 export async function GET(req: NextRequest) {
@@ -44,14 +45,17 @@ export async function POST(req: NextRequest) {
         )
     }
 
+    // TODO: FOR TESTING ONLY, DO NOT KEEP !!!
+    // await prisma.application.deleteMany()
+
     const user = await UserRepo.getUserbyEmail(token!.email!)
     const student = await StudentRepo.getStudentByUserId(user!.id)
 
-    let applications: Application[] = []
+    let applications: Array<Application> = new Array<Application>()
     const coursePreferences = await req.json()
-    coursePreferences.forEach(async (pref: any) => {
+    for (const pref of coursePreferences) {
         let applicationData = {
-            preferenceId: pref.predId,
+            preferenceId: pref.prefId,
             studentId: student!.id,
             courseId: pref.course,
             hasCompletedCourse: pref.grade === 'NotTaken' ? false : true,
@@ -72,7 +76,7 @@ export async function POST(req: NextRequest) {
 
         const application = await ApplicationRepo.createApplication(applicationData)
         applications.push(application)
-    })
+    }
 
     if (applications.length == 0) {
         return NextResponse.json(

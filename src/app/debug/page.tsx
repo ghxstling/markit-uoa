@@ -13,19 +13,26 @@ const DebugPage = () => {
     const makeApiCall = async () => {
         try {
             const applicationData1 = {
-                preferenceId: 1,
-                studentId: 1,
-                courseId: 1,
-                hasCompletedCourse: true,
-                previouslyAchievedGrade: 'NotTaken',
-                hasTutoredCourse: false, 
-                hasMarkedCourse: false,
-                notTakenExplanation: 'I have not taken this course before',
-                equivalentQualification: 'NCEA Level 3',
+                prefId: 1,
+                course: 1,
+                grade: 'NotTaken',
+                tutoredPreviously: false, 
+                markedPreviously: false,
+                explainNotTaken: 'I have not taken this course before',
+                explainNotPrevious: 'NCEA Level 3',
+            }
+            const applicationData2 = {
+                prefId: 2,
+                course: 2,
+                grade: 'A+',
+                tutoredPreviously: false, 
+                markedPreviously: false,
+                explainNotTaken: 'dsadssada',
+                explainNotPrevious: 'NCEA Level 3',
             }
 
             let applications: any[] = [
-                applicationData1,
+                applicationData1, applicationData2,
             ]
             const res = await fetch('/api/applications', {
                 method: 'POST',
