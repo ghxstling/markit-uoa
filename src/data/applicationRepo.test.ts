@@ -1,3 +1,4 @@
+import prisma from '@/libs/prisma'
 import type { Prisma } from '@prisma/client'
 import ApplicationRepo from './applicationRepo'
 import UserRepo from './userRepo'
@@ -27,11 +28,16 @@ beforeAll(async () => {
     course4 = await CourseRepo.addCourse(courseInputHelper('COMPSCI 130', 'Advanced Python Programming'))
 })
 
+let prefIdCounter = 0
+
+beforeEach(async () => {
+    prefIdCounter = 0
+    await prisma.application.deleteMany()
+})
+
 afterAll(async () => {
     await resetDatabase()
 })
-
-let prefIdCounter = 0
 
 const createApplicationInput = (studentId: number, courseId: number): Prisma.ApplicationUncheckedCreateInput => {
     return {
@@ -50,40 +56,48 @@ const createApplicationInput = (studentId: number, courseId: number): Prisma.App
 
 describe('ApplicationRepo', () => {
     it('can create an application', async () => {
-        prefIdCounter = 0
         const input = createApplicationInput(student1!.id, course1!.id)
         const data = await ApplicationRepo.createApplication(input)
         expect(await ApplicationRepo.getApplicationById(data.id)).toMatchObject(data)
     })
     it('can get application by id', async () => {
-        prefIdCounter = 0
-        const applicationInput1 = createApplicationInput(student2!.id, course2!.id)
-        const applicationInput2 = createApplicationInput(student1!.id, course3!.id)
-
-        const application1 = await ApplicationRepo.createApplication(applicationInput1)
-        const application2 = await ApplicationRepo.createApplication(applicationInput2)
-
-        const result1 = await ApplicationRepo.getApplicationById(application1.id)
-        const result2 = await ApplicationRepo.getApplicationById(application2.id)
-
-        expect(result1).toMatchObject(applicationInput1)
-        expect(result2).toMatchObject(applicationInput2)
-    })
-    it('can get all applications', async () => {
-        prefIdCounter = 0
         const applicationInput1 = createApplicationInput(student1!.id, course1!.id)
         const applicationInput2 = createApplicationInput(student2!.id, course2!.id)
         const applicationInput3 = createApplicationInput(student1!.id, course3!.id)
+
+        const application1 = await ApplicationRepo.createApplication(applicationInput1)
+        const application2 = await ApplicationRepo.createApplication(applicationInput2)
+        const application3 = await ApplicationRepo.createApplication(applicationInput3)
+
+        const result1 = await ApplicationRepo.getApplicationById(application1.id)
+        const result2 = await ApplicationRepo.getApplicationById(application2.id)
+        const result3 = await ApplicationRepo.getApplicationById(application3.id)
+
+        expect(result1).toMatchObject(applicationInput1)
+        expect(result2).toMatchObject(applicationInput2)
+        expect(result3).toMatchObject(applicationInput3)
+    })
+    it('can get all applications', async () => {
+        const applicationInput1 = createApplicationInput(student1!.id, course1!.id)
+        const applicationInput2 = createApplicationInput(student2!.id, course2!.id)
+        const applicationInput3 = createApplicationInput(student1!.id, course3!.id)
+
+        await ApplicationRepo.createApplication(applicationInput1)
+        await ApplicationRepo.createApplication(applicationInput2)
+        await ApplicationRepo.createApplication(applicationInput3)
 
         const result = await ApplicationRepo.getAllApplications()
 
         expect(result).toMatchObject([applicationInput1, applicationInput2, applicationInput3])
     })
     it('can get student applications', async () => {
-        prefIdCounter = 0
         const applicationInput1 = createApplicationInput(student1!.id, course1!.id)
         const applicationInput2 = createApplicationInput(student2!.id, course2!.id)
         const applicationInput3 = createApplicationInput(student1!.id, course3!.id)
+
+        await ApplicationRepo.createApplication(applicationInput1)
+        await ApplicationRepo.createApplication(applicationInput2)
+        await ApplicationRepo.createApplication(applicationInput3)
 
         const result1 = await ApplicationRepo.getStudentApplications(student1!.upi)
         const result2 = await ApplicationRepo.getStudentApplications(student2!.upi)
@@ -92,12 +106,14 @@ describe('ApplicationRepo', () => {
         expect(result2).toMatchObject([applicationInput2])
     })
     it('can get applications by course', async () => {
-        prefIdCounter = 0
         const applicationInput1 = createApplicationInput(student1!.id, course1!.id)
         const applicationInput2 = createApplicationInput(student2!.id, course2!.id)
         const applicationInput3 = createApplicationInput(student1!.id, course3!.id)
         const applicationInput4 = createApplicationInput(student1!.id, course2!.id)
 
+        await ApplicationRepo.createApplication(applicationInput1)
+        await ApplicationRepo.createApplication(applicationInput2)
+        await ApplicationRepo.createApplication(applicationInput3)
         await ApplicationRepo.createApplication(applicationInput4)
 
         const result1 = await ApplicationRepo.getApplicationsByCourse(course1!.id)
@@ -109,27 +125,31 @@ describe('ApplicationRepo', () => {
         expect(result3).toMatchObject([applicationInput3])
     })
     it('can get applications by status', async () => {
-        prefIdCounter = 0
-        let applicationInput1 = createApplicationInput(student1!.id, course1!.id)
-        let applicationInput2 = createApplicationInput(student2!.id, course2!.id)
-        let applicationInput3 = createApplicationInput(student1!.id, course3!.id)
-        let applicationInput4 = createApplicationInput(student1!.id, course2!.id)
-        let applicationInput5 = createApplicationInput(student1!.id, course4!.id)
+        const applicationInput1 = createApplicationInput(student1!.id, course1!.id)
+        const applicationInput2 = createApplicationInput(student2!.id, course2!.id)
+        const applicationInput3 = createApplicationInput(student1!.id, course3!.id)
+        const applicationInput4 = createApplicationInput(student1!.id, course2!.id)
+        const applicationInput5 = createApplicationInput(student1!.id, course4!.id)
 
-        applicationInput2.applicationStatus = 'approved'
-        applicationInput3.applicationStatus = 'approved'
-        applicationInput5.applicationStatus = 'denied'
+        let application1 = await ApplicationRepo.createApplication(applicationInput1)
+        let application2 = await ApplicationRepo.createApplication(applicationInput2)
+        let application3 = await ApplicationRepo.createApplication(applicationInput3)
+        let application4 = await ApplicationRepo.createApplication(applicationInput4)
+        let application5 = await ApplicationRepo.createApplication(applicationInput5)
+
+        application2 = await ApplicationRepo.updateApplicationStatus(application2.id, 'approved')
+        application3 = await ApplicationRepo.updateApplicationStatus(application3.id, 'approved')
+        application5 = await ApplicationRepo.updateApplicationStatus(application5.id, 'denied')
 
         const result1 = await ApplicationRepo.getApplicationsByStatus('pending')
         const result2 = await ApplicationRepo.getApplicationsByStatus('approved')
         const result3 = await ApplicationRepo.getApplicationsByStatus('denied')
 
-        expect(result1).toMatchObject([applicationInput1, applicationInput4])
-        expect(result2).toMatchObject([applicationInput2, applicationInput3])
-        expect(result3).toMatchObject([applicationInput5])
+        expect(result1).toMatchObject([application1, application4])
+        expect(result2).toMatchObject([application2, application3])
+        expect(result3).toMatchObject([application5])
     })
     it('can update the status of an application', async () => {
-        prefIdCounter = 0
         const input = createApplicationInput(student1!.id, course4!.id)
         const data = await ApplicationRepo.createApplication(input)
         const updatedData = await ApplicationRepo.updateApplicationStatus(data.id, 'accepted')
@@ -139,26 +159,44 @@ describe('ApplicationRepo', () => {
         })
     })
     it('can update the course preferences for student application', async () => {
-        prefIdCounter = 0
-        const applications = await ApplicationRepo.getStudentApplications(student1!.upi)
-        const application1 = applications[0]
-        const application2 = applications[1]
-        const application3 = applications[2]
-        const application4 = applications[3]
+        const applicationInput1 = createApplicationInput(student1!.id, course1!.id)
+        const applicationInput2 = createApplicationInput(student1!.id, course3!.id)
+        const applicationInput3 = createApplicationInput(student1!.id, course2!.id)
 
-        expect(application1.preferenceId).toMatchObject(1!)
-        expect(application2.preferenceId).toMatchObject(2)
-        expect(application3.preferenceId).toMatchObject(3)
-        expect(application4.preferenceId).toMatchObject(4)
+        const application1 = await ApplicationRepo.createApplication(applicationInput1)
+        const application2 = await ApplicationRepo.createApplication(applicationInput2)
+        const application3 = await ApplicationRepo.createApplication(applicationInput3)
+
+        expect(application1!.preferenceId).toEqual(1)
+        expect(application2!.preferenceId).toEqual(2)
+        expect(application3!.preferenceId).toEqual(3)
         
-        const updatedApplication1 = await ApplicationRepo.updateCoursePreference(application1.id, 4)
-        const updatedApplication2 = await ApplicationRepo.updateCoursePreference(application2.id, 3)
-        const updatedApplication3 = await ApplicationRepo.updateCoursePreference(application3.id, 2)
-        const updatedApplication4 = await ApplicationRepo.updateCoursePreference(application4.id, 1)
+        const updatedApplication1 = await ApplicationRepo.updateCoursePreference(application1!.id, 4)
+        const updatedApplication2 = await ApplicationRepo.updateCoursePreference(application2!.id, 3)
+        const updatedApplication3 = await ApplicationRepo.updateCoursePreference(application3!.id, 2)
 
-        expect(updatedApplication1.preferenceId).toMatchObject(4)
-        expect(updatedApplication2.preferenceId).toMatchObject(3)
-        expect(updatedApplication3.preferenceId).toMatchObject(2)
-        expect(updatedApplication4.preferenceId).toMatchObject(1)
+        expect(updatedApplication1.preferenceId).toEqual(4)
+        expect(updatedApplication2.preferenceId).toEqual(3)
+        expect(updatedApplication3.preferenceId).toEqual(2)
+    })
+    it('can update allocated hours for student application', async () => {
+        const applicationInput = createApplicationInput(student1!.id, course1!.id)
+        const application = await ApplicationRepo.createApplication(applicationInput)
+        expect(application.allocatedHours).toEqual(5)
+
+        let updatedApplication = await ApplicationRepo.updateAllocatedHours(application.id, 10)
+        expect(updatedApplication.allocatedHours).toEqual(10)
+
+        updatedApplication = await ApplicationRepo.updateAllocatedHours(application.id, 200)
+        expect(updatedApplication.allocatedHours).toEqual(200)
+    })
+    it('can delete an application', async () => {
+        const applicationInput = createApplicationInput(student1!.id, course1!.id)
+        const application = await ApplicationRepo.createApplication(applicationInput)
+
+        await ApplicationRepo.deleteApplication(application.id)
+        
+        const deletedApplication = await ApplicationRepo.getApplicationById(application.id)
+        expect(deletedApplication).toEqual(null)
     })
 })
