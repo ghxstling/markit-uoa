@@ -14,20 +14,21 @@ export const applicationSchema = z
         equivalentQualification: z.string().optional(),
     })
     .required()
-    .superRefine(({ hasCompletedCourse, notTakenExplanation, previouslyAchievedGrade }, ctx) => {
-        if (hasCompletedCourse == false && (notTakenExplanation == undefined || notTakenExplanation == null)) {
+    // TODO: add validation for equivalentQualification
+    .superRefine(({ hasCompletedCourse, notTakenExplanation, previouslyAchievedGrade, equivalentQualification }, ctx) => {
+        if (hasCompletedCourse == false && (notTakenExplanation == undefined || notTakenExplanation == null || notTakenExplanation.match(''))) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: 'An explanation is required if you have not completed the course'
             })
         }
-        if (hasCompletedCourse == true && (previouslyAchievedGrade == undefined || previouslyAchievedGrade == null || previouslyAchievedGrade == '')) {
+        if (hasCompletedCourse == true && (previouslyAchievedGrade == undefined || previouslyAchievedGrade == null || previouslyAchievedGrade.match(''))) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: 'Previously achieved grade is required if you have completed the course',
             })
         }
-        if (hasCompletedCourse == false && (previouslyAchievedGrade != undefined && previouslyAchievedGrade != null && previouslyAchievedGrade == '')) {
+        if (hasCompletedCourse == false && (previouslyAchievedGrade != undefined && previouslyAchievedGrade != null && previouslyAchievedGrade.match(''))) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: 'Internal error: previouslyAchievedGrade should be null if hasCompletedCourse is false',
