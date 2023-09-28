@@ -3,14 +3,24 @@ import { DegreeType } from './degreeType'
 
 export const applicationSchema = z
     .object({
+        preferenceId: z.number().int().positive(),
+        studentId: z.number().int().positive(),
+        courseId: z.number().int().positive(),
         hasCompletedCourse: z.boolean(),
         previouslyAchievedGrade: z.string().optional(),
         hasTutoredCourse: z.boolean(),
         hasMarkedCourse: z.boolean(),
+        notTakenExplanation: z.string().optional(),
         equivalentQualification: z.string().optional(),
     })
     .required()
-    .superRefine(({ hasCompletedCourse, previouslyAchievedGrade }, ctx) => {
+    .superRefine(({ hasCompletedCourse, notTakenExplanation, previouslyAchievedGrade }, ctx) => {
+        if (hasCompletedCourse == false && (notTakenExplanation == undefined || notTakenExplanation == null)) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'An explanation is required if you have not completed the course'
+            })
+        }
         if (hasCompletedCourse == true && (previouslyAchievedGrade == undefined || previouslyAchievedGrade == null)) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
