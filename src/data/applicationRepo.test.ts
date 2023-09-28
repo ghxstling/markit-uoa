@@ -2,10 +2,9 @@ import prisma from '@/libs/prisma'
 import type { Prisma } from '@prisma/client'
 import ApplicationRepo from './applicationRepo'
 import UserRepo from './userRepo'
-import { DegreeType } from '@/models/degreeType'
 import StudentRepo from './studentRepo'
-import { courseInputHelper, studentInputHelper, resetDatabase } from '@/helpers/testHelper'
 import CourseRepo from './courseRepo'
+import { courseInputHelper, studentInputHelper, resetDatabase } from '@/helpers/testHelper'
 
 let student1: { id: number, upi: string } | null = null
 let student2: { id: number, upi: string } | null = null

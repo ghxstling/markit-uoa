@@ -23,7 +23,7 @@ export default class ApplicationRepo {
             where: { upi },
         })
         return await prisma.application.findMany({
-            where: { studentId: student?.id },
+            where: { studentId: student!.id },
         })
     }
 
@@ -56,16 +56,16 @@ export default class ApplicationRepo {
         })
     }
 
-    // static async updateAllocatedHours(id: number, allocatedHours: number) {
-    //     return await prisma.application.update({
-    //         where: { id },
-    //         data: { allocatedHours: allocatedHours },
-    //     })
-    // }
+    static async updateAllocatedHours(id: number, allocatedHours: number) {
+        return await prisma.application.update({
+            where: { id },
+            data: { allocatedHours: allocatedHours },
+        })
+    }
 
-    // static async deleteApplication(id: number) {
-    //     return await prisma.application.delete({
-    //         where: { id },
-    //     })
-    // }
+    static async deleteApplication(id: number) {
+        return await prisma.application.delete({
+            where: { id },
+        })
+    }
 }
