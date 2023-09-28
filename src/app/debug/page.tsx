@@ -12,26 +12,27 @@ const DebugPage = () => {
 
     const makeApiCall = async () => {
         try {
-            const upi = 'abc123'
-            const auid = 123456789
-            const degreeType = DegreeType.Bachelor
-            const degreeYear = 1
-            const res = await fetch('/api/students', {
+            const applicationData1 = {
+                preferenceId: 1,
+                studentId: 1,
+                courseId: 1,
+                hasCompletedCourse: true,
+                previouslyAchievedGrade: 'NotTaken',
+                hasTutoredCourse: false, 
+                hasMarkedCourse: false,
+                notTakenExplanation: 'I have not taken this course before',
+                equivalentQualification: 'NCEA Level 3',
+            }
+
+            let applications: any[] = [
+                applicationData1,
+            ]
+            const res = await fetch('/api/applications', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    preferredEmail: 'example@email.com',
-                    upi,
-                    auid: auid,
-                    overseas: false,
-                    degreeType,
-                    degreeYear,
-                    residencyStatus: true,
-                    validWorkVisa: true,
-                    maxWorkHours: 20,
-                }),
+                body: JSON.stringify(applications),
             })
             setApiResponse(await res.json())
             setError(null)

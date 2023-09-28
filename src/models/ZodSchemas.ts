@@ -21,13 +21,13 @@ export const applicationSchema = z
                 message: 'An explanation is required if you have not completed the course'
             })
         }
-        if (hasCompletedCourse == true && (previouslyAchievedGrade == undefined || previouslyAchievedGrade == null)) {
+        if (hasCompletedCourse == true && (previouslyAchievedGrade == undefined || previouslyAchievedGrade == null || previouslyAchievedGrade == '')) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: 'Previously achieved grade is required if you have completed the course',
             })
         }
-        if (hasCompletedCourse == false && (previouslyAchievedGrade != undefined || previouslyAchievedGrade != null)) {
+        if (hasCompletedCourse == false && (previouslyAchievedGrade != undefined && previouslyAchievedGrade != null && previouslyAchievedGrade == '')) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: 'Internal error: previouslyAchievedGrade should be null if hasCompletedCourse is false',
