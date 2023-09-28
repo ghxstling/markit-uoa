@@ -1,6 +1,7 @@
 import { parseArgs } from 'node:util'
 import { PrismaClient } from '@prisma/client'
 import { faker } from '@faker-js/faker';
+import csCourses from './csClassList.json'
 
 const prisma = new PrismaClient()
 
@@ -10,17 +11,20 @@ const options = {
     },
 }
 
+let list: string[] = [];
+
+
 async function generateData(seedOption?: number) {
     if (seedOption !== null) {
         faker.seed(seedOption)
     }
 
     // Seed Courses
-    for (let i = 0; i < 10; i++) {
+    for (const [key, value] of Object.entries(csCourses)) {
         await prisma.course.create({
           data: {
-            courseCode: faker.helpers.fromRegExp('COMPSCI[1-9]{3}'),
-            courseDescription: faker.hacker.ingverb() + " " + faker.hacker.adjective() + " " + faker.hacker.noun(),
+            courseCode: key,
+            courseDescription: value,
             numOfEstimatedStudents: faker.number.int({ min: 1, max: 2000 }),
             numOfEnrolledStudents: faker.number.int({ min: 1, max: 2000 }),
             markerHours: faker.number.int({ min: 5, max: 200 }),
@@ -28,7 +32,7 @@ async function generateData(seedOption?: number) {
             // TODO: check allocated markers numbers to course for the field below
             needMarkers: faker.datatype.boolean(0.5),
             markersNeeded: faker.number.int({ min: 1, max: 20 }),
-            semester: (faker.number.int({ min: 2023, max: 2035 }).toString()) + faker.helpers.arrayElement(["SS", "S1", "S2"]),
+            semester: (faker.number.int({ min: 2023, max: 2024 }).toString()) + faker.helpers.arrayElement(["SS", "S1", "S2"]),
           },
         });
       }
