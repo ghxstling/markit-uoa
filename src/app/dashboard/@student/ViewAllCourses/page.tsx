@@ -13,12 +13,14 @@ import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
-import DynamicBreadcrumb from '../components/DynamicBreadcrumb'
-import Sidebar from '../components/Sidebar'
+import DynamicBreadcrumb from '@/app/components/DynamicBreadcrumb'
+import Sidebar from '@/app/components/Sidebar'
 import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
+import CustomTheme from '@/app/CustomTheme'
+import { ThemeProvider } from '@mui/material/styles'
 
 export default function StudentViewAllCourses() {
     interface Course {
@@ -72,18 +74,35 @@ export default function StudentViewAllCourses() {
     }
 
     return (
-        <>
-            <Box sx={{ display: 'flex' }}>
-                <Sidebar />
+        <ThemeProvider theme={CustomTheme}>
+            <Sidebar />
+
+            <Sidebar />
+            <Box
+                sx={{
+                    height: '100vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'safe center',
+                    ml: '240px',
+                }}
+            >
                 <Box
-                    style={{
-                        paddingTop: 50,
-                        paddingLeft: 350,
-                        paddingRight: 100,
-                        marginBottom: 50,
+                    sx={{
+                        mt: '20px',
+                        ml: { xs: '5px', lg: '100px', xl: '200px' },
                     }}
                 >
                     <DynamicBreadcrumb />
+                </Box>
+                <Box
+                    sx={{
+                        mt: '50px',
+                        ml: { xs: '5px', lg: '150px', xl: '250px' },
+                        mr: { xs: '5px', lg: '150px', xl: '250px' },
+                        mb: '100px',
+                    }}
+                >
                     <h2>Course View</h2>
                     <TableContainer component={Paper} style={{ marginTop: 20 }}>
                         <Table style={{ paddingTop: 40 }}>
@@ -200,6 +219,6 @@ export default function StudentViewAllCourses() {
                     </TableContainer>
                 </Box>
             </Box>
-        </>
+        </ThemeProvider>
     )
 }

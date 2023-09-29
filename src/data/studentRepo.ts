@@ -20,6 +20,22 @@ export default class StudentRepo {
         })
     }
 
+    static async getStudentByEmail(email: string) {
+        const user = await prisma.user.findUnique({
+            where: {
+                email,
+            },
+        })
+        if (user == null) {
+            return null
+        }
+        return await prisma.student.findUnique({
+            where: {
+                userId: user.id,
+            },
+        })
+    }
+
     static async createStudentFromEmail(email: string, data: Prisma.StudentUncheckedCreateWithoutUserInput) {
         const user = await prisma.user.findUnique({
             where: { email },

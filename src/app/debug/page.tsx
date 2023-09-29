@@ -32,7 +32,7 @@ const DebugPage = () => {
         try {
             const data = new FormData()
             data.set('file', file)
-            const res = await fetch('/api/students/me/transcript', {
+            const res = await fetch('/api/students/me/cv', {
                 method: 'POST',
                 body: data,
             })

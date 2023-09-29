@@ -69,10 +69,19 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({ formValues, setFo
     }
 
     const handleResidencyChange = (event: any) => {
-        setFormValues({
-            ...formValues,
-            citizenOrPermanentResident: event.target.value,
-        })
+        const newValue = event.target.value
+        if (newValue === 'Yes') {
+            setFormValues({
+                ...formValues,
+                citizenOrPermanentResident: newValue,
+                workVisa: 'Yes', // Sets work visa to 'Yes' if permanent resident is 'Yes'
+            })
+        } else {
+            setFormValues({
+                ...formValues,
+                citizenOrPermanentResident: newValue,
+            })
+        }
     }
 
     const handleOverseasChange = (event: any) => {

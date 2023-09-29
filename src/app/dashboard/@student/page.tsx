@@ -16,6 +16,9 @@ import {
 } from '@mui/material'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
+import Sidebar from '@/app/components/Sidebar'
+import CustomTheme from '@/app/CustomTheme'
+import { ThemeProvider } from '@mui/material/styles'
 
 const StudentHomepage = () => {
     //initialise use states
@@ -65,70 +68,88 @@ const StudentHomepage = () => {
     }
 
     return (
-        <>
-            {/* <Box sx={{ display: 'flex' }}> */}
-            <Box sx={{ mt: '50px', ml: '96px' }}>
-                <Typography sx={{ mt: '28px' }} variant="h4" fontWeight="bold">
-                    Welcome, {firstName}
-                </Typography>
-                <Link href="./dashboard/Application" passHref>
-                    <Button
-                        variant="contained"
-                        sx={{
-                            backgroundColor: '#00467F',
-                            mt: '53px',
-                            mb: '58px',
-                        }}
-                    >
-                        Apply Now
-                    </Button>
-                </Link>
-                {/* create table */}
-                <Card sx={{ p: '20px' }}>
-                    <Typography variant="h5" fontWeight="bold">
-                        Current Applications
+        <ThemeProvider theme={CustomTheme}>
+            <Sidebar />
+            <Box
+                sx={{
+                    height: '100vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'safe center',
+                    ml: '240px',
+                }}
+            >
+                <Box
+                    sx={{
+                        mt: '20px',
+                        ml: { sm: '60px', lg: '120px' },
+                        mr: { sm: '60px', lg: '120px' },
+                        mb: '20px',
+                    }}
+                >
+                    <Typography sx={{ mt: '28px' }} variant="h4" fontWeight="bold">
+                        Welcome, {firstName}
                     </Typography>
-                    <TableContainer>
-                        <Table sx={{ minWidth: '887px' }} stickyHeader>
-                            <TableHead>
-                                <TableRow>
-                                    {columns.map((column) => (
-                                        <TableCell key={column.id}>{column.name}</TableCell>
-                                    ))}
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {/* map each row to a table row and slice the number of rows based on rows per page */}
-                                {rows &&
-                                    rows.slice(page * rowPerPage, page * rowPerPage + rowPerPage).map((row, index) => {
-                                        return (
-                                            <TableRow key={index}>
-                                                {/* map each column value of a row to its own cell */}
-                                                {columns &&
-                                                    columns.map((column) => {
-                                                        let value = row[column.id]
-                                                        return <TableCell key={value}>{value}</TableCell>
-                                                    })}
-                                            </TableRow>
-                                        )
-                                    })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    {/* create table pages */}
-                    <TablePagination
-                        component="div"
-                        rowsPerPage={rowPerPage}
-                        count={rows.length}
-                        rowsPerPageOptions={[5, 10, 25]}
-                        page={page}
-                        onPageChange={handPageChange}
-                        onRowsPerPageChange={handleRowsPerPage}
-                    ></TablePagination>
-                </Card>
+                    <Link href="./dashboard/Application" passHref>
+                        <Button
+                            variant="contained"
+                            sx={{
+                                backgroundColor: '#00467F',
+                                mt: '53px',
+                                mb: '58px',
+                            }}
+                        >
+                            Apply Now
+                        </Button>
+                    </Link>
+                    {/* create table */}
+                    <Card sx={{ p: '20px' }}>
+                        <Typography variant="h5" fontWeight="bold">
+                            Current Applications
+                        </Typography>
+                        <TableContainer>
+                            <Table sx={{ minWidth: '887px' }} stickyHeader>
+                                <TableHead>
+                                    <TableRow>
+                                        {columns.map((column) => (
+                                            <TableCell key={column.id}>{column.name}</TableCell>
+                                        ))}
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {/* map each row to a table row and slice the number of rows based on rows per page */}
+                                    {rows &&
+                                        rows
+                                            .slice(page * rowPerPage, page * rowPerPage + rowPerPage)
+                                            .map((row, index) => {
+                                                return (
+                                                    <TableRow key={index}>
+                                                        {/* map each column value of a row to its own cell */}
+                                                        {columns &&
+                                                            columns.map((column) => {
+                                                                let value = row[column.id]
+                                                                return <TableCell key={value}>{value}</TableCell>
+                                                            })}
+                                                    </TableRow>
+                                                )
+                                            })}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        {/* create table pages */}
+                        <TablePagination
+                            component="div"
+                            rowsPerPage={rowPerPage}
+                            count={rows.length}
+                            rowsPerPageOptions={[5, 10, 25]}
+                            page={page}
+                            onPageChange={handPageChange}
+                            onRowsPerPageChange={handleRowsPerPage}
+                        ></TablePagination>
+                    </Card>
+                </Box>
             </Box>
-            {/* </Box> */}
-        </>
+        </ThemeProvider>
     )
 }
 
