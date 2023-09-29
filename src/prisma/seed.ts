@@ -92,6 +92,22 @@ async function generateData(seedOption?: number) {
           },
         });
       }
+
+      // Seed Users (Supervisors)
+      for (let i = 0; i < 100; i++) {
+        let firstName = faker.person.firstName()
+        let lastName = faker.person.lastName()
+        let fullName = firstName + " " + lastName
+        let email =  firstName + "." + lastName + "@auckland.ac.nz"
+
+        await prisma.user.create({
+          data: {
+            email: email,
+            name: fullName,
+            role: "supervisor",
+          },
+        });
+      }
   
     //   // Seed Applications
     //   const students = await prisma.student.findMany();
