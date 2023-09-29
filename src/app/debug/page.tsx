@@ -12,34 +12,11 @@ const DebugPage = () => {
 
     const makeApiCall = async () => {
         try {
-            // const applicationData1 = {
-            //     prefId: 1,
-            //     course: 1,
-            //     grade: 'NotTaken',
-            //     tutoredPreviously: false, 
-            //     markedPreviously: false,
-            //     explainNotTaken: 'I have not taken this course before',
-            //     explainNotPrevious: 'NCEA Level 3',
-            // }
-            // const applicationData2 = {
-            //     prefId: 2,
-            //     course: 2,
-            //     grade: 'A+',
-            //     tutoredPreviously: true, 
-            //     markedPreviously: false,
-            //     explainNotTaken: 'sdasdsad',
-            //     explainNotPrevious: 'dsadsadsadasdasd',
-            // }
-
-            // let applications: any[] = [
-            //     applicationData1, applicationData2,
-            // ]
-            const res = await fetch('/api/students/test123/applications', {
+            const res = await fetch('/api/students/test123/applications/2', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                // body: JSON.stringify(applications),
             })
             setApiResponse(await res.json())
             setError(null)
