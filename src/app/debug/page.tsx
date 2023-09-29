@@ -34,7 +34,7 @@ const DebugPage = () => {
             // let applications: any[] = [
             //     applicationData1, applicationData2,
             // ]
-            const res = await fetch('/api/courses/3/applications', {
+            const res = await fetch('/api/students/test123/applications', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
