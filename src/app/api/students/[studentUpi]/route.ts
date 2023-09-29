@@ -67,6 +67,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
     // Get updated information from student
     const {
+        preferredEmail,
         upi,
         AUID,
         currentlyOverseas,
@@ -77,8 +78,9 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         workHours,
     } = await req.json()
 
-    const studentData = {
+    const studentData = { 
         userId: student?.id,
+        preferredEmail,
         upi: upi,
         auid: AUID,
         overseas: currentlyOverseas === 'Yes',
