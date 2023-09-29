@@ -18,14 +18,13 @@ const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFor
             {
                 id: new Date().getTime(),
                 prefId: coursePreferenceID,
-                data: {
-                    course: '',
-                    grade: '',
-                    explainNotTaken: '',
-                    markedPreviously: 'No',
-                    tutoredPreviously: 'No',
-                    explainNotPrevious: '',
-                },
+                course: '',
+                courseName: '',
+                grade: '',
+                explainNotTaken: '',
+                markedPreviously: false,
+                tutoredPreviously: false,
+                explainNotPrevious: '',
             },
         ]
 

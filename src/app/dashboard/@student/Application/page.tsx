@@ -55,6 +55,8 @@ const mapFormValuesToStudentDetails = (formValues: IFormValues): Prisma.StudentU
     }
 }
 
+const mapFormValuesToCourseApplications = (formValues: IFormValues) => {}
+
 const postStudentDetails = async (formValues: IFormValues) => {
     const studentDetails = mapFormValuesToStudentDetails(formValues)
     const res = await fetch('/api/students', {
@@ -140,13 +142,13 @@ const Application = () => {
         if (activeStep === steps.length - 1) {
             //check all applications
             for (let coursePreference of formValues.coursePreferences) {
-                if (coursePreference.data.course === '') {
+                if (coursePreference.courseName === '' || coursePreference.course === '') {
                     setSnackbarMessage(
                         'One of your applications does not contain a selected Course, please select a course for all applications'
                     )
                     setOpenSnackBar(true)
                     return
-                } else if (coursePreference.data.grade === '') {
+                } else if (coursePreference.grade === '') {
                     setSnackbarMessage(
                         'One of your applications does not contain a selected Grade, please select a grade for all applications or select Not Taken Previously'
                     )
