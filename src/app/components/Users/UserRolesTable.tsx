@@ -121,7 +121,7 @@ export default function UserRolesTable() {
     )
 
     return (
-        <Container style={{ marginTop: 20 }}>
+        <Container style={{ marginTop: 20, width: '100%' }}>
             <Paper elevation={3} style={{ padding: '20px' }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography variant="h4" fontWeight={600} style={{ marginBottom: '20px', fontSize: '1.8rem' }}>
@@ -142,7 +142,7 @@ export default function UserRolesTable() {
                                 <TableCell
                                     style={{
                                         textAlign: 'center',
-                                        minWidth: '250px',
+                                        minWidth: '100px',
                                         fontWeight: 'bold',
                                         cursor: 'pointer',
                                     }}
@@ -153,7 +153,7 @@ export default function UserRolesTable() {
                                 <TableCell
                                     style={{
                                         textAlign: 'center',
-                                        minWidth: '250px',
+                                        minWidth: '70px',
                                         fontWeight: 'bold',
                                         cursor: 'pointer',
                                     }}
@@ -161,7 +161,7 @@ export default function UserRolesTable() {
                                 >
                                     Email
                                 </TableCell>
-                                <TableCell style={{ textAlign: 'center', minWidth: '250px', fontWeight: 'bold' }}>
+                                <TableCell style={{ textAlign: 'center', minWidth: '60px', fontWeight: 'bold' }}>
                                     Role
                                 </TableCell>
                             </TableRow>
@@ -169,14 +169,18 @@ export default function UserRolesTable() {
                         <TableBody>
                             {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user) => (
                                 <TableRow key={user.id}>
-                                    <TableCell style={{ textAlign: 'center' }}>{user.name}</TableCell>
-                                    <TableCell style={{ textAlign: 'center' }}>{user.email}</TableCell>
-                                    <TableCell style={{ textAlign: 'center', width: '150px' }}>
+                                    <TableCell style={{ textAlign: 'center', minWidth: '100px' }}>
+                                        {user.name}
+                                    </TableCell>
+                                    <TableCell style={{ textAlign: 'center', minWidth: '70px' }}>
+                                        {user.email}
+                                    </TableCell>
+                                    <TableCell style={{ textAlign: 'center', minWidth: '60px' }}>
                                         <Select
                                             value={user.role}
                                             onChange={(event) => handleRoleChange(event, user.id)}
                                             displayEmpty
-                                            style={{ width: '100%', fontSize: '0.8rem' }}
+                                            style={{ width: '80%', fontSize: '0.8rem' }}
                                             size="small"
                                         >
                                             <MenuItem value={Role.Student}>Student</MenuItem>

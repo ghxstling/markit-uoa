@@ -215,7 +215,10 @@ const Sidebar = () => {
                 sidebarContent = content(
                     name,
                     email,
-                    [['Apply Now', '/dashboard/Application', 'ArchiveIcon']],
+                    [
+                        ['View All Courses', '/dashboard/ViewAllCourses', 'CalendarViewDayIcon'],
+                        ['Apply Now', '/dashboard/Application', 'ArchiveIcon'],
+                    ],
                     open,
                     handleClickOpen,
                     handleClose
