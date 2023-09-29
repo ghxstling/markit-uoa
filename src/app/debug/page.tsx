@@ -25,21 +25,21 @@ const DebugPage = () => {
                 prefId: 2,
                 course: 2,
                 grade: 'A+',
-                tutoredPreviously: false, 
+                tutoredPreviously: true, 
                 markedPreviously: false,
-                explainNotTaken: 'dsadssada',
-                explainNotPrevious: 'NCEA Level 3',
+                explainNotTaken: 'sdasdsad',
+                explainNotPrevious: 'dsadsadsadasdasd',
             }
 
             let applications: any[] = [
                 applicationData1, applicationData2,
             ]
             const res = await fetch('/api/applications', {
-                method: 'POST',
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(applications),
+                // body: JSON.stringify(applications),
             })
             setApiResponse(await res.json())
             setError(null)

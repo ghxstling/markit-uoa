@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import ApplicationRepo from '@/data/applicationRepo'
-import StudentRepo from '@/data/studentRepo'
-import { applicationSchema } from '@/models/ZodSchemas'
 import { getToken } from 'next-auth/jwt'
 import { Role } from '@/models/role'
+
+import ApplicationRepo from '@/data/applicationRepo'
+import StudentRepo from '@/data/studentRepo'
 import UserRepo from '@/data/userRepo'
+import { applicationSchema } from '@/models/ZodSchemas'
 import { Application } from '@prisma/client'
-import prisma from '@/libs/prisma'
 
 // GET /api/applications/
 export async function GET(req: NextRequest) {
@@ -23,7 +23,6 @@ export async function GET(req: NextRequest) {
     }
 
     const applications = await ApplicationRepo.getAllApplications()
-
     return NextResponse.json(applications, 
         {
             status: 200,
@@ -44,9 +43,6 @@ export async function POST(req: NextRequest) {
             { status: 403, headers: { 'content-type': 'application/json' } }
         )
     }
-
-    // TODO: FOR TESTING ONLY, DO NOT KEEP !!!
-    // await prisma.application.deleteMany()
 
     const user = await UserRepo.getUserbyEmail(token!.email!)
     const student = await StudentRepo.getStudentByUserId(user!.id)
