@@ -65,7 +65,7 @@ export async function GET(req: NextRequest, { params }: Params) {
         return NextResponse.json( 
             {
                 status: 403,
-                statusText: 'Student ' + upi + ' cannot view application ID ' + id,
+                statusText: 'Application ID ' + id + ' doesn\'t exist for student ' + upi,
             },
             { status: 403 }
         )
