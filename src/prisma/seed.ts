@@ -25,7 +25,7 @@ async function generateData(seedOption?: number) {
           data: {
             courseCode: key,
             courseDescription: value,
-            numOfEstimatedStudents: faker.number.int({ min: 1, max: 2000 }),
+            numOfEstimatedStudents: faker.number.int({ min: 400, max: 2000 }),
             numOfEnrolledStudents: faker.number.int({ min: 1, max: 2000 }),
             markerHours: faker.number.int({ min: 5, max: 200 }),
             markerResponsibilities: faker.lorem.paragraph({ min: 1, max: 4 }),
@@ -37,42 +37,61 @@ async function generateData(seedOption?: number) {
         });
       }
   
-    //   // Seed Users (Students)
-    //   for (let i = 0; i < 20; i++) {
-    //     await prisma.user.create({
-    //       data: {
-    //         email: faker.internet.email(),
-    //         name: faker.name.findName(),
-    //         role: "student",
-    //         student: {
-    //           create: {
-    //             preferredEmail: faker.internet.email(),
-    //             upi: faker.random.alphaNumeric(7).toUpperCase(),
-    //             auid: faker.datatype.number({ min: 100000000, max: 999999999 }),
-    //             overseas: faker.datatype.boolean(),
-    //             overseasStatus: faker.random.arrayElement([
-    //               "Exchange Student",
-    //               "International Student",
-    //               null,
-    //             ]),
-    //             residencyStatus: faker.datatype.boolean(),
-    //             validWorkVisa: faker.datatype.boolean(),
-    //             degreeType: faker.random.arrayElement([
-    //               "Bachelor's",
-    //               "Master's",
-    //               "Ph.D.",
-    //             ]),
-    //             degreeYear: faker.datatype.number({ min: 2010, max: 2023 }),
-    //             maxWorkHours: faker.datatype.number({ min: 5, max: 20 }),
-    //             otherContracts: faker.datatype.boolean(),
-    //             otherContractsDetails: faker.lorem.sentence(),
-    //             CV: faker.system.fileName(),
-    //             academicTranscript: faker.system.fileName(),
-    //           },
-    //         },
-    //       },
-    //     });
-    //   }
+      // Seed Users (Students)
+      for (let i = 0; i < 200; i++) {
+        let firstName = faker.person.firstName()
+        let lastName = faker.person.lastName()
+        let fullName = firstName + " " + lastName
+        let upi = firstName.slice(0,1).toLowerCase()
+        for (let i = 0; 4 > upi.length; i++) {
+            if (lastName.charAt(i).match(/[a-zA-Z]/g)) {
+                upi += lastName.charAt(i).toLowerCase()
+              }
+          }
+        upi += faker.string.numeric(3)
+        let email = upi + "@aucklanduni.ac.nz"
+
+        let residencyStatus = faker.datatype.boolean(0.8)
+        let validWorkVisa
+        if (residencyStatus === false) {
+            validWorkVisa = faker.datatype.boolean(0.8)
+        } else {
+            validWorkVisa = null
+        }
+
+        await prisma.user.create({
+          data: {
+            email: email,
+            name: fullName,
+            role: "student",
+            student: {
+              create: {
+                preferredEmail: email,
+                upi: upi,
+                auid: parseInt(faker.string.numeric({length: 9, allowLeadingZeros: false })),
+                overseas: faker.datatype.boolean(0.8),
+                // overseasStatus not genereated
+                residencyStatus: residencyStatus,
+                validWorkVisa: validWorkVisa,
+                degreeType: faker.helpers.arrayElement([
+                    'bachelor',
+                    'bachelor honours',
+                    'graduate certificate',
+                    'graduate diploma',
+                    'masters',
+                    'phd',
+                ]),
+                degreeYear: faker.number.int({ min: 1, max: 10 }),
+                maxWorkHours: faker.number.int({ min: 5, max: 25 }),
+                // otherContracts not generated
+                // otherContractsDetails not generated
+                CV: "CV.pdf",
+                academicTranscript: "Academic Transcript.pdf",
+              },
+            },
+          },
+        });
+      }
   
     //   // Seed Applications
     //   const students = await prisma.student.findMany();
