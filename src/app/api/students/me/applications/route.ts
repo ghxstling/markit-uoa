@@ -20,16 +20,6 @@ export async function GET(req: NextRequest) {
 
     const user = await UserRepo.getUserbyEmail(token!.email!)
     const student = await StudentRepo.getStudentByUserId(user!.id)
-
-    if (!student) {
-        return NextResponse.json( 
-            {
-                status: 404,
-                statusText: 'Student ' + student!.upi + ' does not exist',
-            },
-            { status: 404 }
-        )
-    }
     const applications = await ApplicationRepo.getStudentApplications(student!.upi)
     if (applications.length === 0) {
         return NextResponse.json( 
