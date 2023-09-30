@@ -14,11 +14,11 @@ type Params = {
 export async function GET(req: NextRequest, { params }: Params) {
     // Check user token for authorised credentials
     const token = await getToken({ req })
-    if (token!.role != Role.Coordinator) {
+    if (token!.role != Role.Supervisor && token!.role != Role.Coordinator) {
         return new NextResponse(
             JSON.stringify({
                 success: false,
-                message: 'Only coordinators are permitted to access this endpoint.',
+                message: 'Only supervisors and coordinators are permitted to access this endpoint.',
             }),
             { status: 403, headers: { 'content-type': 'application/json' } }
         )
