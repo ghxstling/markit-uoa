@@ -119,22 +119,24 @@ async function generateData(seedOption?: number) {
     for (let i = 0; i < 500; i++) {
         let student = students[faker.number.int({ min: 0, max: students.length - 1 })]
         let course = courses[faker.number.int({ min: 0, max: courses.length - 1 })]
-        if (await prisma.application.findFirst({ 
-            where: {
-                AND: [
-                  {
-                    studentId: {
-                        equals: student.id,
-                    },
-                  },
-                  {
-                    courseId: {
-                      equals: course.id,
-                    },
-                  },
-                ]
-              },
-            }) === null) {
+        if (
+            (await prisma.application.findFirst({
+                where: {
+                    AND: [
+                        {
+                            studentId: {
+                                equals: student.id,
+                            },
+                        },
+                        {
+                            courseId: {
+                                equals: course.id,
+                            },
+                        },
+                    ],
+                },
+            })) === null
+        ) {
             let previouslyAchievedGrade = faker.helpers.arrayElement(gradeArray)
             let hasCompletedCourse, hasTutoredCourse, hasMarkedCourse, notTakenExplanation
             if (previouslyAchievedGrade === 'Not Taken Previously') {
@@ -147,12 +149,12 @@ async function generateData(seedOption?: number) {
                 hasTutoredCourse = faker.datatype.boolean(0.5)
                 hasMarkedCourse = faker.datatype.boolean(0.5)
             }
-    
+
             let equivalentQualification
             if ((hasMarkedCourse || hasTutoredCourse) !== true) {
                 equivalentQualification = faker.lorem.sentences({ min: 3, max: 5 })
             }
-    
+
             await prisma.application.create({
                 data: {
                     applicationStatus: faker.helpers.arrayElement(['pending', 'approved', 'denied']),
@@ -167,7 +169,7 @@ async function generateData(seedOption?: number) {
                 },
             })
         } else {
-            console.log("Application already exists - Regenerating...")
+            console.log('Application already exists - Regenerating...')
             i--
         }
     }
@@ -189,7 +191,7 @@ async function main() {
                 console.log('RANDOM seeding in progress.')
                 break
             default:
-                generateData(123)
+                console.log('No seeding was completed.')
                 break
         }
     } catch (error) {
