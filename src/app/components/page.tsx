@@ -13,8 +13,16 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+import { number } from 'zod';
 
-export default function viewStudentInformation(){
+type ViewStudentInformationProps = {
+  studentId: string
+}
+
+
+export default function ViewStudentInformation({ studentId }: ViewStudentInformationProps){
+
   interface Course {
     courseCode: string
     semester: string
@@ -55,95 +63,8 @@ export default function viewStudentInformation(){
     }
 
     const router = usePathname();
-    const parts = router.split("/");
-    const studentId = parts[parts.length - 1];
 
-    
-    /*const mockStudent: Student = {
-      id: 1,
-      upi: 'abc123',
-      auid: 12345,
-      email: 'student@example.com',
-      overseas: false,
-      residencyStatus: true,
-      validWorkVisa: true,
-      degreeYear: 3,
-      maxWorkHours: 20,
-      degreeType: 'Bachelor of Science',
-      applications: [
-        {
-          id: 1,
-          applicationStatus: 'Pending',
-          student: {
-            id: 1,
-            upi: 'abc123',
-            auid: 12345,
-            email: 'student@example.com',
-            overseas: false,
-            residencyStatus: true,
-            validWorkVisa: true,
-            degreeYear: 3,
-            maxWorkHours: 20,
-            degreeType: 'Bachelor of Science',
-            applications: [],
-          },
-          studentId: 1,
-          course: {
-            courseCode: 'COMP101',
-            semester: 'Fall 2023',
-            markersNeeded: 2,
-            applicants: 5,
-            needMarkers: true,
-            id: 101,
-          },
-          courseId: 101,
-          preferredEmail: 'student@example.com',
-          hasCompletedCourse: false,
-          previouslyAchievedGrade: '',
-          hasTutoredCourse: false,
-          hasMarkedCourse: false,
-          notTakenExplanation: 'Test',
-          equivalentQualification: '',
-        },
-
-        {
-          id: 1,
-          applicationStatus: 'Pending',
-          student: {
-            id: 1,
-            upi: 'abc123',
-            auid: 12345,
-            email: 'student@example.com',
-            overseas: false,
-            residencyStatus: true,
-            validWorkVisa: true,
-            degreeYear: 3,
-            maxWorkHours: 20,
-            degreeType: 'Bachelor of Science',
-            applications: [],
-          },
-          studentId: 1,
-          course: {
-            courseCode: 'COMP101',
-            semester: 'Fall 2023',
-            markersNeeded: 2,
-            applicants: 5,
-            needMarkers: true,
-            id: 101,
-          },
-          courseId: 101,
-          preferredEmail: 'student@example.com',
-          hasCompletedCourse: true,
-          previouslyAchievedGrade: 'A',
-          hasTutoredCourse: false,
-          hasMarkedCourse: false,
-          notTakenExplanation: '',
-          equivalentQualification: '',
-        }
-      ],
-    };*/
-
-    const [data, setData] = useState<Student>(); /*put mockStudent in the brackets and comment out the useEffect and fetchData to use mockStudent */
+    const [data, setData] = useState<Student>();
     
     useEffect(() => {
         if (studentId) {
