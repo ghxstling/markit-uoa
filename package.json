@@ -7,7 +7,9 @@
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
-        "test": "jest -i"
+        "test": "jest -i",
+        "prisma:migrate": "prisma migrate dev --schema ./src/prisma/schema.prisma",
+        "prisma:studio": "npx prisma studio --schema ./src/prisma/schema.prisma"
     },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.410.0",
