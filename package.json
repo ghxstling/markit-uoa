@@ -7,7 +7,11 @@
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
-        "test": "jest -i"
+        "test": "jest -i",
+        "migrate:dev": "prisma migrate dev --schema ./src/prisma/schema.prisma",
+        "migrate:reset": "prisma migrate reset --schema ./src/prisma/schema.prisma",
+        "studio": "prisma studio --schema ./src/prisma/schema.prisma",
+        "seed": "ts-node ./src/prisma/seed.ts --datasetType constant"
     },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.410.0",
@@ -43,8 +47,5 @@
         "ts-jest": "^29.1.1",
         "ts-node": "^10.9.1",
         "typescript": "^5.2.2"
-    },
-    "prisma": {
-        "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
     }
 }
