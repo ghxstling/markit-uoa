@@ -67,17 +67,11 @@ model Application {
   preferenceId            Int
   // many to one with Student
   student                 Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  <<<<<<< HEAD
   studentId               Int
   // many to one with Course
   course                  Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId                Int
-  =======
-  studentId               Int
   // one to one with Course
-  course                  Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId                Int
-  >>>>>>> master
   hasCompletedCourse      Boolean
   previouslyAchievedGrade String? // needed if hasCompletedCourse is true
   hasTutoredCourse        Boolean
@@ -85,10 +79,5 @@ model Application {
   notTakenExplanation     String? // needed if hasCompletedCourse is false
   equivalentQualification String? // needed if hasTutoredCourse && hasMarkedCourse is false
 
-  <<<<<<< HEAD
-  =======
-  >>>>>>> master
-
-  @@unique([studentId, courseId], name: "student_application_for_course")
   @@unique([studentId, courseId])
 }
