@@ -6,24 +6,24 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model Course {
-  id                     Int          @id @default(autoincrement())
+  id                     Int           @id @default(autoincrement())
   courseCode             String
   courseDescription      String
   numOfEstimatedStudents Int
   numOfEnrolledStudents  Int
   markerHours            Int
   markerResponsibilities String
-  needMarkers            Boolean      @default(true)
+  needMarkers            Boolean       @default(true)
   markersNeeded          Int
   semester               String
-  modifiedAt             DateTime     @default(now()) @updatedAt
-  // one to many with Application
-  applications            Application[]
+  modifiedAt             DateTime      @default(now()) @updatedAt
+  // one to one with Application
+  application            Application[]
   // TODO: add course director (name, email)
   // TODO: add course coordinator (name, email)
 }
@@ -67,10 +67,17 @@ model Application {
   preferenceId            Int
   // many to one with Student
   student                 Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  studentId               Int     
+  <<<<<<< HEAD
+  studentId               Int
   // many to one with Course
   course                  Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId                Int     
+  courseId                Int
+  =======
+  studentId               Int
+  // one to one with Course
+  course                  Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId                Int
+  >>>>>>> master
   hasCompletedCourse      Boolean
   previouslyAchievedGrade String? // needed if hasCompletedCourse is true
   hasTutoredCourse        Boolean
@@ -78,5 +85,10 @@ model Application {
   notTakenExplanation     String? // needed if hasCompletedCourse is false
   equivalentQualification String? // needed if hasTutoredCourse && hasMarkedCourse is false
 
+  <<<<<<< HEAD
+  =======
+  >>>>>>> master
+
   @@unique([studentId, courseId], name: "student_application_for_course")
+  @@unique([studentId, courseId])
 }
