@@ -11,19 +11,19 @@ datasource db {
 }
 
 model Course {
-  id                     Int          @id @default(autoincrement())
+  id                     Int           @id @default(autoincrement())
   courseCode             String
   courseDescription      String
   numOfEstimatedStudents Int
   numOfEnrolledStudents  Int
   markerHours            Int
   markerResponsibilities String
-  needMarkers            Boolean      @default(true)
+  needMarkers            Boolean       @default(true)
   markersNeeded          Int
   semester               String
-  modifiedAt             DateTime     @default(now()) @updatedAt
+  modifiedAt             DateTime      @default(now()) @updatedAt
   // one to one with Application
-  application            Application?
+  application            Application[]
   // TODO: add course director (name, email)
   // TODO: add course coordinator (name, email)
 }
@@ -65,14 +65,16 @@ model Application {
   applicationStatus       String  @default("pending") // refer to the applicationStatus enum in models/applicationStatus.ts
   // one to one with Student
   student                 Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  studentId               Int     @unique
+  studentId               Int
   // one to one with Course
   course                  Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId                Int     @unique
+  courseId                Int
   hasCompletedCourse      Boolean
   previouslyAchievedGrade String? // needed if hasCompletedCourse is true
   hasTutoredCourse        Boolean
   hasMarkedCourse         Boolean
   notTakenExplanation     String? // needed if hasCompletedCourse is false
   equivalentQualification String? // needed if hasTutoredCourse && hasMarkedCourse is false
+
+  @@unique([studentId, courseId])
 }
