@@ -3,27 +3,57 @@ import { DegreeType } from './degreeType'
 
 export const applicationSchema = z
     .object({
+        preferenceId: z.number().int().positive(),
+        studentId: z.number().int().positive(),
+        courseId: z.number().int().positive(),
         hasCompletedCourse: z.boolean(),
         previouslyAchievedGrade: z.string().optional(),
         hasTutoredCourse: z.boolean(),
         hasMarkedCourse: z.boolean(),
+        notTakenExplanation: z.string().optional(),
         equivalentQualification: z.string().optional(),
     })
     .required()
-    .superRefine(({ hasCompletedCourse, previouslyAchievedGrade }, ctx) => {
-        if (hasCompletedCourse == true && (previouslyAchievedGrade == undefined || previouslyAchievedGrade == null)) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: 'Previously achieved grade is required if you have completed the course',
-            })
-        }
-        if (hasCompletedCourse == false && (previouslyAchievedGrade != undefined || previouslyAchievedGrade != null)) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: 'Internal error: previouslyAchievedGrade should be null if hasCompletedCourse is false',
-            })
-        }
-    })
+    // TODO: add validation for equivalentQualification
+    .superRefine((
+        {
+            hasCompletedCourse,
+            notTakenExplanation,
+            previouslyAchievedGrade,
+            equivalentQualification,
+            hasMarkedCourse,
+            hasTutoredCourse,
+        }, ctx) => {
+            if (hasMarkedCourse == false && hasTutoredCourse == false &&
+                (equivalentQualification == undefined || equivalentQualification == null || equivalentQualification == '')) {
+                console.log(true)
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: 'Your equivalent qualification is required if you have not marked/tutored the course before'
+                })
+            }
+            if (hasCompletedCourse == false) {
+                if (notTakenExplanation == undefined || notTakenExplanation == null || notTakenExplanation == '') {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: 'An explanation is required if you have not completed the course'
+                    })
+                }
+                if (previouslyAchievedGrade != undefined && previouslyAchievedGrade != null && !(previouslyAchievedGrade == 'NotTaken')) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "Internal error: previouslyAchievedGrade should be set to 'NotTaken' if hasCompletedCourse is false",
+                    })
+                }
+            } else {
+                if (previouslyAchievedGrade == undefined || previouslyAchievedGrade == null || previouslyAchievedGrade == 'NotTaken') {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: 'Previously achieved grade is required if you have completed the course',
+                    })
+                }
+            }
+        })
 
 export const courseSchema = z
     .object({

@@ -63,12 +63,15 @@ model Student {
 model Application {
   id                      Int     @id @default(autoincrement())
   applicationStatus       String  @default("pending") // refer to the applicationStatus enum in models/applicationStatus.ts
-  // one to one with Student
+  allocatedHours          Int     @default(5) // needed if applicationStatus is 'accepted'
+  preferenceId            Int
+  // many to one with Student
   student                 Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
   studentId               Int
-  // one to one with Course
+  // many to one with Course
   course                  Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId                Int
+  // one to one with Course
   hasCompletedCourse      Boolean
   previouslyAchievedGrade String? // needed if hasCompletedCourse is true
   hasTutoredCourse        Boolean
