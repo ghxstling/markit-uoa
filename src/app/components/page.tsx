@@ -15,6 +15,8 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { number } from 'zod';
+import Button from '@mui/material/Button';
+import Link from 'next/link';
 
 type ViewStudentInformationProps = {
   studentId: string
@@ -120,6 +122,9 @@ export default function ViewStudentInformation({ studentId }: ViewStudentInforma
                 <Divider/>
                 <p>Degree Type: {data?.degreeType}</p>
                 <Divider/>
+                <Link href='http://localhost:3000/api/students/[studentId]/cv' as={`/dashboard/courses/${data?.upi}`}><Button>Student CV</Button></Link>
+                <Divider/>
+                <Link href='http://localhost:3000/api/students/[studentId]/transcript' as={`/dashboard/courses/${data?.upi}`}><Button>Student Transcript</Button></Link>
                 <h2>Student Applications</h2>
                 <TableContainer component={Paper} style={{marginTop:20}}>
                         <Table style={{paddingTop:40}}>
