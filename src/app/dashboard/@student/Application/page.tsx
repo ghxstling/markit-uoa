@@ -249,10 +249,6 @@ const Application = () => {
                                             <Button variant="contained" onClick={handleNext} sx={{ mt: 3, ml: 1 }}>
                                                 Submit student details
                                             </Button>
-                                        ) : activeStep === 2 ? (
-                                            <Button variant="contained" onClick={handleNext} sx={{ mt: 3, ml: 1 }}>
-                                                Submit files
-                                            </Button>
                                         ) : activeStep === steps.length - 1 ? (
                                             formValues.coursePreferences.length === 0 ? (
                                                 <Button
