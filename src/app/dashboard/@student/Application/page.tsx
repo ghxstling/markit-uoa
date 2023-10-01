@@ -48,7 +48,7 @@ const mapFormValuesToStudentDetails = (formValues: IFormValues): Prisma.StudentU
         auid: Number(formValues.AUID),
         overseas: formValues.currentlyOverseas === 'Yes',
         residencyStatus: formValues.citizenOrPermanentResident === 'Yes',
-        validWorkVisa: formValues.workVisa === 'Yes',
+        validWorkVisa: formValues.citizenOrPermanentResident === 'Yes' ? true : formValues.workVisa === 'Yes',
         degreeType: formValues.degree,
         degreeYear: formValues.degreeYears,
         maxWorkHours: formValues.workHours,
@@ -64,6 +64,19 @@ const postStudentDetails = async (formValues: IFormValues) => {
         },
         body: JSON.stringify(studentDetails),
     })
+    return res
+}
+
+const postCourseApplications = async (formValues: IFormValues) => {
+    const courseApplications = formValues.coursePreferences
+    const res = await fetch('api/applications', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(courseApplications),
+    })
+    console.log(JSON.stringify(courseApplications))
     return res
 }
 
@@ -84,13 +97,13 @@ const Application = () => {
         workHours: 5,
         coursePreferences: [],
     })
-    const [hasPreferences, setHasPreferences] = useState(true)
 
     //TODO Fetch existing application, get relevant values and update formValues
 
     const [snackbarMessage, setSnackbarMessage] = useState('Please enter 9 digits for your student ID')
     const [openSnackBar, setOpenSnackBar] = useState(false)
     const [openSnackBarSuccess, setOpenSnackBarSuccess] = useState(false)
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('Student submitted successfully!')
 
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
@@ -129,6 +142,7 @@ const Application = () => {
             }
             const res = await postStudentDetails(formValues)
             if (res.ok) {
+                setSnackbarSuccessMessage('Student submitted successfully')
                 setOpenSnackBarSuccess(true)
             } else {
                 setSnackbarMessage('Error submitting student details, please try again')
@@ -140,16 +154,25 @@ const Application = () => {
         if (activeStep === steps.length - 1) {
             //check all applications
             for (let coursePreference of formValues.coursePreferences) {
-                if (coursePreference.data.course === '') {
+                if (coursePreference.courseName === '' || coursePreference.course === '') {
                     setSnackbarMessage(
                         'One of your applications does not contain a selected Course, please select a course for all applications'
                     )
                     setOpenSnackBar(true)
                     return
-                } else if (coursePreference.data.grade === '') {
+                } else if (coursePreference.grade === '') {
                     setSnackbarMessage(
                         'One of your applications does not contain a selected Grade, please select a grade for all applications or select Not Taken Previously'
                     )
+                    setOpenSnackBar(true)
+                    return
+                }
+                const res = await postCourseApplications(formValues)
+                if (res.ok) {
+                    setSnackbarSuccessMessage('Course selection submitted successfully')
+                    setOpenSnackBarSuccess(true)
+                } else {
+                    setSnackbarMessage('Error submitting course selection details, please try again')
                     setOpenSnackBar(true)
                     return
                 }
@@ -270,7 +293,7 @@ const Application = () => {
                                         onClose={handleCloseSuccess}
                                     >
                                         <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
-                                            Student submitted successfully!
+                                            {snackbarSuccessMessage}
                                         </Alert>
                                     </Snackbar>
                                 </>

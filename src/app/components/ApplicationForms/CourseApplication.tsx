@@ -15,6 +15,7 @@ interface Course {
 }
 
 import { CourseApplicationType } from '@/types/CourseApplicationType'
+import { number } from 'zod'
 
 interface CourseApplicationProps {
     application: CourseApplicationType
@@ -27,7 +28,17 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
     updateCoursePreference,
     removeCoursePreference,
 }) => {
-    const [formData, setFormData] = useState(application.data)
+    let data = {
+        course: application.course,
+        courseName: application.courseName,
+        grade: application.grade,
+        explainNotTaken: application.explainNotTaken,
+        markedPreviously: application.markedPreviously,
+        tutoredPreviously: application.tutoredPreviously,
+        explainNotPrevious: application.explainNotPrevious,
+    }
+
+    const [formData, setFormData] = useState(data)
     const [courseData, setCourseData] = useState<Course[]>([])
 
     useEffect(() => {
@@ -51,15 +62,26 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
         const { name, value } = event.target
         setFormData(
             (prevFormData: {
-                course: string
+                course: number | ''
+                courseName: string
                 grade: string
                 explainNotTaken: string
-                markedPreviously: string
-                tutoredPreviously: string
+                markedPreviously: boolean
+                tutoredPreviously: boolean
                 explainNotPrevious: string
             }) => ({
                 ...prevFormData,
                 [name]: value,
+                ...(name === 'course' && {
+                    course: parseInt(value),
+                    courseName: courseData.find((course) => course.id === parseInt(value))?.courseCode,
+                }),
+                ...(name === 'markedPreviously' && {
+                    markedPreviously: value === 'Yes',
+                }),
+                ...(name === 'tutoredPreviously' && {
+                    tutoredPreviously: value === 'Yes',
+                }),
             })
         )
     }
@@ -68,8 +90,14 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
         console.log(formData) //remvoe this later
         const updatedApplication: CourseApplicationType = {
             id: thisApplicationId,
+            courseName: formData.courseName,
             prefId: coursePrefId,
-            data: formData,
+            course: formData.course,
+            grade: formData.grade,
+            explainNotTaken: formData.explainNotTaken,
+            markedPreviously: formData.markedPreviously,
+            tutoredPreviously: formData.tutoredPreviously,
+            explainNotPrevious: formData.explainNotPrevious,
         }
         submitFormData(updatedApplication)
     }
@@ -164,7 +192,7 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
                                     row
                                     name="markedPreviously"
                                     id="markedPreviously"
-                                    value={formData.markedPreviously}
+                                    value={String(formData.markedPreviously) === 'true' ? 'Yes' : 'No'}
                                     onChange={handleChange}
                                     onBlur={handleApplicationUpdate}
                                 >
@@ -190,7 +218,7 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
                                     row
                                     name="tutoredPreviously"
                                     id="tutoredPreviously"
-                                    value={formData.tutoredPreviously}
+                                    value={String(formData.tutoredPreviously) === 'true' ? 'Yes' : 'No'}
                                     onChange={handleChange}
                                     onBlur={handleApplicationUpdate}
                                 >

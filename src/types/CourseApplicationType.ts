@@ -1,12 +1,11 @@
 export type CourseApplicationType = {
     id: number
+    courseName: string
     prefId: number
-    data: {
-        course: string
-        grade: string
-        explainNotTaken: string
-        markedPreviously: string
-        tutoredPreviously: string
-        explainNotPrevious: string
-    }
+    course: number | ''
+    grade: string
+    explainNotTaken: string
+    markedPreviously: boolean
+    tutoredPreviously: boolean
+    explainNotPrevious: string
 }
