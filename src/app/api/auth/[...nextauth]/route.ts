@@ -33,9 +33,7 @@ const authOptions: AuthOptions = {
         async jwt({ token, profile }) {
             // profile not null on first sign in
             if (profile) {
-                const userFromEmail = await UserRepo.getUserbyEmail(
-                    profile.email!
-                )
+                const userFromEmail = await UserRepo.getUserbyEmail(profile.email!)
                 token.role = userFromEmail!.role
             }
             return token
@@ -49,4 +47,4 @@ const authOptions: AuthOptions = {
 
 const handler = NextAuth(authOptions)
 
-export { handler as GET, handler as POST, authOptions }
+export { handler as GET, handler as POST }
