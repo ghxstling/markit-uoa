@@ -116,6 +116,7 @@ export default function ViewStudentInformation({ studentId }: ViewStudentInforma
                 ) : (
                 <p>Valid Work Visa: No</p>
                 )}
+                
                 <p>Years into Degree: {data?.degreeYear}</p>
                 <Divider/>
                 <p>Maximum Hours Per Week: {data?.maxWorkHours}</p>
