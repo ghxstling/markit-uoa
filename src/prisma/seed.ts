@@ -155,19 +155,19 @@ async function generateData(seedOption?: number) {
                 equivalentQualification = faker.lorem.sentences({ min: 3, max: 5 })
             }
 
-            await prisma.application.create({
-                data: {
-                    applicationStatus: faker.helpers.arrayElement(['pending', 'approved', 'denied']),
-                    student: { connect: { id: student.id } },
-                    course: { connect: { id: course.id } },
-                    hasCompletedCourse: hasCompletedCourse,
-                    previouslyAchievedGrade: previouslyAchievedGrade,
-                    hasTutoredCourse: hasTutoredCourse,
-                    hasMarkedCourse: hasMarkedCourse,
-                    notTakenExplanation: notTakenExplanation,
-                    equivalentQualification: equivalentQualification,
-                },
-            })
+            // await prisma.application.create({
+            //     data: {
+            //         applicationStatus: faker.helpers.arrayElement(['pending', 'approved', 'denied']),
+            //         student: { connect: { id: student.id } },
+            //         course: { connect: { id: course.id } },
+            //         hasCompletedCourse: hasCompletedCourse,
+            //         previouslyAchievedGrade: previouslyAchievedGrade,
+            //         hasTutoredCourse: hasTutoredCourse,
+            //         hasMarkedCourse: hasMarkedCourse,
+            //         notTakenExplanation: notTakenExplanation,
+            //         equivalentQualification: equivalentQualification,
+            //     },
+            // })
         } else {
             console.log('Application already exists - Regenerating...')
             i--
