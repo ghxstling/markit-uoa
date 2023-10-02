@@ -91,10 +91,10 @@ export default function CourseTable() {
                         </TableCell>
                         <TableCell style={{ textAlign: 'center' }}>
                             <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                Markers Needed{' '}
-                                <Tooltip title="Markers">
+                                Markers Assigned/Needed
+                                <Tooltip title="number of marker assigned / number of markers needed">
                                     <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
-                                </Tooltip>{' '}
+                                </Tooltip>
                                 {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
                             </div>
                         </TableCell>
@@ -102,8 +102,8 @@ export default function CourseTable() {
                         {isCoordinator ? (
                             <TableCell style={{ textAlign: 'center' }}>
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                    Hours Needed/Hours Assigned
-                                    <Tooltip title="status">
+                                    Hours Assigned/Needed
+                                    <Tooltip title="number of hours assigned / number of hours needed">
                                         <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
                                     </Tooltip>
                                 </div>
@@ -135,12 +135,14 @@ export default function CourseTable() {
                                         {isCoordinator ? <Button>View</Button> : <Button>Edit</Button>}
                                     </Link>
                                 </TableCell>
-                                <TableCell style={{ textAlign: 'center' }}>{course.markersNeeded}</TableCell>
                                 {/*TODO add this data<TableCell style={{textAlign:'center'}}>{course.applicants}</TableCell>*/}
                                 {isCoordinator ? (
-                                    <TableCell style={{ textAlign: 'center' }}>30/{course.markerHours}</TableCell>
+                                    <>
+                                        <TableCell style={{ textAlign: 'center' }}>2/{course.markersNeeded}</TableCell>
+                                        <TableCell style={{ textAlign: 'center' }}>30/{course.markerHours}</TableCell>
+                                    </>
                                 ) : (
-                                    <></>
+                                    <TableCell style={{ textAlign: 'center' }}>2/{course.markersNeeded}</TableCell>
                                 )}
                                 <TableCell style={{ textAlign: 'center' }}>
                                     {course.needMarkers ? (

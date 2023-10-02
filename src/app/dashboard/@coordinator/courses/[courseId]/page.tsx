@@ -7,7 +7,6 @@ import { ThemeProvider } from '@mui/material/styles'
 import CustomTheme from '@/app/CustomTheme'
 import { Box, Stack } from '@mui/material'
 import CourseInformation from '@/app/components/courses/CourseInformation'
-import AllocateMarkers from '@/app/components/AllocateMarkers'
 
 export default function CreateCoursePage() {
     const pathname = usePathname()

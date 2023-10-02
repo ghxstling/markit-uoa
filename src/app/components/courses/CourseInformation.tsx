@@ -13,6 +13,7 @@ import {
     TableFooter,
     Checkbox,
     Chip,
+    TableContainer,
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { Card } from '@mui/material'
@@ -146,7 +147,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     return (
         <>
             <Card sx={{ p: '20px' }}>
-                <Box display="flex">
+                <Box display="flex" alignItems="center">
                     <Typography variant="h5" fontWeight="bold">
                         {courseName}
                     </Typography>
@@ -158,6 +159,19 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                     >
                         Edit Course
                     </Button>
+
+                    <TableContainer sx={{ width: '60%', border: '2px solid black', ml: 11 }}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Markers Needed: 2 {/* number of markers needed */}</TableCell>
+                                    <TableCell>Markers Assigned: 2 {/* number of markers assigned */}</TableCell>
+                                    <TableCell>Hours Needed: 30 {/* number of hours needed */}</TableCell>
+                                    <TableCell>Hours Assigned: 30 {/* number of hours assigned */}</TableCell>
+                                </TableRow>
+                            </TableHead>
+                        </Table>
+                    </TableContainer>
                 </Box>
 
                 <Table sx={{ mt: 4 }}>
@@ -256,10 +270,10 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                 <TableCell style={{ textAlign: 'center' }}>
                                     <Chip
                                     onClick={() => setSelected((selected) => {
-                                        selected[i] = !selected[i]
+                                        selected[index] = !selected[index]
                                     })}
-                                    color={selected[i] ? 'primary' : 'secondary'}
-                                    label={selected[i] ? 'Qualified' : 'Unqualified'}
+                                    color={selected[index] ? 'primary' : 'secondary'}
+                                    label={selected[index] ? 'Qualified' : 'Unqualified'}
                                     />
                                 </TableCell>
                             </TableRow>
