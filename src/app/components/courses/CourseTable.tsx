@@ -22,6 +22,7 @@ export default function CourseTable() {
         applicants: number
         needMarkers: boolean
         id: number
+        markerHours: number
     }
 
     const [data, setData] = useState<Course[]>([])
@@ -98,6 +99,18 @@ export default function CourseTable() {
                             </div>
                         </TableCell>
                         {/*TODO add this collumn<TableCell style={{textAlign:'center'}}><div style={{display:'flex', alignItems: 'center', flexWrap: 'wrap',}}>Number of Applicants <Tooltip title="Applicants"><InfoOutlinedIcon style={{marginLeft:5, verticalAlign:"middle"}}/></Tooltip> <ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/></div></TableCell>*/}
+                        {isCoordinator ? (
+                            <TableCell style={{ textAlign: 'center' }}>
+                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                    Hours Needed/Hours Assigned
+                                    <Tooltip title="status">
+                                        <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
+                                    </Tooltip>
+                                </div>
+                            </TableCell>
+                        ) : (
+                            <></>
+                        )}
                         <TableCell style={{ textAlign: 'center' }}>
                             <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
                                 Status{' '}
@@ -124,8 +137,12 @@ export default function CourseTable() {
                                 </TableCell>
                                 <TableCell style={{ textAlign: 'center' }}>{course.markersNeeded}</TableCell>
                                 {/*TODO add this data<TableCell style={{textAlign:'center'}}>{course.applicants}</TableCell>*/}
+                                {isCoordinator ? (
+                                    <TableCell style={{ textAlign: 'center' }}>30/{course.markerHours}</TableCell>
+                                ) : (
+                                    <></>
+                                )}
                                 <TableCell style={{ textAlign: 'center' }}>
-                                    {' '}
                                     {course.needMarkers ? (
                                         <Button variant="contained" color="success" style={{ width: '75%' }}>
                                             Complete

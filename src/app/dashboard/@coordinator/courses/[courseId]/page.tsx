@@ -1,12 +1,13 @@
 'use client'
 
-import EditCourseDetails from '@/app/components/courses/EditCourseDetails'
 import Sidebar from '../../../../components/Sidebar'
 import DynamicBreadcrumb from '@/app/components/DynamicBreadcrumb'
 import { usePathname } from 'next/navigation'
 import { ThemeProvider } from '@mui/material/styles'
 import CustomTheme from '@/app/CustomTheme'
 import { Box, Stack } from '@mui/material'
+import CourseInformation from '@/app/components/courses/CourseInformation'
+import AllocateMarkers from '@/app/components/AllocateMarkers'
 
 export default function CreateCoursePage() {
     const pathname = usePathname()
@@ -40,7 +41,7 @@ export default function CreateCoursePage() {
                         mb: '50px',
                     }}
                 >
-                    <EditCourseDetails courseId={courseId} />
+                    <CourseInformation courseId={courseId} />
                 </Box>
             </Box>
         </ThemeProvider>

@@ -12,6 +12,7 @@ import {
     TablePagination,
     TableFooter,
     Checkbox,
+    Chip,
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { Card } from '@mui/material'
@@ -30,31 +31,15 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     }
 
     const [studentData, setStudentData] = useState<StudentData[]>([])
+    const [applications, setApplications] = useState([])
     const [open, setOpen] = React.useState(false)
     const [page, setPage] = React.useState(0)
     const [rowsPerPage, setRowsPerPage] = React.useState(5)
     const [courseName, setCourseName] = useState('')
     const [checkedStudents, setCheckedStudents] = useState<number[]>([])
+    const [selected, setSelected] = React.useState(false) //change this to be an array of the qualified boolean for all applications
 
     const emptyRows = page >= 0 ? Math.max(0, (1 + page) * rowsPerPage - studentData.length) : 0
-
-    //fetch the applicants
-
-    /*
-    useEffect(() => {
-        fetchStudentData()
-    }, [])
-
-    const fetchStudentData = async () => {
-        try {
-            const response = await fetch('url to get applciants', { method: 'GET' })
-            const jsonData = await response.json()
-            setStudentData(jsonData)
-        } catch (error) {
-            console.error('Error fetching data:', error)
-        }
-    }
-    */
 
     //fetch the course name
     useEffect(() => {
@@ -66,6 +51,23 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
             const response = await fetch('/api/courses', { method: 'GET' })
             const jsonData = await response.json()
             setCourseName(jsonData.filter((course: any) => course.id == courseId)[0].courseCode)
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
+    }
+
+    //fetch applicants
+    useEffect(() => {
+        fetchApplicants()
+    }, [])
+
+    const fetchApplicants = async () => {
+        try {
+            const response = await fetch(`/api/courses/${courseId}/applications`, {
+                method: 'GET',
+            })
+            const jsonData = await response.json()
+            console.log(jsonData)
         } catch (error) {
             console.error('Error fetching data:', error)
         }
@@ -161,15 +163,15 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                 <Table sx={{ mt: 4 }}>
                     <TableHead>
                         <TableRow>
-                            <TableCell style={{ textAlign: 'center', width: '130px' }}>
+                            <TableCell style={{ textAlign: 'center', width: '150px' }}>
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                    Select Markers
+                                    Select
                                     <Tooltip title="Click on checkboxes to assign markers">
                                         <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
                                     </Tooltip>
                                 </div>
                             </TableCell>
-                            <TableCell style={{ textAlign: 'center', width: '130px' }}>
+                            <TableCell style={{ textAlign: 'center', width: '200px' }}>
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
                                     Applicant
                                     <Tooltip title="Click on student name to view student information">
@@ -178,13 +180,13 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
                                 </div>
                             </TableCell>
-                            <TableCell style={{ textAlign: 'center', width: '130px' }}>
+                            <TableCell style={{ textAlign: 'center', width: '50px' }}>
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
                                     Grade
                                     {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
                                 </div>
                             </TableCell>
-                            <TableCell style={{ textAlign: 'center', width: '130px' }}>
+                            <TableCell style={{ textAlign: 'center', width: '250px' }}>
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
                                     Marked Before
                                     <Tooltip title="Has the student marked the course before">
@@ -193,7 +195,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
                                 </div>
                             </TableCell>
-                            <TableCell style={{ textAlign: 'center', width: '130px' }}>
+                            <TableCell style={{ textAlign: 'center', width: '150px' }}>
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
                                     Overseas
                                     <Tooltip title="Is the student overseas">
@@ -202,7 +204,25 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
                                 </div>
                             </TableCell>
-                            <TableCell style={{ textAlign: 'center', width: '130px' }}>
+                            <TableCell style={{ textAlign: 'center', width: '200px' }}>
+                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                    Total Allocated Hours
+                                    <Tooltip title="Is the student qualified to mark the course">
+                                        <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
+                                    </Tooltip>
+                                    {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
+                                </div>
+                            </TableCell>
+                            <TableCell style={{ textAlign: 'center', width: '200px' }}>
+                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                    Maximum Hours Per Week
+                                    <Tooltip title="Is the student qualified to mark the course">
+                                        <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
+                                    </Tooltip>
+                                    {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
+                                </div>
+                            </TableCell>
+                            <TableCell style={{ textAlign: 'center', width: '150px' }}>
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
                                     Qualification
                                     <Tooltip title="Is the student qualified to mark the course">
@@ -221,8 +241,8 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                             <TableRow key={student.id}>
                                 <TableCell padding="checkbox" style={{ textAlign: 'center' }}>
                                     <Checkbox 
-                                        checked={checkedStudents.includes(student.id) || false}
-                                        onChange={() => handleCheckedStudents(student.id)}
+                                        checked={checkedStudents.includes(application.id) || false}
+                                        onChange={() => handleCheckedStudents(application.id)}
                                     />
                                 </TableCell>
                                 <TableCell style={{ textAlign: 'center' }}>
@@ -230,13 +250,17 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                         <Button>{function that returns name based on user id}</Button>
                                     </Link>
                                 </TableCell>
-                                <TableCell style={{ textAlign: 'center' }}>{get grade}</TableCell>
-                                <TableCell style={{ textAlign: 'center' }}>{get has marked course}</TableCell>
-                                <TableCell style={{ textAlign: 'center' }}>{student.overseas}</TableCell>
+                                <TableCell style={{ textAlign: 'center' }}>application.grade</TableCell>
+                                <TableCell style={{ textAlign: 'center' }}>application.markedBefore</TableCell>
+                                <TableCell style={{ textAlign: 'center' }}>application.overseas</TableCell>
                                 <TableCell style={{ textAlign: 'center' }}>
-                                    <Button variant="contained" sx={{ backgroundColor: 'green' }}>
-                                    {qualified/unqualified}
-                                    </Button>
+                                    <Chip
+                                    onClick={() => setSelected((selected) => {
+                                        selected[i] = !selected[i]
+                                    })}
+                                    color={selected[i] ? 'primary' : 'secondary'}
+                                    label={selected[i] ? 'Qualified' : 'Unqualified'}
+                                    />
                                 </TableCell>
                             </TableRow>
                         ))*/}
@@ -251,34 +275,33 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                             <TableCell style={{ textAlign: 'center' }}>A</TableCell>
                             <TableCell style={{ textAlign: 'center' }}>Yes</TableCell>
                             <TableCell style={{ textAlign: 'center' }}>No</TableCell>
+                            <TableCell style={{ textAlign: 'center' }}>25</TableCell>
+                            <TableCell style={{ textAlign: 'center' }}>5</TableCell>
                             <TableCell style={{ textAlign: 'center' }}>
-                                <Button variant="contained" sx={{ backgroundColor: 'green' }}>
-                                    Qualified
-                                </Button>
+                                <Chip
+                                    onClick={() => setSelected((s) => !s)}
+                                    color={selected ? 'primary' : 'secondary'}
+                                    label={selected ? 'Qualified' : 'Unqualified'}
+                                />
                             </TableCell>
                         </TableRow>
 
                         {emptyRows > 0 && (
                             <TableRow style={{ height: 69.5 * emptyRows }}>
-                                <TableCell colSpan={6} />
+                                <TableCell colSpan={8} />
                             </TableRow>
                         )}
                     </TableBody>
                 </Table>
                 <TableFooter>
                     <TableRow>
-                        <TableCell sx={{ width: '324px' }} colSpan={2}>
+                        <TableCell sx={{ width: '600px' }} colSpan={4}>
                             <Button
                                 variant="contained"
                                 sx={{ backgroundColor: '#01579B' }}
                                 onClick={handleMarkerSubmit}
                             >
                                 Submit Marker Assignment
-                            </Button>
-                        </TableCell>
-                        <TableCell sx={{ width: '324px' }} colSpan={2}>
-                            <Button variant="contained" sx={{ backgroundColor: '#01579B' }}>
-                                Assign Marker Hours
                             </Button>
                         </TableCell>
                         <TableCell sx={{ width: '600px' }} colSpan={4}>
