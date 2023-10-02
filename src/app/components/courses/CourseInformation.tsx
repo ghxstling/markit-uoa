@@ -27,12 +27,36 @@ type CourseInformationProps = {
 }
 
 const CourseInformation = ({ courseId }: CourseInformationProps) => {
-    interface StudentData {
-        //some array thing of applications + student name
+    interface User {
+        id: number
+        name: string
     }
 
-    const [studentData, setStudentData] = useState<StudentData[]>([])
-    const [applications, setApplications] = useState([])
+    interface Student {
+        id: number
+        overseas: boolean
+        upi: string
+        maxWorkHours: number
+        userId: number
+    }
+
+    type Application = {
+        id: number
+        hasMarkedCourse: boolean
+        previouslyAchievedGrade: string
+        studentId: number
+    }
+
+    interface ApplicantsData {
+        id: number
+        hasMarkedCourse: boolean
+        previouslyAchievedGrade: string
+        studentId: number
+    }
+
+    const [studentData, setStudentData] = useState<Student[]>([])
+    const [applications, setApplications] = useState<ApplicantsData[]>([])
+    const [users, setUsers] = useState<User[]>([])
     const [open, setOpen] = React.useState(false)
     const [page, setPage] = React.useState(0)
     const [rowsPerPage, setRowsPerPage] = React.useState(5)
@@ -68,7 +92,41 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                 method: 'GET',
             })
             const jsonData = await response.json()
-            console.log(jsonData)
+            setApplications(jsonData)
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
+    }
+
+    //fetch all students
+    useEffect(() => {
+        fetchStudents()
+    }, [])
+
+    const fetchStudents = async () => {
+        try {
+            const response = await fetch('/api/students', {
+                method: 'GET',
+            })
+            const jsonData = await response.json()
+            setStudentData(jsonData)
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
+    }
+
+    //fetch all users
+    useEffect(() => {
+        fetchUsers()
+    }, [])
+
+    const fetchUsers = async () => {
+        try {
+            const response = await fetch('/api/users', {
+                method: 'GET',
+            })
+            const jsonData = await response.json()
+            setUsers(jsonData)
         } catch (error) {
             console.error('Error fetching data:', error)
         }
@@ -248,36 +306,71 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {/*(rowsPerPage > 0
-                            ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            : data
-                        ).map((student, index) => (
-                            <TableRow key={student.id}>
+                        {(rowsPerPage > 0
+                            ? applications.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            : applications
+                        ).map((application, index) => (
+                            <TableRow key={application.id}>
                                 <TableCell padding="checkbox" style={{ textAlign: 'center' }}>
-                                    <Checkbox 
+                                    <Checkbox
                                         checked={checkedStudents.includes(application.id) || false}
                                         onChange={() => handleCheckedStudents(application.id)}
                                     />
                                 </TableCell>
                                 <TableCell style={{ textAlign: 'center' }}>
-                                    <Link href="src/app/dashboard/students/[studentId]/page.tsx" as={`/dashboard/students/${student.id}`} passHref>
-                                        <Button>{function that returns name based on user id}</Button>
+                                    <Link
+                                        href="src/app/dashboard/students/[studentId]/page.tsx"
+                                        as={`/dashboard/students/${application.studentId}`}
+                                        passHref
+                                    >
+                                        <Button>
+                                            {
+                                                users.find(
+                                                    (user) =>
+                                                        user.id ===
+                                                        studentData.find(
+                                                            (student) => student.id === application.studentId
+                                                        )?.userId
+                                                )?.name
+                                            }{' '}
+                                            ({studentData.find((student) => student.id === application.studentId)?.upi})
+                                        </Button>
                                     </Link>
                                 </TableCell>
-                                <TableCell style={{ textAlign: 'center' }}>application.grade</TableCell>
-                                <TableCell style={{ textAlign: 'center' }}>application.markedBefore</TableCell>
-                                <TableCell style={{ textAlign: 'center' }}>application.overseas</TableCell>
                                 <TableCell style={{ textAlign: 'center' }}>
-                                    <Chip
+                                    {application.previouslyAchievedGrade}
+                                </TableCell>
+                                <TableCell style={{ textAlign: 'center' }}>
+                                    {String(application.hasMarkedCourse)}
+                                </TableCell>
+                                <TableCell style={{ textAlign: 'center' }}>
+                                    {String(
+                                        studentData.find((student) => student.id === application.studentId)?.overseas
+                                    )}
+                                </TableCell>
+                                <TableCell style={{ textAlign: 'center' }}>
+                                    {' '}
+                                    25{/*applicant total allocated hours */}
+                                </TableCell>
+                                <TableCell style={{ textAlign: 'center' }}>
+                                    {studentData.find((student) => student.id === application.studentId)?.maxWorkHours}
+                                </TableCell>
+                                <TableCell style={{ textAlign: 'center' }}>
+                                    {/*<Chip
                                     onClick={() => setSelected((selected) => {
                                         selected[index] = !selected[index]
                                     })}
                                     color={selected[index] ? 'primary' : 'secondary'}
                                     label={selected[index] ? 'Qualified' : 'Unqualified'}
+                                    /> */}
+                                    <Chip
+                                        onClick={() => setSelected((s) => !s)}
+                                        color={selected ? 'primary' : 'secondary'}
+                                        label={selected ? 'Qualified' : 'Unqualified'}
                                     />
                                 </TableCell>
                             </TableRow>
-                        ))*/}
+                        ))}
 
                         <TableRow>
                             <TableCell padding="checkbox" style={{ textAlign: 'center' }}>

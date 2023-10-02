@@ -69,7 +69,7 @@ const postStudentDetails = async (formValues: IFormValues) => {
 
 const postCourseApplications = async (formValues: IFormValues) => {
     const courseApplications = formValues.coursePreferences
-    const res = await fetch('api/applications', {
+    const res = await fetch('/api/applications', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
