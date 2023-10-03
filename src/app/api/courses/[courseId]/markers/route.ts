@@ -58,7 +58,8 @@ export async function GET(req: NextRequest, { params }: Params) {
         )
     }
 
-    return NextResponse.json(markers, 
+    const hours = await MarkerService.getAllocatedHours(markers)
+    return NextResponse.json({ markers, hours }, 
         {
             status: 200,
             statusText: 'Markers retrieved successfully',
@@ -92,8 +93,8 @@ export async function POST(req: NextRequest, { params }: Params) {
     }
 
     const applications = await req.json()
-    const markers = await MarkerService.assignMarkers(applications, course)
-    if (markers == null) {
+    const markers = await MarkerService.assignMarkers(applications)
+    if (markers === null) {
         return NextResponse.json(
             {
                 status: 400,
@@ -101,7 +102,8 @@ export async function POST(req: NextRequest, { params }: Params) {
             }, { status: 400}
         )
     } else {
-        return NextResponse.json(markers, 
+        const hours = await MarkerService.getAllocatedHours(markers)
+        return NextResponse.json({ markers, hours }, 
             {
                 status: 200,
                 statusText: 'Markers assigned successfully',
