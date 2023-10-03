@@ -15,12 +15,12 @@ const DebugPage = () => {
             const data = {
                 allocatedHours: 20
             }
-            const res = await fetch('/api/courses/68/markers/868', {
-                method: 'PATCH',
+            const res = await fetch('/api/courses/68/markers/927', {
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(data)
+                // body: JSON.stringify(data)
             })
             setApiResponse(await res.json())
             setError(null)
