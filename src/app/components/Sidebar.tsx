@@ -185,7 +185,6 @@ const Sidebar = () => {
             session.user.name.slice(session.user.name.lastIndexOf(' '))[1] +
             '.'
         const email: string = session.user.email
-        console.log(session.role)
         switch (session.role) {
             case 'coordinator':
                 sidebarContent = content(

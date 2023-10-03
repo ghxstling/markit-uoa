@@ -76,7 +76,6 @@ const postCourseApplications = async (formValues: IFormValues) => {
         },
         body: JSON.stringify(courseApplications),
     })
-    console.log(JSON.stringify(courseApplications))
     return res
 }
 
@@ -123,25 +122,51 @@ const Application = () => {
     const fetchApplications = async () => {
         try {
             const response = await fetch(`/api/students/me/applications`, { method: 'GET' })
-            const jsonData = await response.json()
-            let currentCoursePreferences = jsonData.map((application: any) => {
-                return {
-                    id: application.id,
-                    courseName: getCourseNameById(application.courseId),
-                    prefId: application.prefId,
-                    course: application.courseId,
-                    grade: application.previouslyAchievedGrade,
-                    explainNotTaken: application.notTakenExplanation,
-                    markedPreviously: application.hasMarkedCourse,
-                    tutoredPreviously: application.hasTutoredCourse,
-                    explainNotPrevious: application.equivalentQualification,
-                }
-            })
-            setFormValues({ ...formValues, coursePreferences: currentCoursePreferences })
+            if (response.ok) {
+                const jsonData = await response.json()
+                console.log(jsonData)
+                let currentCoursePreferences = jsonData.map((application: any) => {
+                    return {
+                        id: application.id,
+                        courseName: getCourseNameById(application.courseId),
+                        prefId: application.preferenceId,
+                        course: application.courseId,
+                        grade: application.previouslyAchievedGrade,
+                        explainNotTaken: application.notTakenExplanation,
+                        markedPreviously: application.hasMarkedCourse,
+                        tutoredPreviously: application.hasTutoredCourse,
+                        explainNotPrevious: application.equivalentQualification,
+                    }
+                })
+                setFormValues({ ...formValues, coursePreferences: currentCoursePreferences })
+            } else {
+                return
+            }
         } catch (error) {
             console.error('Error fetching data:', error)
         }
     }
+
+    //fetch existing student details, get relevant values and update formValues
+
+    /*
+    useEffect(() => {
+        fetchStudentDetails()
+    }, [])
+
+    const fetchStudentDetails = async () => {
+        try {
+            const response = await fetch(`/api/students/me`, { method: 'GET' })
+            const jsonData = await response.json()
+            console.log(jsonData)
+            let currentStudentData = jsonData.map((student: any) => {
+                return {}
+            })
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
+    }
+    */
 
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
@@ -206,6 +231,7 @@ const Application = () => {
                     return
                 }
                 const res = await postCourseApplications(formValues)
+                console.log(res.ok)
                 if (res.ok) {
                     setSnackbarSuccessMessage('Course selection submitted successfully')
                     setOpenSnackBarSuccess(true)
@@ -215,9 +241,6 @@ const Application = () => {
                     return
                 }
             }
-
-            //TODO: check that there are 2 selected files (do this after the file storage method has been confirmed)
-            console.log(formValues)
         }
         setActiveStep(activeStep + 1)
 
