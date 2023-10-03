@@ -9,7 +9,19 @@ interface ChartData {
     value: number
     label: string
 }
-const palette = ['#07447E', '#99ACC0', '#336697', '#004382', '#10497F']
+// const palette = ['#07447E', '#99ACC0', '#336697', '#004382', '#10497F']
+const palette = [
+    '#07447E',
+    '#2C5E8F',
+    '#50789F',
+    '#99ACC0',
+    '#C5D1DC',
+    '#F1F6F7',
+    '#799DBD',
+    '#004382',
+    '#084681',
+    '#10497F',
+]
 
 export default function CoursePieChart() {
     const [applicationStats, setApplicationStats] = useState<ChartData[]>([])
