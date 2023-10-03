@@ -1,6 +1,8 @@
 import { PieChart } from '@mui/x-charts/PieChart'
 import { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
+import CustomTheme from '@/app/CustomTheme'
+import { ThemeProvider } from '@mui/material/styles'
 
 interface ChartData {
     id: number
@@ -60,7 +62,7 @@ export default function CoursePieChart() {
     }, [])
 
     return (
-        <>
+        <ThemeProvider theme={CustomTheme}>
             <PieChart
                 colors={palette}
                 series={[
@@ -74,13 +76,13 @@ export default function CoursePieChart() {
                     },
                 ]}
                 sx={{
-                    '--ChartsLegend-rootOffsetX': '-40px',
+                    '--ChartsLegend-rootOffsetX': { xs: '-100px', lg: '-40px' },
                     '--ChartsLegend-rootOffsetY': '-10px',
                     '--ChartsLegend-rootSpacing': '20px',
                 }}
                 width={700}
                 height={500}
             />
-        </>
+        </ThemeProvider>
     )
 }
