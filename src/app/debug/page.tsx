@@ -3,18 +3,40 @@
 'use client'
 import { useState } from 'react'
 import { UserStatus } from '../components/UserStatus'
+import { DegreeType } from '@/models/degreeType'
 
 const DebugPage = () => {
     const [apiResponse, setApiResponse] = useState(null)
     const [error, setError] = useState<string | null>(null)
+    const [file, setFile] = useState<File>()
 
     const makeApiCall = async () => {
         try {
-            const response = await fetch('/api/courses/1', {
-                method: 'PATCH',
+            const res = await fetch('/api/students/me/applications', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
             })
-            const data = await response.json()
-            setApiResponse(data)
+            setApiResponse(await res.json())
+            setError(null)
+        } catch (err) {
+            setError('Error fetching data from the API')
+            setApiResponse(null)
+        }
+    }
+
+    const uploadFile = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        if (!file) return
+        try {
+            const data = new FormData()
+            data.set('file', file)
+            const res = await fetch('/api/students/me/cv', {
+                method: 'POST',
+                body: data,
+            })
+            setApiResponse(await res.json())
             setError(null)
         } catch (err) {
             setError('Error fetching data from the API')
@@ -33,6 +55,10 @@ const DebugPage = () => {
                     <code>{JSON.stringify(apiResponse, null, 2)}</code>
                 </pre>
             )}
+            <form onSubmit={uploadFile}>
+                <input type="file" name="file" onChange={(e) => setFile(e.target.files?.[0])} />
+                <input type="submit" value="Upload to Server" />
+            </form>
         </div>
     )
 }
