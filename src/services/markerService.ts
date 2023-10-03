@@ -19,7 +19,7 @@ export default class MarkerService {
             let newApplication
             for (const app of applications) {
                 await ApplicationRepo.updateApplicationStatus(app.id, ApplicationStatus.Approved)
-                newApplication = await this._allocateHours(app, app.allocatedHours)
+                newApplication = await this.allocateHours(app, app.allocatedHours)
                 updatedApplications.push(newApplication!)
             }
             const course = await CourseRepo.getCourseById(newApplication!.courseId)
@@ -38,7 +38,7 @@ export default class MarkerService {
         return hours
     }
 
-    static async _allocateHours(application: Application, hours: number) {
+    static async allocateHours(application: Application, hours: number) {
         try {
             const updatedApplication = await ApplicationRepo.updateAllocatedHours(application.id, hours)
             const course = await CourseRepo.getCourseById(updatedApplication.courseId)
