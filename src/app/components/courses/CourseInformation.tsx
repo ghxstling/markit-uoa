@@ -404,7 +404,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                 sx={{ width: '100%' }}
                                 rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
                                 colSpan={3}
-                                count={studentData.length}
+                                count={applications.length}
                                 rowsPerPage={rowsPerPage}
                                 page={page}
                                 onPageChange={handleChangePage}
