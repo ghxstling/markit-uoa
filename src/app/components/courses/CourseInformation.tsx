@@ -280,7 +280,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                             <TableCell style={{ textAlign: 'center', width: '200px' }}>
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
                                     Total Allocated Hours
-                                    <Tooltip title="Is the student qualified to mark the course">
+                                    <Tooltip title="Total hours allocated to student across all courses">
                                         <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
                                     </Tooltip>
                                     {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
@@ -289,7 +289,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                             <TableCell style={{ textAlign: 'center', width: '200px' }}>
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
                                     Maximum Hours Per Week
-                                    <Tooltip title="Is the student qualified to mark the course">
+                                    <Tooltip title="Maximum hours student willing to work per week">
                                         <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
                                     </Tooltip>
                                     {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
