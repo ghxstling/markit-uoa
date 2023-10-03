@@ -1,11 +1,13 @@
 import { PieChart } from '@mui/x-charts/PieChart'
 import { useEffect, useState } from 'react'
+import { createRoot } from 'react-dom/client'
 
 interface ChartData {
     id: number
     value: number
     label: string
 }
+const palette = ['#07447E', '#99ACC0', '#336697', '#004382', '#10497F']
 
 export default function CoursePieChart() {
     const [applicationStats, setApplicationStats] = useState<ChartData[]>([])
@@ -52,18 +54,33 @@ export default function CoursePieChart() {
             }
             stats.sort((a, b) => b.value - a.value) // sort the data in descending order
             setApplicationStats(stats.slice(0, 10)) // Update the state with the fetched data
+            const domNode = document.getElementById('loading')
+            domNode?.parentNode?.removeChild(domNode)
         })
     }, [])
 
     return (
-        <PieChart
-            series={[
-                {
-                    data: applicationStats,
-                },
-            ]}
-            width={700}
-            height={500}
-        />
+        <>
+            <PieChart
+                colors={palette}
+                series={[
+                    {
+                        data: applicationStats,
+                        outerRadius: 200,
+                        paddingAngle: 0.5,
+                        cornerRadius: 5,
+                        cx: 200,
+                        highlightScope: { faded: 'global', highlighted: 'item' },
+                    },
+                ]}
+                sx={{
+                    '--ChartsLegend-rootOffsetX': '-40px',
+                    '--ChartsLegend-rootOffsetY': '-10px',
+                    '--ChartsLegend-rootSpacing': '20px',
+                }}
+                width={700}
+                height={500}
+            />
+        </>
     )
 }

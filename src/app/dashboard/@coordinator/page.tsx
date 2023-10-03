@@ -6,7 +6,7 @@ import Divider from '@mui/material/Divider'
 import Button from '@mui/material/Button'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { Box } from '@mui/material'
+import { Box, CircularProgress } from '@mui/material'
 import Sidebar from '@/app/components/Sidebar'
 import CoursePieChart from '@/app/components/CoordinatorDashboardData/CoursePieChart'
 import CustomTheme from '@/app/CustomTheme'
@@ -55,7 +55,7 @@ export default function CoordinatorDashboard() {
                         </Button>
                     </Link>
                     <Typography variant="h5" fontWeight="bold" sx={{ mt: '58px' }}>
-                        Statistics
+                        Top 10 Courses With Most Applications
                     </Typography>
                     <Divider variant="fullWidth" sx={{ mb: '40px' }} />
                     <Box
@@ -64,8 +64,14 @@ export default function CoordinatorDashboard() {
                             ml: { xs: '5px', lg: '150px', xl: '250px' },
                             mr: { xs: '5px', lg: '150px', xl: '250px' },
                             mb: '50px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignContent: 'center',
+                            justifyContent: 'center',
+                            alignItems: 'center',
                         }}
                     >
+                        <CircularProgress id="loading" />
                         <CoursePieChart />
                     </Box>
                 </Box>
