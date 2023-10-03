@@ -8,6 +8,7 @@ import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { Box } from '@mui/material'
 import Sidebar from '@/app/components/Sidebar'
+import CoursePieChart from '@/app/components/CoordinatorDashboardData/CoursePieChart'
 import CustomTheme from '@/app/CustomTheme'
 import { ThemeProvider } from '@mui/material/styles'
 
@@ -57,6 +58,16 @@ export default function CoordinatorDashboard() {
                         Statistics
                     </Typography>
                     <Divider variant="fullWidth" sx={{ mb: '40px' }} />
+                    <Box
+                        sx={{
+                            mt: '40px',
+                            ml: { xs: '5px', lg: '150px', xl: '250px' },
+                            mr: { xs: '5px', lg: '150px', xl: '250px' },
+                            mb: '50px',
+                        }}
+                    >
+                        <CoursePieChart />
+                    </Box>
                 </Box>
             </Box>
         </ThemeProvider>
