@@ -39,7 +39,7 @@ async function generateData(seedOption?: number) {
     }
 
     // Seed Users (Students)
-    for (let i = 0; i < 250; i++) {
+    for (let i = 0; i < 4000; i++) {
         let firstName = faker.person.firstName()
         let lastName = faker.person.lastName()
         let fullName = firstName + ' ' + lastName
@@ -163,7 +163,7 @@ async function generateData(seedOption?: number) {
 
     const gradeArray = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'Not Taken Previously']
 
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < 18000; i++) {
         let student = students[faker.number.int({ min: 0, max: students.length - 1 })]
         let course = courses[faker.number.int({ min: 0, max: courses.length - 1 })]
         if (
