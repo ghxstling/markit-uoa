@@ -62,7 +62,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     const [rowsPerPage, setRowsPerPage] = React.useState(5)
     const [courseName, setCourseName] = useState('')
     const [checkedStudents, setCheckedStudents] = useState<number[]>([])
-    const [selected, setSelected] = React.useState(false) //change this to be an array of the qualified boolean for all applications
+    const [selected, setSelected] = useState(new Array(applications.length).fill(false))
 
     const emptyRows = page >= 0 ? Math.max(0, (1 + page) * rowsPerPage - studentData.length) : 0
 
@@ -93,6 +93,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
             })
             const jsonData = await response.json()
             setApplications(jsonData)
+            setSelected(new Array(jsonData.length).fill(false))
         } catch (error) {
             console.error('Error fetching data:', error)
         }
@@ -364,34 +365,21 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     label={selected[index] ? 'Qualified' : 'Unqualified'}
                                     /> */}
                                     <Chip
-                                        onClick={() => setSelected((s) => !s)}
-                                        color={selected ? 'primary' : 'secondary'}
-                                        label={selected ? 'Qualified' : 'Unqualified'}
+                                        onClick={() =>
+                                            setSelected((selected) => {
+                                                console.log(index)
+                                                let newSelected = [...selected]
+                                                newSelected[index] = !newSelected[index]
+                                                setSelected(newSelected)
+                                                return newSelected
+                                            })
+                                        }
+                                        color={selected[index] ? 'primary' : 'secondary'}
+                                        label={selected[index] ? 'Qualified' : 'Unqualified'}
                                     />
                                 </TableCell>
                             </TableRow>
                         ))}
-
-                        <TableRow>
-                            <TableCell padding="checkbox" style={{ textAlign: 'center' }}>
-                                <Checkbox />
-                            </TableCell>
-                            <TableCell style={{ textAlign: 'center' }}>
-                                <Button>Marwa Yang</Button>
-                            </TableCell>
-                            <TableCell style={{ textAlign: 'center' }}>A</TableCell>
-                            <TableCell style={{ textAlign: 'center' }}>Yes</TableCell>
-                            <TableCell style={{ textAlign: 'center' }}>No</TableCell>
-                            <TableCell style={{ textAlign: 'center' }}>25</TableCell>
-                            <TableCell style={{ textAlign: 'center' }}>5</TableCell>
-                            <TableCell style={{ textAlign: 'center' }}>
-                                <Chip
-                                    onClick={() => setSelected((s) => !s)}
-                                    color={selected ? 'primary' : 'secondary'}
-                                    label={selected ? 'Qualified' : 'Unqualified'}
-                                />
-                            </TableCell>
-                        </TableRow>
 
                         {emptyRows > 0 && (
                             <TableRow style={{ height: 69.5 * emptyRows }}>
