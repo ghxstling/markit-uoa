@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import CustomTheme from '@/app/CustomTheme'
 import { ThemeProvider } from '@mui/material/styles'
+import { CircularProgress } from '@mui/material'
 
 interface ChartData {
     id: number
@@ -25,6 +26,7 @@ const palette = [
 
 export default function CoursePieChart() {
     const [applicationStats, setApplicationStats] = useState<ChartData[]>([])
+    const [isLoading, setIsLoading] = useState<boolean>(true)
 
     const fetchCoursesData = async () => {
         try {
@@ -68,10 +70,13 @@ export default function CoursePieChart() {
             }
             stats.sort((a, b) => b.value - a.value) // sort the data in descending order
             setApplicationStats(stats.slice(0, 10)) // Update the state with the fetched data
-            const domNode = document.getElementById('loading')
-            domNode?.parentNode?.removeChild(domNode)
+            setIsLoading(false)
         })
-    }, [])
+    }, [applicationStats])
+
+    if (isLoading) {
+        return <CircularProgress />
+    }
 
     return (
         <ThemeProvider theme={CustomTheme}>
@@ -83,7 +88,7 @@ export default function CoursePieChart() {
                         outerRadius: 200,
                         paddingAngle: 0.5,
                         cornerRadius: 5,
-                        cx: 200,
+                        cx: 250,
                         highlightScope: { faded: 'global', highlighted: 'item' },
                     },
                 ]}

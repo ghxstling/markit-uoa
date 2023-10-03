@@ -71,7 +71,6 @@ export default function CoordinatorDashboard() {
                             alignItems: 'center',
                         }}
                     >
-                        <CircularProgress id="loading" />
                         <CoursePieChart />
                     </Box>
                 </Box>
