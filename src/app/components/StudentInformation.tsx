@@ -123,9 +123,9 @@ export default function ViewStudentInformation({ studentId }: ViewStudentInforma
                 <Divider/>
                 <p>Degree Type: {data?.degreeType}</p>
                 <Divider/>
-                <Link href='http://localhost:3000/api/students/[studentId]/cv' as={`/dashboard/courses/${data?.upi}`}><Button>Student CV</Button></Link>
+                <Link href='http://localhost:3000/api/students/[studentId]/cv' as={`/dashboard/courses/${data?.upi}`}><a target="_blank"><Button>Student CV</Button></a></Link>
                 <Divider/>
-                <Link href='http://localhost:3000/api/students/[studentId]/transcript' as={`/dashboard/courses/${data?.upi}`}><Button>Student Transcript</Button></Link>
+                <Link href='http://localhost:3000/api/students/[studentId]/transcript' as={`/dashboard/courses/${data?.upi}`}><a target="_blank"><Button>Student Transcript</Button></a></Link>
                 <h2>Student Applications</h2>
                 <TableContainer component={Paper} style={{marginTop:20}}>
                         <Table style={{paddingTop:40}}>
