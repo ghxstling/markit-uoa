@@ -50,8 +50,8 @@ export default function CoursePieChart() {
 
                 stats.push(courseData)
             }
-
-            setApplicationStats(stats) // Update the state with the fetched data
+            stats.sort((a, b) => b.value - a.value) // sort the data in descending order
+            setApplicationStats(stats.slice(0, 10)) // Update the state with the fetched data
         })
     }, [])
 
