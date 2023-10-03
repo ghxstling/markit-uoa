@@ -33,6 +33,20 @@ export default class MarkerService {
         }
     }
 
+    static async removeMarker(application: Application) {
+        try {
+            const updatedApplication = await ApplicationRepo.updateApplicationStatus(application.id, ApplicationStatus.Denied)
+            const course = await CourseRepo.getCourseById(application.courseId)
+            if (await this._hasMetRequirements(course!) == false) {
+                await CourseRepo.updateCourse(course!.id, { needMarkers: true })
+            }
+            return updatedApplication
+        } catch (err) {
+            console.log(err)
+            return null
+        }
+    }
+
     static async getAllocatedHours(applications: Application[]) {
         const hours = applications.reduce((total, app) => total + app.allocatedHours, 0)
         return hours
