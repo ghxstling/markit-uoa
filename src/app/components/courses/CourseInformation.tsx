@@ -367,7 +367,6 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     <Chip
                                         onClick={() =>
                                             setSelected((selected) => {
-                                                console.log(index)
                                                 let newSelected = [...selected]
                                                 newSelected[index] = !newSelected[index]
                                                 setSelected(newSelected)
