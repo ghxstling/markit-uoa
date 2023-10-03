@@ -1,27 +1,30 @@
 import type { Prisma } from '@prisma/client'
 import ApplicationRepo from '@/data/applicationRepo'
-import { ApplicationStatus } from '@/models/applicationStatus'
 import CourseRepo from '@/data/courseRepo'
+import { ApplicationStatus } from '@/models/applicationStatus'
 
 type Application = Exclude<Prisma.PromiseReturnType<typeof ApplicationRepo.getApplicationById>, null>
 type Course = Exclude<Prisma.PromiseReturnType<typeof CourseRepo.getCourseById>, null>
 
 export default class MarkerService {
+
     static async getAssignedMarkers(applications: Application[]) {
         const markers = applications.filter((app) => app.applicationStatus === ApplicationStatus.Approved)
         return markers
     }
 
-    static async assignMarkers(applications: Application[], course: Course) {
+    static async assignMarkers(applications: Application[]) {
         try {
             let updatedApplications = new Array<Application>()
+            let newApplication
             for (const app of applications) {
                 await ApplicationRepo.updateApplicationStatus(app.id, ApplicationStatus.Approved)
-                const newApplication = await ApplicationRepo.updateAllocatedHours(app.id, app.allocatedHours)
-                updatedApplications.push(newApplication)
+                newApplication = await this._allocateHours(app, app.allocatedHours)
+                updatedApplications.push(newApplication!)
             }
-            if (await this._hasMetRequirements(updatedApplications, course)) {
-                await CourseRepo.updateCourse(course.id, { needMarkers: false })
+            const course = await CourseRepo.getCourseById(newApplication!.courseId)
+            if (await this._hasMetRequirements(course!)) {
+                await CourseRepo.updateCourse(course!.id, { needMarkers: false })
             }
             return updatedApplications
         } catch (err) {
@@ -30,13 +33,30 @@ export default class MarkerService {
         }
     }
 
-    static async _hasMetRequirements(applications: Application[], course: Course) {
-        const totalHours = applications.reduce((total, app) => total + app.allocatedHours, 0)
-        const totalMarkers = await this.getAssignedMarkers(applications).then((markers) => markers.length)
-        if (totalHours >= course.markerHours && totalMarkers >= course.markersNeeded) {
-            return true
-        } else {
-            return false
+    static async getAllocatedHours(applications: Application[]) {
+        const hours = applications.reduce((total, app) => total + app.allocatedHours, 0)
+        return hours
+    }
+
+    static async _allocateHours(application: Application, hours: number) {
+        try {
+            const updatedApplication = await ApplicationRepo.updateAllocatedHours(application.id, hours)
+            const course = await CourseRepo.getCourseById(updatedApplication.courseId)
+            if (await this._hasMetRequirements(course!)) {
+                await CourseRepo.updateCourse(course!.id, { needMarkers: false })
+            }
+            return updatedApplication
+        } catch (err) {
+            console.log(err)
+            return null
         }
+    }
+
+    static async _hasMetRequirements(course: Course) {
+        const applications = await ApplicationRepo.getApplicationsByCourse(course!.id)
+        const totalHours = await this.getAllocatedHours(applications)
+        const totalMarkers = await this.getAssignedMarkers(applications).then((markers) => markers.length)
+        if (totalHours >= course.markerHours && totalMarkers >= course.markersNeeded) return true
+        else return false
     }
 }
