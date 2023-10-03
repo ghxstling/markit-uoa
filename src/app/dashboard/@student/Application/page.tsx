@@ -5,7 +5,7 @@ import EmploymentDetails from '@/app/components/ApplicationForms/EmploymentDetai
 import PersonalDetails from '@/app/components/ApplicationForms/PersonalDetails'
 import { IFormValues } from '@/types/IFormValues'
 import { Box, Button, Container, Paper, Snackbar, Step, StepLabel, Stepper, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import validator from 'validator'
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
 import CoursePreferences from '@/app/components/ApplicationForms/CoursePreferences'
@@ -80,6 +80,17 @@ const postCourseApplications = async (formValues: IFormValues) => {
     return res
 }
 
+const getCourseNameById = async (courseId: number) => {
+    const res = await fetch(`/api/courses/${courseId}`, {
+        method: 'GET',
+    })
+    if (res.ok) {
+        return res.statusText.split(' ')[2] + ' ' + res.statusText.split(' ')[3]
+    } else {
+        alert('Error occured on get course name')
+    }
+}
+
 const Application = () => {
     //initialise use states
     const { data: session } = useSession()
@@ -98,12 +109,39 @@ const Application = () => {
         coursePreferences: [],
     })
 
-    //TODO Fetch existing application, get relevant values and update formValues
-
     const [snackbarMessage, setSnackbarMessage] = useState('Please enter 9 digits for your student ID')
     const [openSnackBar, setOpenSnackBar] = useState(false)
     const [openSnackBarSuccess, setOpenSnackBarSuccess] = useState(false)
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('Student submitted successfully!')
+
+    //Fetch existing applications, get relevant values and update formValues
+
+    useEffect(() => {
+        fetchApplications()
+    }, [])
+
+    const fetchApplications = async () => {
+        try {
+            const response = await fetch(`/api/students/me/applications`, { method: 'GET' })
+            const jsonData = await response.json()
+            let currentCoursePreferences = jsonData.map((application: any) => {
+                return {
+                    id: application.id,
+                    courseName: getCourseNameById(application.courseId),
+                    prefId: application.prefId,
+                    course: application.courseId,
+                    grade: application.previouslyAchievedGrade,
+                    explainNotTaken: application.notTakenExplanation,
+                    markedPreviously: application.hasMarkedCourse,
+                    tutoredPreviously: application.hasTutoredCourse,
+                    explainNotPrevious: application.equivalentQualification,
+                }
+            })
+            setFormValues({ ...formValues, coursePreferences: currentCoursePreferences })
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
+    }
 
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
