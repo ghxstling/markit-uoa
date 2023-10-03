@@ -14,7 +14,7 @@ const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFor
 
     useEffect(() => {
         fetchApplications()
-    }, [formValues.coursePreferences])
+    }, [formValues.coursePreferences.length])
 
     const fetchApplications = async () => {
         try {

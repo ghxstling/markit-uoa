@@ -123,8 +123,9 @@ const Application = () => {
         try {
             const response = await fetch(`/api/students/me/applications`, { method: 'GET' })
             if (response.ok) {
-                const jsonData = await response.json()
+                let jsonData = await response.json()
                 console.log(jsonData)
+                jsonData = jsonData.sort((a: any, b: any) => a.preferenceId - b.preferenceId)
                 let currentCoursePreferences = jsonData.map((application: any) => {
                     return {
                         id: application.id,
@@ -230,16 +231,16 @@ const Application = () => {
                     setOpenSnackBar(true)
                     return
                 }
-                const res = await postCourseApplications(formValues)
-                console.log(res.ok)
-                if (res.ok) {
-                    setSnackbarSuccessMessage('Course selection submitted successfully')
-                    setOpenSnackBarSuccess(true)
-                } else {
-                    setSnackbarMessage('Error submitting course selection details, please try again')
-                    setOpenSnackBar(true)
-                    return
-                }
+            }
+            const res = await postCourseApplications(formValues)
+            console.log(res.ok)
+            if (res.ok) {
+                setSnackbarSuccessMessage('Course selection submitted successfully')
+                setOpenSnackBarSuccess(true)
+            } else {
+                setSnackbarMessage('Error submitting course selection details, please try again')
+                setOpenSnackBar(true)
+                return
             }
         }
         setActiveStep(activeStep + 1)
