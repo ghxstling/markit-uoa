@@ -97,6 +97,8 @@ const StudentHomepage = () => {
         firstName = session.user.name.slice(0, session.user.name.lastIndexOf(' ') + 1)
     }
 
+    const emptyRows = page >= 0 ? Math.max(0, (1 + page) * rowPerPage - applications.length) : 0
+
     return (
         <ThemeProvider theme={CustomTheme}>
             <Sidebar />
@@ -177,6 +179,11 @@ const StudentHomepage = () => {
                                             </TableCell>
                                         </TableRow>
                                     ))}
+                                    {emptyRows > 0 && (
+                                        <TableRow style={{ height: 69.5 * emptyRows }}>
+                                            <TableCell colSpan={8} />
+                                        </TableRow>
+                                    )}
                                 </TableBody>
                             </Table>
                         </TableContainer>
