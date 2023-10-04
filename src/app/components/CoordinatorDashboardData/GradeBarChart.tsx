@@ -92,7 +92,13 @@ export default function GradeBarChart() {
             yAxis={[{ scaleType: 'band', dataKey: 'grade' }]}
             series={[{ dataKey: 'numberOfApplications', label: 'Number of Applications' }]}
             layout="horizontal"
-            {...chartSetting}
+            xAxis={[
+                {
+                    label: 'Amount of Applications',
+                },
+            ]}
+            width={650}
+            height={400}
             sx={{
                 '--ChartsLegend-rootOffsetX': '-50px',
                 '--ChartsLegend-rootOffsetY': '-30px',
