@@ -13,6 +13,7 @@ import {
     TableBody,
     Typography,
     TablePagination,
+    Chip,
 } from '@mui/material'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
@@ -21,8 +22,23 @@ import CustomTheme from '@/app/CustomTheme'
 import { ThemeProvider } from '@mui/material/styles'
 
 const StudentHomepage = () => {
+    interface Courses {
+        id: number
+        courseCode: string
+        semester: string
+    }
+
+    interface ApplicantsData {
+        id: number
+        applicationStatus: string
+        courseId: number
+        allocatedHours: number
+    }
+
     //initialise use states
     const [rows, rowChange] = useState([])
+    const [applications, setApplications] = useState<ApplicantsData[]>([])
+    const [courses, setCourses] = useState<Courses[]>([])
     const [page, setPage] = useState(0)
     const [rowPerPage, setRowPerPage] = useState(5)
 
@@ -38,24 +54,39 @@ const StudentHomepage = () => {
 
     //fetch data
     useEffect(() => {
-        fetch('https://jsonplaceholder.typicode.com/users')
+        fetch('/api/students/me/applications')
             .then((response) => response.json())
-            .then((json) => {
-                console.log(json)
-                rowChange(json)
+            .then((jsonData) => {
+                console.log(jsonData)
+                setApplications(jsonData)
             })
             .catch((e) => {
                 console.log(e.message)
             })
     }, [])
 
+    useEffect(() => {
+        fetchCourseInfo()
+    }, [])
+
+    const fetchCourseInfo = async () => {
+        try {
+            const response = await fetch('/api/courses', { method: 'GET' })
+            const jsonData = await response.json()
+            if (response.ok) {
+                setCourses(jsonData)
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
+    }
+
     //initialise columns
     const columns = [
         { id: 'name', name: 'Course' },
         { id: 'email', name: 'Semester' },
-        { id: 'username', name: 'Status' },
         { id: 'website', name: 'Hours Assigned' },
-        { id: 'phone', name: 'Final/Estimate' },
+        { id: 'applicationStatus', name: 'Status' },
     ]
 
     //get first name of user
@@ -112,27 +143,41 @@ const StudentHomepage = () => {
                                 <TableHead>
                                     <TableRow>
                                         {columns.map((column) => (
-                                            <TableCell key={column.id}>{column.name}</TableCell>
+                                            <TableCell style={{ textAlign: 'center' }}>{column.name}</TableCell>
                                         ))}
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {/* map each row to a table row and slice the number of rows based on rows per page */}
-                                    {rows &&
-                                        rows
-                                            .slice(page * rowPerPage, page * rowPerPage + rowPerPage)
-                                            .map((row, index) => {
-                                                return (
-                                                    <TableRow key={index}>
-                                                        {/* map each column value of a row to its own cell */}
-                                                        {columns &&
-                                                            columns.map((column) => {
-                                                                let value = row[column.id]
-                                                                return <TableCell key={value}>{value}</TableCell>
-                                                            })}
-                                                    </TableRow>
-                                                )
-                                            })}
+                                    {(rowPerPage > 0
+                                        ? applications.slice(page * rowPerPage, page * rowPerPage + rowPerPage)
+                                        : applications
+                                    ).map((application, index) => (
+                                        <TableRow>
+                                            <TableCell style={{ textAlign: 'center' }}>
+                                                {
+                                                    courses.find((course) => course.id === application.courseId)
+                                                        ?.courseCode
+                                                }
+                                            </TableCell>
+                                            <TableCell style={{ textAlign: 'center' }}>
+                                                {courses.find((course) => course.id === application.courseId)?.semester}
+                                            </TableCell>
+                                            <TableCell style={{ textAlign: 'center' }}>
+                                                {application.allocatedHours}
+                                            </TableCell>
+                                            <TableCell style={{ textAlign: 'center' }}>
+                                                <Chip
+                                                    color={
+                                                        application.applicationStatus === 'pending'
+                                                            ? 'secondary'
+                                                            : 'primary'
+                                                    }
+                                                    label={application.applicationStatus}
+                                                />
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
                                 </TableBody>
                             </Table>
                         </TableContainer>

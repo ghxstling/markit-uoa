@@ -40,18 +40,12 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         userId: number
     }
 
-    type Application = {
-        id: number
-        hasMarkedCourse: boolean
-        previouslyAchievedGrade: string
-        studentId: number
-    }
-
     interface ApplicantsData {
         id: number
         hasMarkedCourse: boolean
         previouslyAchievedGrade: string
         studentId: number
+        //isQualified: boolean
     }
 
     const [studentData, setStudentData] = useState<Student[]>([])
@@ -61,6 +55,8 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     const [page, setPage] = React.useState(0)
     const [rowsPerPage, setRowsPerPage] = React.useState(5)
     const [courseName, setCourseName] = useState('')
+    const [markersNeeded, setMarkersNeeded] = useState(0)
+    const [markerHoursNeeded, setMarkerHoursNeeded] = useState(0)
     const [checkedStudents, setCheckedStudents] = useState<number[]>([])
     const [selected, setSelected] = useState(new Array(applications.length).fill(false))
 
@@ -68,14 +64,16 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
 
     //fetch the course name
     useEffect(() => {
-        fetchCourseName()
+        fetchCourseInfo()
     }, [])
 
-    const fetchCourseName = async () => {
+    const fetchCourseInfo = async () => {
         try {
             const response = await fetch('/api/courses', { method: 'GET' })
             const jsonData = await response.json()
             setCourseName(jsonData.filter((course: any) => course.id == courseId)[0].courseCode)
+            setMarkersNeeded(jsonData.filter((course: any) => course.id == courseId)[0].markersNeeded)
+            setMarkerHoursNeeded(jsonData.filter((course: any) => course.id == courseId)[0].markerHours)
         } catch (error) {
             console.error('Error fetching data:', error)
         }
@@ -94,10 +92,39 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
             const jsonData = await response.json()
             setApplications(jsonData)
             setSelected(new Array(jsonData.length).fill(false))
+            /*
+            setQualified()
+            */
         } catch (error) {
             console.error('Error fetching data:', error)
         }
     }
+
+    /*
+    const setQualified = () => {
+        newSelected =  [...selected]
+        for(let i = 0; i < newSelected.length; i++) {
+            newSelected[i] = applications[i].isQualified
+        }
+        setSelected(newSelected)
+    } 
+    */
+
+    /*
+    handleQualifiedChange(index: number) {
+        //get application that is being changed
+        changedApplication = applications[index]
+        
+        //patch changed application
+        const response = fetch('/api/url', {
+            method: 'PATCH'
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(application),
+        })
+    }
+    */
 
     //fetch all students
     useEffect(() => {
@@ -223,9 +250,9 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>Markers Needed: 2 {/* number of markers needed */}</TableCell>
+                                    <TableCell>Markers Needed: {markersNeeded}</TableCell>
                                     <TableCell>Markers Assigned: 2 {/* number of markers assigned */}</TableCell>
-                                    <TableCell>Hours Needed: 30 {/* number of hours needed */}</TableCell>
+                                    <TableCell>Hours Needed: {markerHoursNeeded}</TableCell>
                                     <TableCell>Hours Assigned: 30 {/* number of hours assigned */}</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -357,18 +384,13 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     {studentData.find((student) => student.id === application.studentId)?.maxWorkHours}
                                 </TableCell>
                                 <TableCell style={{ textAlign: 'center' }}>
-                                    {/*<Chip
-                                    onClick={() => setSelected((selected) => {
-                                        selected[index] = !selected[index]
-                                    })}
-                                    color={selected[index] ? 'primary' : 'secondary'}
-                                    label={selected[index] ? 'Qualified' : 'Unqualified'}
-                                    /> */}
                                     <Chip
                                         onClick={() =>
                                             setSelected((selected) => {
                                                 let newSelected = [...selected]
                                                 newSelected[index] = !newSelected[index]
+                                                //applications[index].isQualified = newSelected[index]
+                                                //handleQualifiedChange(index)
                                                 setSelected(newSelected)
                                                 return newSelected
                                             })
