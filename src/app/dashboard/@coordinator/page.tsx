@@ -11,6 +11,8 @@ import Sidebar from '@/app/components/Sidebar'
 import CoursePieChart from '@/app/components/CoordinatorDashboardData/CoursePieChart'
 import CustomTheme from '@/app/CustomTheme'
 import { ThemeProvider } from '@mui/material/styles'
+import GradeBarChart from '@/app/components/CoordinatorDashboardData/GradeBarChart'
+import ChartsContainer from '@/app/components/CoordinatorDashboardData/ChartsContainer'
 
 export default function CoordinatorDashboard() {
     const { data: session } = useSession()
@@ -55,24 +57,11 @@ export default function CoordinatorDashboard() {
                         </Button>
                     </Link>
                     <Typography variant="h5" fontWeight="bold" sx={{ mt: '58px' }}>
-                        Top 10 Courses With Most Applications
+                        Statistics
                     </Typography>
-                    <Divider variant="fullWidth" sx={{ mb: '40px' }} />
-                    <Box
-                        sx={{
-                            mt: '40px',
-                            ml: { xs: '5px', lg: '150px', xl: '250px' },
-                            mr: { xs: '5px', lg: '150px', xl: '250px' },
-                            mb: '50px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignContent: 'center',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <CoursePieChart />
-                    </Box>
+                    <Divider variant="fullWidth" sx={{ mb: '20px' }} />
+
+                    <ChartsContainer />
                 </Box>
             </Box>
         </ThemeProvider>
