@@ -28,7 +28,6 @@ export default function GradeBarChart() {
         { grade: 'D+', numberOfApplications: 0 },
         { grade: 'D', numberOfApplications: 0 },
         { grade: 'D-', numberOfApplications: 0 },
-        { grade: 'Not Taken', numberOfApplications: 0 },
     ])
     const [isLoading, setIsLoading] = useState(true)
 
@@ -60,7 +59,6 @@ export default function GradeBarChart() {
                     { grade: 'D+', numberOfApplications: 0 },
                     { grade: 'D', numberOfApplications: 0 },
                     { grade: 'D-', numberOfApplications: 0 },
-                    { grade: 'Not Taken Previously', numberOfApplications: 0 },
                 ]
 
                 for (const application of applications) {
