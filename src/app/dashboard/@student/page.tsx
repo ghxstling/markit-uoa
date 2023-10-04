@@ -54,15 +54,20 @@ const StudentHomepage = () => {
 
     //fetch data
     useEffect(() => {
-        fetch('/api/students/me/applications')
-            .then((response) => response.json())
-            .then((jsonData) => {
-                setApplications(jsonData)
-            })
-            .catch((error) => {
-                console.error('An Error Occurred', error)
-            })
+        fetchApplications()
     }, [])
+
+    const fetchApplications = async () => {
+        try {
+            const response = await fetch('/api/students/me/applications')
+            const jsonData = await response.json()
+            if (response.ok) {
+                setApplications(jsonData)
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
+    }
 
     useEffect(() => {
         fetchCourseInfo()

@@ -143,7 +143,6 @@ const Application = () => {
                 })
                 setFormValues({
                     ...formValues,
-                    coursePreferences: currentCoursePreferences,
                     AUID: jsonData2.auid,
                     currentlyOverseas: jsonData2.overseas === false ? 'No' : 'Yes',
                     citizenOrPermanentResident: jsonData2.residencyStatus === false ? 'No' : 'Yes',
@@ -151,6 +150,7 @@ const Application = () => {
                     degree: jsonData2.degreeType,
                     degreeYears: jsonData2.degreeYear,
                     workHours: jsonData2.maxWorkHours,
+                    coursePreferences: currentCoursePreferences,
                 })
             }
             if (response1.ok && !response2.ok) {
