@@ -124,7 +124,6 @@ const Application = () => {
             const response = await fetch(`/api/students/me/applications`, { method: 'GET' })
             if (response.ok) {
                 let jsonData = await response.json()
-                console.log(jsonData)
                 jsonData = jsonData.sort((a: any, b: any) => a.preferenceId - b.preferenceId)
                 let currentCoursePreferences = jsonData.map((application: any) => {
                     return {
@@ -233,7 +232,6 @@ const Application = () => {
                 }
             }
             const res = await postCourseApplications(formValues)
-            console.log(res.ok)
             if (res.ok) {
                 setSnackbarSuccessMessage('Course selection submitted successfully')
                 setOpenSnackBarSuccess(true)

@@ -57,11 +57,10 @@ const StudentHomepage = () => {
         fetch('/api/students/me/applications')
             .then((response) => response.json())
             .then((jsonData) => {
-                console.log(jsonData)
                 setApplications(jsonData)
             })
-            .catch((e) => {
-                console.log(e.message)
+            .catch((error) => {
+                console.error('An Error Occurred', error)
             })
     }, [])
 
