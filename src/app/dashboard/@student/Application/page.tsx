@@ -113,19 +113,50 @@ const Application = () => {
     const [openSnackBarSuccess, setOpenSnackBarSuccess] = useState(false)
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('Student submitted successfully!')
 
-    //Fetch existing applications, get relevant values and update formValues
+    //fetch existing student and application details, get relevant values and update formValues
 
     useEffect(() => {
-        fetchApplications()
+        fetchApplicationsAndStudentData()
     }, [])
 
-    const fetchApplications = async () => {
+    const fetchApplicationsAndStudentData = async () => {
         try {
-            const response = await fetch(`/api/students/me/applications`, { method: 'GET' })
-            if (response.ok) {
-                let jsonData = await response.json()
-                jsonData = jsonData.sort((a: any, b: any) => a.preferenceId - b.preferenceId)
-                let currentCoursePreferences = jsonData.map((application: any) => {
+            const response1 = await fetch(`/api/students/me/applications`, { method: 'GET' })
+            const response2 = await fetch(`/api/students/me`, { method: 'GET' })
+            if (response1.ok && response2.ok) {
+                let jsonData1 = await response1.json()
+                jsonData1 = jsonData1.sort((a: any, b: any) => a.preferenceId - b.preferenceId)
+                const jsonData2 = await response2.json()
+                console.log(jsonData2.degreeType)
+                let currentCoursePreferences = jsonData1.map((application: any) => {
+                    return {
+                        id: application.id,
+                        courseName: getCourseNameById(application.courseId),
+                        prefId: application.preferenceId,
+                        course: application.courseId,
+                        grade: application.previouslyAchievedGrade,
+                        explainNotTaken: application.notTakenExplanation,
+                        markedPreviously: application.hasMarkedCourse,
+                        tutoredPreviously: application.hasTutoredCourse,
+                        explainNotPrevious: application.equivalentQualification,
+                    }
+                })
+                setFormValues({
+                    ...formValues,
+                    coursePreferences: currentCoursePreferences,
+                    AUID: jsonData2.auid,
+                    currentlyOverseas: jsonData2.overseas === false ? 'No' : 'Yes',
+                    citizenOrPermanentResident: jsonData2.residencyStatus === false ? 'No' : 'Yes',
+                    workVisa: jsonData2.validWorkVisa === false ? 'No' : 'Yes',
+                    degree: jsonData2.degreeType,
+                    degreeYears: jsonData2.degreeYear,
+                    workHours: jsonData2.maxWorkHours,
+                })
+            }
+            if (response1.ok && !response2.ok) {
+                let jsonData1 = await response1.json()
+                jsonData1 = jsonData1.sort((a: any, b: any) => a.preferenceId - b.preferenceId)
+                let currentCoursePreferences = jsonData1.map((application: any) => {
                     return {
                         id: application.id,
                         courseName: getCourseNameById(application.courseId),
@@ -139,34 +170,27 @@ const Application = () => {
                     }
                 })
                 setFormValues({ ...formValues, coursePreferences: currentCoursePreferences })
-            } else {
+            }
+            if (response2.ok && !response1.ok) {
+                const jsonData2 = await response2.json()
+                setFormValues({
+                    ...formValues,
+                    AUID: jsonData2.auid,
+                    currentlyOverseas: jsonData2.overseas === false ? 'No' : 'Yes',
+                    citizenOrPermanentResident: jsonData2.residencyStatus === false ? 'No' : 'Yes',
+                    workVisa: jsonData2.validWorkVisa === false ? 'No' : 'Yes',
+                    degree: jsonData2.degreeType,
+                    degreeYears: jsonData2.degreeYear,
+                    workHours: jsonData2.maxWorkHours,
+                })
+            }
+            if (!response1.ok && !response2.ok) {
                 return
             }
         } catch (error) {
             console.error('Error fetching data:', error)
         }
     }
-
-    //fetch existing student details, get relevant values and update formValues
-
-    /*
-    useEffect(() => {
-        fetchStudentDetails()
-    }, [])
-
-    const fetchStudentDetails = async () => {
-        try {
-            const response = await fetch(`/api/students/me`, { method: 'GET' })
-            const jsonData = await response.json()
-            console.log(jsonData)
-            let currentStudentData = jsonData.map((student: any) => {
-                return {}
-            })
-        } catch (error) {
-            console.error('Error fetching data:', error)
-        }
-    }
-    */
 
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
@@ -189,7 +213,7 @@ const Application = () => {
                 setSnackbarMessage('Please enter a valid email address')
                 setOpenSnackBar(true)
                 return
-            } else if ((formValues.AUID as string).length !== 9) {
+            } else if (String(formValues.AUID).length !== 9) {
                 setSnackbarMessage('Please enter 9 digits for your student ID')
                 setOpenSnackBar(true)
                 return
