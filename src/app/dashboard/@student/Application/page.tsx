@@ -185,7 +185,7 @@ const Application = () => {
                 })
             }
             if (!response1.ok && !response2.ok) {
-                return
+                throw new Error('Something went wrong')
             }
         } catch (error) {
             console.error('Error fetching data:', error)

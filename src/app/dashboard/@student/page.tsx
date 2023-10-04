@@ -170,7 +170,9 @@ const StudentHomepage = () => {
                                                 {courses.find((course) => course.id === application.courseId)?.semester}
                                             </TableCell>
                                             <TableCell style={{ textAlign: 'center' }}>
-                                                {application.allocatedHours}
+                                                {application.applicationStatus === 'pending'
+                                                    ? 'N/A'
+                                                    : application.allocatedHours}
                                             </TableCell>
                                             <TableCell style={{ textAlign: 'center' }}>
                                                 <Chip
