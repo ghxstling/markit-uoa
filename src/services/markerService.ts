@@ -15,18 +15,30 @@ export default class MarkerService {
 
     static async assignMarkers(applications: Application[]) {
         try {
+            const course = await CourseRepo.getCourseById(applications[0]!.courseId)
+            const defaultAllocatedHours = Math.floor(course!.markerHours / course!.markersNeeded)
             let updatedApplications = new Array<Application>()
-            let newApplication
             for (const app of applications) {
                 await ApplicationRepo.updateApplicationStatus(app.id, ApplicationStatus.Approved)
-                newApplication = await this.allocateHours(app, app.allocatedHours)
+                const newApplication = await this._allocateHours(app, defaultAllocatedHours)
                 updatedApplications.push(newApplication!)
             }
-            const course = await CourseRepo.getCourseById(newApplication!.courseId)
             if (await this._hasMetRequirements(course!)) {
                 await CourseRepo.updateCourse(course!.id, { needMarkers: false })
             }
             return updatedApplications
+        } catch (err) {
+            console.log(err)
+            return null
+        }
+    }
+
+    static async updateMarker(applicationData: Application) {
+        let updatedApplication
+        try {
+            updatedApplication = await this._allocateHours(applicationData, applicationData.allocatedHours)
+            updatedApplication = await this._setQualificationStatus(updatedApplication!, applicationData.isQualified)
+            return updatedApplication
         } catch (err) {
             console.log(err)
             return null
@@ -52,7 +64,7 @@ export default class MarkerService {
         return hours
     }
 
-    static async allocateHours(application: Application, hours: number) {
+    static async _allocateHours(application: Application, hours: number) {
         try {
             const updatedApplication = await ApplicationRepo.updateAllocatedHours(application.id, hours)
             const course = await CourseRepo.getCourseById(updatedApplication.courseId)
@@ -65,7 +77,17 @@ export default class MarkerService {
             return null
         }
     }
-
+    
+    static async _setQualificationStatus(application: Application, isQualified: boolean) {
+        try {
+            const updatedApplication = await ApplicationRepo.updateApplication(application.id, { isQualified })
+            return updatedApplication
+        } catch (err) {
+            console.log(err)
+            return null
+        }
+    }
+    
     static async _hasMetRequirements(course: Course) {
         const applications = await ApplicationRepo.getApplicationsByCourse(course!.id)
         const totalHours = await this.getAllocatedHours(applications)

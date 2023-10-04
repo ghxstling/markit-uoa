@@ -70,8 +70,23 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         )
     }
 
-    const { allocatedHours } = await req.json()
-    const updatedMarker = await MarkerService.allocateHours(marker, allocatedHours)
+    const { allocatedHours, isQualified } = await req.json()
+    const markerData = {
+        id: markerId,
+        applicationStatus: marker.applicationStatus,
+        allocatedHours: allocatedHours, 
+        preferenceId: marker.preferenceId,
+        studentId: marker.studentId,
+        courseId: courseId,
+        hasCompletedCourse: marker.hasCompletedCourse,
+        previouslyAchievedGrade: marker.previouslyAchievedGrade,
+        hasTutoredCourse: marker.hasTutoredCourse,
+        hasMarkedCourse: marker.hasMarkedCourse,
+        notTakenExplanation: marker.notTakenExplanation,
+        equivalentQualification: marker.equivalentQualification,
+        isQualified: isQualified,
+    }
+    const updatedMarker = await MarkerService.updateMarker(markerData)
     if (updatedMarker == null) {
         return NextResponse.json(
             {
