@@ -78,6 +78,7 @@ model Application {
   hasMarkedCourse         Boolean
   notTakenExplanation     String? // needed if hasCompletedCourse is false
   equivalentQualification String? // needed if hasTutoredCourse && hasMarkedCourse is false
+  isQualified             Boolean @default(false)
 
   @@unique([studentId, courseId])
 }

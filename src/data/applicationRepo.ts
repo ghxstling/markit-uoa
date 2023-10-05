@@ -36,9 +36,26 @@ export default class ApplicationRepo {
         })
     }
 
+    static async doesApplicationExist(studentId: number, courseId: number) {
+        const app = await prisma.application.findUnique({
+            where: {
+                studentId_courseId: { studentId, courseId }
+            },
+            include: { student: true, course: true }
+        })
+        return app != null
+    }
+
     static async getApplicationsByStatus(status: string) {
         return await prisma.application.findMany({
             where: { applicationStatus: status },
+        })
+    }
+
+    static async updateApplication(id: number, data: Prisma.ApplicationUncheckedUpdateInput) {
+        return await prisma.application.update({
+            where: { id },
+            data
         })
     }
 
