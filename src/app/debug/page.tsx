@@ -12,11 +12,10 @@ const DebugPage = () => {
 
     const makeApiCall = async () => {
         try {
-            const data = {
-                allocatedHours: 20
-            }
-            const res = await fetch('/api/courses/68/markers/927', {
-                method: 'DELETE',
+
+            const res = await fetch('/api/students/me', {
+                method: 'GET',
+
                 headers: {
                     'Content-Type': 'application/json',
                 },
