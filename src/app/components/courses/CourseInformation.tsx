@@ -175,34 +175,41 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         }
     }
 
-    const handleMarkerSubmit = () => {
+    const handleMarkerSubmit = async () => {
+        console.log(checkedStudents);
         if (checkedStudents.length === 0) {
-            //no students selected error
-            return
+            // No students selected error
+            return;
         }
-
+    
         const payload = {
             students: checkedStudents,
+            applicationStatus: 'approved',
+        };
+    
+        try {
+            const response = await fetch('change to correct endpoint soon', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+    
+            // Parse the response JSON
+            const data = await response.json();
+    
+            if (response.ok) {
+                console.log('Students submitted successfully');
+            } else {
+                console.log('Failed to submit students:', data.message); // Log the error message from the server
+            }
+        } catch (error) {
+            // Handle network or other unknown errors
+            console.log('Error submitting students:', error);
         }
-
-        fetch('url for submitting checked students', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    console.log('Students submitted successfully')
-                } else {
-                    console.log('Failed to submit students')
-                }
-            })
-            .catch((error) => {
-                console.log('Error submitting students:', error)
-            })
-    }
+    };
+    
     return (
         <>
             <Card sx={{ p: '20px' }}>
