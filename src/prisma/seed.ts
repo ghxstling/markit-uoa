@@ -39,18 +39,34 @@ async function generateData(seedOption?: number) {
     }
 
     // Seed Users (Students)
-    for (let i = 0; i < 250; i++) {
+    for (let i = 0; i < 4000; i++) {
         let firstName = faker.person.firstName()
         let lastName = faker.person.lastName()
         let fullName = firstName + ' ' + lastName
-        let upi = firstName.slice(0, 1).toLowerCase()
-        for (let i = 0; 4 > upi.length; i++) {
+        let upi = ''
+        let upi1stPart = firstName.slice(0, 1).toLowerCase()
+        for (let i = 0; 4 > upi1stPart.length; i++) {
             if (lastName.charAt(i).match(/[a-zA-Z]/g)) {
-                upi += lastName.charAt(i).toLowerCase()
+                upi1stPart += lastName.charAt(i).toLowerCase()
             }
         }
-        upi += faker.string.numeric(3)
+        let upi2ndPart = faker.string.numeric(3)
+        upi = upi1stPart + upi2ndPart
         let email = upi + '@aucklanduni.ac.nz'
+
+        while (
+            (await prisma.user.findFirst({
+                where: {
+                    email: {
+                        equals: email,
+                    },
+                },
+            })) !== null
+        ) {
+            upi2ndPart = faker.string.numeric(3)
+            upi = upi1stPart + upi2ndPart
+            email = upi + '@aucklanduni.ac.nz'
+        }
 
         let residencyStatus = faker.datatype.boolean(0.8)
         let validWorkVisa
@@ -58,6 +74,19 @@ async function generateData(seedOption?: number) {
             validWorkVisa = faker.datatype.boolean(0.8)
         } else {
             validWorkVisa = null
+        }
+
+        let auid = parseInt(faker.string.numeric({ length: 9, allowLeadingZeros: false }))
+        while (
+            (await prisma.student.findFirst({
+                where: {
+                    auid: {
+                        equals: auid,
+                    },
+                },
+            })) !== null
+        ) {
+            auid = parseInt(faker.string.numeric({ length: 9, allowLeadingZeros: false }))
         }
 
         await prisma.user.create({
@@ -69,7 +98,7 @@ async function generateData(seedOption?: number) {
                     create: {
                         preferredEmail: email,
                         upi: upi,
-                        auid: parseInt(faker.string.numeric({ length: 9, allowLeadingZeros: false })),
+                        auid: auid,
                         overseas: faker.datatype.boolean(0.2),
                         // overseasStatus not genereated
                         residencyStatus: residencyStatus,
@@ -101,6 +130,24 @@ async function generateData(seedOption?: number) {
         let fullName = firstName + ' ' + lastName
         let email = firstName.toLowerCase() + '.' + lastName.toLowerCase() + '@auckland.ac.nz'
 
+        if (
+            (await prisma.user.findFirst({
+                where: {
+                    email: {
+                        equals: email,
+                    },
+                },
+            })) !== null
+        ) {
+            email =
+                firstName.toLowerCase() +
+                '.' +
+                lastName.toLowerCase() +
+                '.' +
+                faker.number.int({ min: 1, max: 9 }).toString() +
+                '@auckland.ac.nz'
+        }
+
         await prisma.user.create({
             data: {
                 email: email,
@@ -116,7 +163,7 @@ async function generateData(seedOption?: number) {
 
     const gradeArray = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'Not Taken Previously']
 
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < 18000; i++) {
         let student = students[faker.number.int({ min: 0, max: students.length - 1 })]
         let course = courses[faker.number.int({ min: 0, max: courses.length - 1 })]
         if (
@@ -155,19 +202,32 @@ async function generateData(seedOption?: number) {
                 equivalentQualification = faker.lorem.sentences({ min: 3, max: 5 })
             }
 
-            // await prisma.application.create({
-            //     data: {
-            //         applicationStatus: faker.helpers.arrayElement(['pending', 'approved', 'denied']),
-            //         student: { connect: { id: student.id } },
-            //         course: { connect: { id: course.id } },
-            //         hasCompletedCourse: hasCompletedCourse,
-            //         previouslyAchievedGrade: previouslyAchievedGrade,
-            //         hasTutoredCourse: hasTutoredCourse,
-            //         hasMarkedCourse: hasMarkedCourse,
-            //         notTakenExplanation: notTakenExplanation,
-            //         equivalentQualification: equivalentQualification,
-            //     },
-            // })
+            let preferenceId = 1
+            preferenceId += await prisma.application.count({
+                where: {
+                    studentId: {
+                        equals: student.id,
+                    },
+                },
+            })
+
+            let isQualified = faker.datatype.boolean(0.5)
+
+            await prisma.application.create({
+                data: {
+                    applicationStatus: faker.helpers.arrayElement(['pending', 'approved', 'denied']),
+                    preferenceId: preferenceId,
+                    student: { connect: { id: student.id } },
+                    course: { connect: { id: course.id } },
+                    hasCompletedCourse: hasCompletedCourse,
+                    previouslyAchievedGrade: previouslyAchievedGrade,
+                    hasTutoredCourse: hasTutoredCourse,
+                    hasMarkedCourse: hasMarkedCourse,
+                    notTakenExplanation: notTakenExplanation,
+                    equivalentQualification: equivalentQualification,
+                    isQualified: isQualified,
+                },
+            })
         } else {
             console.log('Application already exists - Regenerating...')
             i--

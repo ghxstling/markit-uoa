@@ -3,14 +3,16 @@
 import React from 'react'
 import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
-import RecentActivityTable from '@/app/components/RecentActivityTable'
 import Button from '@mui/material/Button'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { Box } from '@mui/material'
+import { Box, CircularProgress } from '@mui/material'
 import Sidebar from '@/app/components/Sidebar'
+import CoursePieChart from '@/app/components/CoordinatorDashboardData/CoursePieChart'
 import CustomTheme from '@/app/CustomTheme'
 import { ThemeProvider } from '@mui/material/styles'
+import GradeBarChart from '@/app/components/CoordinatorDashboardData/GradeBarChart'
+import ChartsContainer from '@/app/components/CoordinatorDashboardData/ChartsContainer'
 
 export default function CoordinatorDashboard() {
     const { data: session } = useSession()
@@ -55,10 +57,11 @@ export default function CoordinatorDashboard() {
                         </Button>
                     </Link>
                     <Typography variant="h5" fontWeight="bold" sx={{ mt: '58px' }}>
-                        Recent Activity
+                        Statistics
                     </Typography>
-                    <Divider variant="fullWidth" sx={{ mb: '40px' }} />
-                    <RecentActivityTable />
+                    <Divider variant="fullWidth" sx={{ mb: '20px' }} />
+
+                    <ChartsContainer />
                 </Box>
             </Box>
         </ThemeProvider>
