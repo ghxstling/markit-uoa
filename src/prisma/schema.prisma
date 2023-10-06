@@ -15,7 +15,7 @@ model Course {
   courseCode             String
   courseDescription      String
   supervisor             Supervisor?   @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
-  supervisorId           Int?          @unique
+  supervisorId           Int?          
   numOfEstimatedStudents Int
   numOfEnrolledStudents  Int
   markerHours            Int
