@@ -188,7 +188,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         };
     
         try {
-            const response = await fetch('change to correct endpoint soon', {
+            const response = await fetch('/api/applications', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
