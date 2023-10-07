@@ -39,4 +39,13 @@ export default class CourseRepo {
             where: { id },
         });
     }
+
+
+    static async importCourses(courses: Prisma.CourseCreateInput[]) {
+        return await prisma.course.createMany({
+            data: courses,
+            skipDuplicates: true // Skip courses that already exist
+        });
+    }
+    
 }

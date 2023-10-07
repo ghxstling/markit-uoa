@@ -11,9 +11,13 @@ import {
     DialogContent,
     DialogActions,
     DialogContentText,
+    Snackbar,
+    Alert,
+    CircularProgress,
 } from '@mui/material'
 
 type Course = {
+    id: string
     semester: string
     // add other properties as needed
 }
@@ -23,12 +27,24 @@ export default function ImportCourses() {
     const [sourceSemester, setSourceSemester] = useState<string>('')
     const [targetSemester, setTargetSemester] = useState<string>('')
     const [openDialog, setOpenDialog] = useState(false)
+    const [snackbarOpen, setSnackbarOpen] = useState(false)
+    const [snackbarMessage, setSnackbarMessage] = useState('')
+    const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('info')
+    const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
+        setIsLoading(true)
         fetch('/api/courses')
             .then((res) => res.json())
-            .then((data) => setCourses(data))
-            .catch((error) => console.error('Error fetching courses:', error))
+            .then((data) => {
+                setCourses(data)
+                setIsLoading(false)
+            })
+            .catch((error) => {
+                console.error('Error fetching courses:', error)
+                setIsLoading(false)
+                // Optionally, display an error message using the Snackbar.
+            })
     }, [])
 
     const getAllSemesters = (): string[] => {
@@ -36,14 +52,21 @@ export default function ImportCourses() {
     }
 
     const handleImport = () => {
+        setIsLoading(true)
+        // 1. Filter courses from the source semester.
         const coursesToDuplicate = courses.filter((course) => course.semester === sourceSemester)
 
-        const duplicatedCourses = coursesToDuplicate.map((course) => ({
-            ...course,
-            semester: targetSemester,
-        }))
+        // 2. Modify the semester property of each of those courses.
+        const duplicatedCourses = coursesToDuplicate.map((course) => {
+            const { id, ...restOfCourse } = course // exclude id
+            return {
+                ...restOfCourse,
+                semester: targetSemester,
+            }
+        })
 
-        fetch('/api/courses/bulk-insert', {
+        // 3. Send the duplicated courses to the server.
+        fetch('/api/courses/import', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -51,16 +74,28 @@ export default function ImportCourses() {
             body: JSON.stringify(duplicatedCourses),
         })
             .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Server responded with an error')
+                if (response.status === 201) {
+                    setSnackbarMessage('Courses successfully imported!')
+                    setSnackbarSeverity('success')
+                    setSnackbarOpen(true)
+                    setIsLoading(false) // <-- Move it inside this scope
+                    // Optionally, you could refresh the list of courses here.
+                } else {
+                    return response.json().then((data) => {
+                        throw new Error(data.error || 'Failed to import courses')
+                    })
                 }
-                return response.json()
             })
-            .then((data) => {
-                alert('Courses imported successfully!')
-            })
-            .catch((error) => console.error('Error duplicating courses:', error))
 
+            .catch((error) => {
+                console.error('Error importing courses:', error)
+                setSnackbarMessage(error.message)
+                setSnackbarSeverity('error')
+                setSnackbarOpen(true)
+                setIsLoading(false)
+            })
+
+        // Close the confirmation dialog.
         setOpenDialog(false)
     }
 
@@ -108,6 +143,11 @@ export default function ImportCourses() {
                     Import
                 </Button>
             </Box>
+            {isLoading && (
+                <Box display="flex" justifyContent="center" mt={3}>
+                    <CircularProgress />
+                </Box>
+            )}
 
             <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
                 <DialogTitle>Confirm Import</DialogTitle>
@@ -126,6 +166,16 @@ export default function ImportCourses() {
                     </Button>
                 </DialogActions>
             </Dialog>
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={() => setSnackbarOpen(false)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+            >
+                <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} variant="filled">
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </Container>
     )
 }
