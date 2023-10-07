@@ -48,10 +48,11 @@ export async function POST(req: NextRequest) {
     const student = await StudentRepo.getStudentByUserId(user!.id)
 
     let applications: Array<Application> = new Array<Application>()
+    let prefId = (await ApplicationRepo.getStudentApplications(student!.upi)).length
     const coursePreferences = await req.json()
     for (const pref of coursePreferences) {
         let applicationData = {
-            preferenceId: pref.prefId,
+            preferenceId: ++prefId,
             studentId: student!.id,
             courseId: pref.course,
             hasCompletedCourse: pref.grade === 'NotTaken' ? false : true,
