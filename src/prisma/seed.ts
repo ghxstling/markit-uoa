@@ -19,6 +19,7 @@ async function generateData(seedOption?: number) {
     }
 
     // Seed Courses
+    console.log('Seeding Courses ...')
     for (const [key, value] of Object.entries(csCourses)) {
         await prisma.course.create({
             data: {
@@ -28,10 +29,9 @@ async function generateData(seedOption?: number) {
                 numOfEnrolledStudents: faker.number.int({ min: 1, max: 2000 }),
                 markerHours: faker.number.int({ min: 5, max: 200 }),
                 markerResponsibilities: faker.lorem.paragraph({ min: 1, max: 4 }),
-                // TODO: check allocated markers numbers to course for the field below
                 needMarkers: faker.datatype.boolean(0.5),
                 markersNeeded: faker.number.int({ min: 1, max: 20 }),
-                semester:
+                 semester:
                     faker.number.int({ min: 2023, max: 2024 }).toString() +
                     faker.helpers.arrayElement(['SS', 'S1', 'S2']),
             },
@@ -39,6 +39,7 @@ async function generateData(seedOption?: number) {
     }
 
     // Seed Users (Students)
+    console.log('Seeding Students ...')
     for (let i = 0; i < 4000; i++) {
         let firstName = faker.person.firstName()
         let lastName = faker.person.lastName()
@@ -124,6 +125,7 @@ async function generateData(seedOption?: number) {
     }
 
     // Seed Users (Supervisors)
+    console.log('Seeding Supervisors ...')
     for (let i = 0; i < 100; i++) {
         let firstName = faker.person.firstName()
         let lastName = faker.person.lastName()
@@ -148,16 +150,36 @@ async function generateData(seedOption?: number) {
                 '@auckland.ac.nz'
         }
 
+        let supervisorCourses = []
+        let coursesLeft = await prisma.course.findMany({
+            where: { supervisorId: null }
+        })
+
+        if (coursesLeft.length !== 0) {
+            for (let i = 0; i < faker.number.int({ min: 0, max: 3 }); i++) {
+                supervisorCourses.push({ id: coursesLeft[faker.number.int({ min: 0, max: coursesLeft.length-1})].id })
+            }
+        }
+
         await prisma.user.create({
             data: {
                 email: email,
                 name: fullName,
                 role: 'supervisor',
+                supervisor: {
+                    create: {
+                        courses: {
+                            connect: supervisorCourses
+                        }
+                    }
+                }
             },
         })
     }
 
     // Seed Applications
+    console.log('Seeding Applications ...')
+
     const students = await prisma.student.findMany()
     const courses = await prisma.course.findMany()
 
@@ -212,10 +234,13 @@ async function generateData(seedOption?: number) {
             })
 
             let isQualified = faker.datatype.boolean(0.5)
+            let applicationStatus = faker.helpers.arrayElement(['pending', 'approved', 'denied'])
+            let allocatedHours = applicationStatus === 'approved' ? faker.number.int({ min: 10, max: 10}) : 5
 
             await prisma.application.create({
                 data: {
-                    applicationStatus: faker.helpers.arrayElement(['pending', 'approved', 'denied']),
+                    applicationStatus: applicationStatus,
+                    allocatedHours: allocatedHours,
                     preferenceId: preferenceId,
                     student: { connect: { id: student.id } },
                     course: { connect: { id: course.id } },
@@ -233,6 +258,7 @@ async function generateData(seedOption?: number) {
             i--
         }
     }
+    console.log('Seeding completed.')
 }
 
 async function main() {
@@ -243,12 +269,12 @@ async function main() {
     try {
         switch (datasetType) {
             case 'constant':
-                generateData(123)
                 console.log('CONSTANT seeding in progress.')
+                generateData(123)
                 break
             case 'random':
-                generateData()
                 console.log('RANDOM seeding in progress.')
+                generateData()
                 break
             default:
                 console.log('No seeding was completed.')
