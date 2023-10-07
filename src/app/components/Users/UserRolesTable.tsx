@@ -16,6 +16,8 @@ import {
     TextField,
     Box,
 } from '@mui/material'
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
 import { Role } from '@/models/role'
 import React, { useEffect, useState } from 'react'
 
@@ -29,7 +31,7 @@ export default function UserRolesTable() {
 
     const [users, setUsers] = useState<User[]>([])
     const [page, setPage] = useState(0)
-    const [rowsPerPage, setRowsPerPage] = useState(5)
+    const [rowsPerPage, setRowsPerPage] = useState(10)
     const [sortConfig, setSortConfig] = useState<{ key: keyof User; direction: 'ascending' | 'descending' } | null>(
         null
     )
@@ -149,6 +151,12 @@ export default function UserRolesTable() {
                                     onClick={() => handleSort('name')}
                                 >
                                     Name
+                                    {sortConfig?.key === 'name' &&
+                                        (sortConfig.direction === 'ascending' ? (
+                                            <ArrowDropUpIcon />
+                                        ) : (
+                                            <ArrowDropDownIcon />
+                                        ))}
                                 </TableCell>
                                 <TableCell
                                     style={{
@@ -160,6 +168,12 @@ export default function UserRolesTable() {
                                     onClick={() => handleSort('email')}
                                 >
                                     Email
+                                    {sortConfig?.key === 'email' &&
+                                        (sortConfig.direction === 'ascending' ? (
+                                            <ArrowDropUpIcon />
+                                        ) : (
+                                            <ArrowDropDownIcon />
+                                        ))}
                                 </TableCell>
                                 <TableCell style={{ textAlign: 'center', minWidth: '60px', fontWeight: 'bold' }}>
                                     Role
@@ -196,7 +210,7 @@ export default function UserRolesTable() {
                                 <TableCell colSpan={3}>
                                     <TablePagination
                                         component="div"
-                                        rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                        rowsPerPageOptions={[10, 25, 50, 100]}
                                         count={filteredUsers.length}
                                         rowsPerPage={rowsPerPage}
                                         page={page}
