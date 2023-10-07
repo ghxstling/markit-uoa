@@ -14,12 +14,13 @@ import {
     Snackbar,
     Alert,
     CircularProgress,
+    InputLabel,
+    FormControl,
 } from '@mui/material'
 
 type Course = {
     id: string
     semester: string
-    // add other properties as needed
 }
 
 export default function ImportCourses() {
@@ -43,7 +44,7 @@ export default function ImportCourses() {
             .catch((error) => {
                 console.error('Error fetching courses:', error)
                 setIsLoading(false)
-                // Optionally, display an error message using the Snackbar.
+                // TODO: display an error message using the Snackbar
             })
     }, [])
 
@@ -53,10 +54,10 @@ export default function ImportCourses() {
 
     const handleImport = () => {
         setIsLoading(true)
-        // 1. Filter courses from the source semester.
+        // 1. Filter courses from the source semester
         const coursesToDuplicate = courses.filter((course) => course.semester === sourceSemester)
 
-        // 2. Modify the semester property of each of those courses.
+        // 2. Modify the semester property of each of those courses
         const duplicatedCourses = coursesToDuplicate.map((course) => {
             const { id, ...restOfCourse } = course // exclude id
             return {
@@ -65,7 +66,7 @@ export default function ImportCourses() {
             }
         })
 
-        // 3. Send the duplicated courses to the server.
+        // 3. Send the duplicated courses to the server
         fetch('/api/courses/import', {
             method: 'POST',
             headers: {
@@ -78,8 +79,7 @@ export default function ImportCourses() {
                     setSnackbarMessage('Courses successfully imported!')
                     setSnackbarSeverity('success')
                     setSnackbarOpen(true)
-                    setIsLoading(false) // <-- Move it inside this scope
-                    // Optionally, you could refresh the list of courses here.
+                    setIsLoading(false)
                 } else {
                     return response.json().then((data) => {
                         throw new Error(data.error || 'Failed to import courses')
@@ -95,7 +95,6 @@ export default function ImportCourses() {
                 setIsLoading(false)
             })
 
-        // Close the confirmation dialog.
         setOpenDialog(false)
     }
 
@@ -103,12 +102,14 @@ export default function ImportCourses() {
         <Container>
             <Typography variant="h4">Import Courses</Typography>
 
-            <Box mt={3}>
+            <FormControl fullWidth margin="normal">
+                <InputLabel id="source-semester-label">Source Semester</InputLabel>
                 <Select
+                    labelId="source-semester-label"
                     value={sourceSemester}
+                    label="Source Semester"
                     onChange={(e) => setSourceSemester(e.target.value as string)}
-                    displayEmpty
-                    placeholder="Select Source Semester"
+                    inputProps={{ id: 'source-semester' }}
                 >
                     {getAllSemesters().map((semester) => (
                         <MenuItem key={semester} value={semester}>
@@ -116,14 +117,16 @@ export default function ImportCourses() {
                         </MenuItem>
                     ))}
                 </Select>
-            </Box>
+            </FormControl>
 
-            <Box mt={3}>
+            <FormControl fullWidth margin="normal">
+                <InputLabel id="target-semester-label">Target Semester</InputLabel>
                 <Select
+                    labelId="target-semester-label"
                     value={targetSemester}
+                    label="Target Semester"
                     onChange={(e) => setTargetSemester(e.target.value as string)}
-                    displayEmpty
-                    placeholder="Select Target Semester"
+                    inputProps={{ id: 'target-semester' }}
                 >
                     {getAllSemesters().map((semester) => (
                         <MenuItem key={semester} value={semester}>
@@ -131,7 +134,7 @@ export default function ImportCourses() {
                         </MenuItem>
                     ))}
                 </Select>
-            </Box>
+            </FormControl>
 
             <Box mt={3}>
                 <Button
@@ -139,10 +142,12 @@ export default function ImportCourses() {
                     color="primary"
                     onClick={() => setOpenDialog(true)}
                     disabled={!sourceSemester || !targetSemester || sourceSemester === targetSemester}
+                    fullWidth
                 >
                     Import
                 </Button>
             </Box>
+
             {isLoading && (
                 <Box display="flex" justifyContent="center" mt={3}>
                     <CircularProgress />
