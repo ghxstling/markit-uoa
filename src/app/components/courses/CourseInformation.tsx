@@ -45,7 +45,8 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         hasMarkedCourse: boolean
         previouslyAchievedGrade: string
         studentId: number
-        //isQualified: boolean
+        courseId: number
+        isQualified: boolean
     }
 
     const [studentData, setStudentData] = useState<Student[]>([])
@@ -92,39 +93,34 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
             const jsonData = await response.json()
             setApplications(jsonData)
             setSelected(new Array(jsonData.length).fill(false))
-            /*
             setQualified()
-            */
         } catch (error) {
             console.error('Error fetching data:', error)
         }
     }
 
-    /*
     const setQualified = () => {
-        newSelected =  [...selected]
-        for(let i = 0; i < newSelected.length; i++) {
+        let newSelected = [...selected]
+        for (let i = 0; i < newSelected.length; i++) {
             newSelected[i] = applications[i].isQualified
         }
         setSelected(newSelected)
-    } 
-    */
+    }
 
-    /*
-    handleQualifiedChange(index: number) {
+    const handleQualifiedChange = (index: number) => {
         //get application that is being changed
-        changedApplication = applications[index]
-        
+        const changedApplication = applications[index]
+        const courseId = changedApplication.courseId
+
         //patch changed application
-        const response = fetch('/api/url', {
-            method: 'PATCH'
+        const response = fetch(`/api/courses/${courseId}/markers/[markerId]`, {
+            method: 'PATCH',
             headers: {
-            'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(application),
+            body: JSON.stringify(changedApplication),
         })
     }
-    */
 
     //fetch all students
     useEffect(() => {

@@ -127,7 +127,6 @@ const Application = () => {
                 let jsonData1 = await response1.json()
                 jsonData1 = jsonData1.sort((a: any, b: any) => a.preferenceId - b.preferenceId)
                 const jsonData2 = await response2.json()
-                console.log(jsonData2.degreeType)
                 let currentCoursePreferences = jsonData1.map((application: any) => {
                     return {
                         id: application.id,
@@ -237,6 +236,7 @@ const Application = () => {
 
         if (activeStep === steps.length - 1) {
             //check all applications
+            let uniqueCourses: Set<number> = new Set()
             for (let coursePreference of formValues.coursePreferences) {
                 if (coursePreference.courseName === '' || coursePreference.course === '') {
                     setSnackbarMessage(
@@ -244,7 +244,18 @@ const Application = () => {
                     )
                     setOpenSnackBar(true)
                     return
-                } else if (coursePreference.grade === '') {
+                } else {
+                    if (!uniqueCourses.has(coursePreference.course)) {
+                        uniqueCourses.add(coursePreference.course)
+                    } else {
+                        setSnackbarMessage(
+                            'You have more than one application for a course, please select a unique course for all applications'
+                        )
+                        setOpenSnackBar(true)
+                        return
+                    }
+                }
+                if (coursePreference.grade === '') {
                     setSnackbarMessage(
                         'One of your applications does not contain a selected Grade, please select a grade for all applications or select Not Taken Previously'
                     )
