@@ -123,6 +123,23 @@ describe('ApplicationRepo', () => {
         expect(result2).toMatchObject([applicationInput2, applicationInput4])
         expect(result3).toMatchObject([applicationInput3])
     })
+    it('can check if application exists', async () => {
+        const applicationInput1 = createApplicationInput(student1!.id, course1!.id)
+        const applicationInput2 = createApplicationInput(student2!.id, course2!.id)
+
+        await ApplicationRepo.createApplication(applicationInput1)
+        await ApplicationRepo.createApplication(applicationInput2)
+
+        const result1 = await ApplicationRepo.doesApplicationExist(student1!.id, course1!.id)
+        const result2 = await ApplicationRepo.doesApplicationExist(student2!.id, course2!.id)
+        const result3 = await ApplicationRepo.doesApplicationExist(student1!.id, course2!.id)
+        const result4 = await ApplicationRepo.doesApplicationExist(student2!.id, course1!.id)
+    
+        expect(result1).toEqual(true)
+        expect(result2).toEqual(true)
+        expect(result3).toEqual(false)
+        expect(result4).toEqual(false)
+    })
     it('can get applications by status', async () => {
         const applicationInput1 = createApplicationInput(student1!.id, course1!.id)
         const applicationInput2 = createApplicationInput(student2!.id, course2!.id)
@@ -147,6 +164,25 @@ describe('ApplicationRepo', () => {
         expect(result1).toMatchObject([application1, application4])
         expect(result2).toMatchObject([application2, application3])
         expect(result3).toMatchObject([application5])
+    })
+    it('can update application details', async () => {
+        const applicationInput1 = createApplicationInput(student1!.id, course1!.id)
+        let application = await ApplicationRepo.createApplication(applicationInput1)
+
+        let applicationInput2 = {
+            applicationStatus: 'approved',
+            preferenceId: ++prefIdCounter,
+            studentId: student1!.id,
+            courseId: course1!.id,
+            hasCompletedCourse: false,
+            previouslyAchievedGrade: 'Not Taken Previously',
+            hasTutoredCourse: true,
+            hasMarkedCourse: false,
+            notTakenExplanation: 'd;osafhiaolfhwfhufhuhfo',
+            equivalentQualification: 'I did it in high school'
+        }
+        const result = await ApplicationRepo.updateApplication(application.id, applicationInput2)
+        expect(result).toMatchObject(applicationInput2)
     })
     it('can update the status of an application', async () => {
         const input = createApplicationInput(student1!.id, course4!.id)
