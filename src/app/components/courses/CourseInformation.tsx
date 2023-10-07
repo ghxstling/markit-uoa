@@ -63,6 +63,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     const [courseName, setCourseName] = useState('')
     const [checkedStudents, setCheckedStudents] = useState<number[]>([])
     const [selected, setSelected] = useState(new Array(applications.length).fill(false))
+    const [approvedStudents, setApprovedStudents] = useState<ApplicantsData[]>([]);
 
     const emptyRows = page >= 0 ? Math.max(0, (1 + page) * rowsPerPage - studentData.length) : 0
 
@@ -168,27 +169,44 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     }
 
     const handleCheckedStudents = (studentId: number) => {
+        // Check if the studentId is already in the checkedStudents array
         if (checkedStudents.includes(studentId)) {
-            setCheckedStudents(checkedStudents.filter((id) => id !== studentId))
+            // Remove the studentId from the checkedStudents array
+            setCheckedStudents(checkedStudents.filter((id) => id !== studentId));
+
+            // Remove the corresponding Application from the approvedStudents array
+            setApprovedStudents((prevApprovedStudents) =>
+                prevApprovedStudents.filter((application) => application.studentId !== studentId)
+            );
         } else {
-            setCheckedStudents([...checkedStudents, studentId])
+            // Add the studentId to the checkedStudents array
+            setCheckedStudents([...checkedStudents, studentId]);
+
+            // Find the Application for the selected studentId
+            const selectedApplication = applications.find((application) => application.studentId === studentId);
+            console.log(selectedApplication)
+
+            // Add the selected Application to the approvedStudents array
+            if (selectedApplication) {
+                setApprovedStudents((prevApprovedStudents) => [...prevApprovedStudents, selectedApplication]);
+            }
         }
-    }
+    };
 
     const handleMarkerSubmit = async () => {
         console.log(checkedStudents);
+        
         if (checkedStudents.length === 0) {
             // No students selected error
             return;
         }
     
         const payload = {
-            students: checkedStudents,
-            applicationStatus: 'approved',
+            students: approvedStudents,
         };
-    
+        console.log(payload);
         try {
-            const response = await fetch('/api/applications', {
+            const response = await fetch('/api/courses/[courseId]/markers', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -321,8 +339,8 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                             <TableRow key={application.id}>
                                 <TableCell padding="checkbox" style={{ textAlign: 'center' }}>
                                     <Checkbox
-                                        checked={checkedStudents.includes(application.id) || false}
-                                        onChange={() => handleCheckedStudents(application.id)}
+                                        checked={checkedStudents.includes(application.studentId) || false}
+                                        onChange={() => handleCheckedStudents(application.studentId)}
                                     />
                                 </TableCell>
                                 <TableCell style={{ textAlign: 'center' }}>
