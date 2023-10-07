@@ -70,7 +70,14 @@ export async function POST(req: NextRequest) {
             })
         }
 
-        const application = await ApplicationRepo.createApplication(applicationData)
+        let application
+        const check = await ApplicationRepo.doesApplicationExist(applicationData.studentId, applicationData.courseId)
+        if (check == false) {
+            application = await ApplicationRepo.createApplication(applicationData)
+        } else {
+            const exisitingApplication = (await ApplicationRepo.getStudentApplications(student!.upi)).find((apps) => apps.courseId === applicationData.courseId)
+            application = await ApplicationRepo.updateApplication(exisitingApplication!.id, applicationData)
+        }
         applications.push(application)
     }
 

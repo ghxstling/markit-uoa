@@ -211,6 +211,8 @@ async function generateData(seedOption?: number) {
                 },
             })
 
+            let isQualified = faker.datatype.boolean(0.5)
+
             await prisma.application.create({
                 data: {
                     applicationStatus: faker.helpers.arrayElement(['pending', 'approved', 'denied']),
@@ -223,6 +225,7 @@ async function generateData(seedOption?: number) {
                     hasMarkedCourse: hasMarkedCourse,
                     notTakenExplanation: notTakenExplanation,
                     equivalentQualification: equivalentQualification,
+                    isQualified: isQualified,
                 },
             })
         } else {
