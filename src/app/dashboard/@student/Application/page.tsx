@@ -152,8 +152,7 @@ const Application = () => {
                     workHours: jsonData2.maxWorkHours,
                     coursePreferences: currentCoursePreferences,
                 })
-            }
-            if (response1.ok && !response2.ok) {
+            } else if (response1.ok && !response2.ok) {
                 let jsonData1 = await response1.json()
                 jsonData1 = jsonData1.sort((a: any, b: any) => a.preferenceId - b.preferenceId)
                 let currentCoursePreferences = jsonData1.map((application: any) => {
@@ -170,8 +169,7 @@ const Application = () => {
                     }
                 })
                 setFormValues({ ...formValues, coursePreferences: currentCoursePreferences })
-            }
-            if (response2.ok && !response1.ok) {
+            } else if (response2.ok && !response1.ok) {
                 const jsonData2 = await response2.json()
                 setFormValues({
                     ...formValues,
@@ -183,8 +181,7 @@ const Application = () => {
                     degreeYears: jsonData2.degreeYear,
                     workHours: jsonData2.maxWorkHours,
                 })
-            }
-            if (!response1.ok && !response2.ok) {
+            } else if (!response1.ok && !response2.ok) {
                 throw new Error('Something went wrong')
             }
         } catch (error) {
