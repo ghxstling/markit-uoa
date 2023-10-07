@@ -14,12 +14,14 @@ import {
     Typography,
     TablePagination,
     Chip,
+    Dialog,
 } from '@mui/material'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Sidebar from '@/app/components/Sidebar'
 import CustomTheme from '@/app/CustomTheme'
 import { ThemeProvider } from '@mui/material/styles'
+import ChangePreferenceOrder from '@/app/components/ApplicationForms/ChangePreferenceOrder'
 
 const StudentHomepage = () => {
     interface Courses {
@@ -41,6 +43,7 @@ const StudentHomepage = () => {
     const [courses, setCourses] = useState<Courses[]>([])
     const [page, setPage] = useState(0)
     const [rowPerPage, setRowPerPage] = useState(5)
+    const [preferenceDialogOpen, setPreferenceDialogOpen] = useState(false)
 
     //handle pagination
     const handPageChange = (event: unknown, newpage: any) => {
@@ -50,6 +53,14 @@ const StudentHomepage = () => {
     const handleRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRowPerPage(parseInt(event.target.value, 10))
         setPage(0)
+    }
+
+    const openPreferenceDialog = () => {
+        setPreferenceDialogOpen(true)
+    }
+
+    const closePreferenceDialog = () => {
+        setPreferenceDialogOpen(false)
     }
 
     //fetch data
@@ -141,9 +152,24 @@ const StudentHomepage = () => {
                     </Link>
                     {/* create table */}
                     <Card sx={{ p: '20px' }}>
-                        <Typography variant="h5" fontWeight="bold">
-                            Current Applications
-                        </Typography>
+                        <Box display="flex">
+                            <Typography variant="h5" fontWeight="bold">
+                                Current Applications
+                            </Typography>
+                            <Button
+                                variant="contained"
+                                size="small"
+                                onClick={openPreferenceDialog}
+                                sx={{
+                                    backgroundColor: 'white',
+                                    color: '#00467F',
+                                    border: '1px solid #00467F',
+                                    ml: 3,
+                                }}
+                            >
+                                Edit Order of Preference
+                            </Button>
+                        </Box>
                         <TableContainer>
                             <Table sx={{ minWidth: '887px' }} stickyHeader>
                                 <TableHead>
@@ -204,6 +230,14 @@ const StudentHomepage = () => {
                             onPageChange={handPageChange}
                             onRowsPerPageChange={handleRowsPerPage}
                         ></TablePagination>
+                        <Dialog open={preferenceDialogOpen} onClose={closePreferenceDialog} maxWidth="md" fullWidth>
+                            <ChangePreferenceOrder />
+                            <Box p={3} display="flex" justifyContent="flex-start">
+                                <Button variant="outlined" color="primary" onClick={closePreferenceDialog}>
+                                    Close
+                                </Button>
+                            </Box>
+                        </Dialog>
                     </Card>
                 </Box>
             </Box>
