@@ -55,6 +55,18 @@ describe('SupervisorRepo', () => {
         const result2 = await SupervisorRepo.getSupervisorbyEmail(email2)
         expect(result2).toBe(null)
     })
+    it('can get supervisor by their user ID', async () => {
+        const email = 'example@gmail.com'
+        const userInput = { email }
+        const user = await UserRepo.createUser(userInput)
+        const supervisorInput = {
+            userId: user.id
+        }
+        const result = await SupervisorRepo.createSupervisorFromEmail(email, supervisorInput)
+        const supervisor = await SupervisorRepo.getSupervisorByUserId(user.id)
+        expect(supervisor).toMatchObject(result)
+        expect(supervisor?.userId).toBe(user.id)
+    })
     it('can get all supervisors', async () => {
         let email = 'example1@gmail.com'
         const userInput1 = { email }

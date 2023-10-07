@@ -7,6 +7,7 @@ export default class SupervisorRepo {
             data,
         })
     }
+
     static async createSupervisorFromEmail(email: string, data: Prisma.SupervisorUncheckedCreateInput) {
         const user = await prisma.user.findUnique({
             where: { email },
@@ -22,6 +23,12 @@ export default class SupervisorRepo {
                 ...data,
                 userId: user!.id,
             }
+        })
+    }
+
+    static async getSupervisorByUserId(userId: number) {
+        return await prisma.supervisor.findUnique({
+            where: { userId },
         })
     }
 
