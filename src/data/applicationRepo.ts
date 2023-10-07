@@ -67,10 +67,27 @@ export default class ApplicationRepo {
     }
 
     static async updateCoursePreference(id: number, prefId: number) {
-        return await prisma.application.update({
+        const updatedApplication = await prisma.application.update({
             where: { id },
             data: { preferenceId: prefId },
         })
+
+        const studentApplications = await prisma.application.findMany({
+            where: { studentId: updatedApplication!.studentId },
+        })
+        for (let i=1; i <= studentApplications.length; i++) {
+            let application = studentApplications[i-1]
+            if (application.id === id && i !== studentApplications.length) {
+                application = studentApplications[i]
+            }
+            if (i !== prefId) {
+                await prisma.application.update({
+                    where: { id: application.id },
+                    data: { preferenceId: i },
+                })
+            }
+        }
+        return updatedApplication
     }
 
     static async updateAllocatedHours(id: number, allocatedHours: number) {

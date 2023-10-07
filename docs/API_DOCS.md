@@ -275,6 +275,8 @@ model Application {
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
     - Returns:
         - An array of `Application`s for a given `Course`.
+- `PATCH /api/courses/[courseId]/applications/[applicationId]`
+    - Updates the preference number and qualification status for a `Student` `Application` for a given `Course`.
 - `GET /api/students/[studentUpi]/applications`
     - Retrieves all `Application`s for a given `Student`.
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
