@@ -62,7 +62,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
 
     interface CourseData{
         markers: ApplicantsData[]
-        totalHours: number
+        hours: number
     }
 
     const [studentData, setStudentData] = useState<Student[]>([])
@@ -110,17 +110,17 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
             setSelected(new Array(jsonData.length).fill(false))
             jsonData.sort((a, b) => {
                 if (a.applicationStatus === 'approved' && b.applicationStatus !== 'approved') {
-                    return -1; // "approved" comes first
-                } else if (a.applicationStatus !== 'approved' && b.applicationStatus === 'approved') {
-                    return 1; // "approved" comes first
-                } else if (a.applicationStatus === 'pending' && b.applicationStatus !== 'pending') {
-                    return -1; // "pending" comes next
-                } else if (a.applicationStatus !== 'pending' && b.applicationStatus === 'pending') {
-                    return 1; // "pending" comes next
-                } else {
-                    // For other statuses, "denied" comes last
-                    return a.applicationStatus.localeCompare(b.applicationStatus);
-                }
+                return -1; // "approved" comes first
+            } else if (a.applicationStatus !== 'approved' && b.applicationStatus === 'approved') {
+                return 1; // "approved" comes first
+            } else if (a.applicationStatus === 'pending' && b.applicationStatus !== 'pending') {
+                return -1; // "pending" comes next
+            } else if (a.applicationStatus !== 'pending' && b.applicationStatus === 'pending') {
+                return 1; // "pending" comes next
+            } else {
+                // For other statuses, "denied" comes last
+                return a.applicationStatus.localeCompare(b.applicationStatus);
+            }
             });
         } catch (error) {
             console.error('Error fetching data:', error)
@@ -268,7 +268,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
             const response = await fetch('/api/courses/'+courseId+'/markers', {method: 'GET',});
             const jsonData = await response.json()
             setCourseData(jsonData)
-            console.log(courseData?.totalHours)
+            console.log(courseData?.hours)
         } catch (error) {
             console.error('Error fetching data:', error)
         }
@@ -314,7 +314,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     <TableCell>Markers Needed: {course?.markersNeeded}</TableCell>
                                     <TableCell>Markers Assigned: {courseData?.markers.length}</TableCell>
                                     <TableCell>Hours Needed: {course?.markerHours}</TableCell>
-                                    <TableCell>Hours Assigned: {courseData?.totalHours}</TableCell>
+                                    <TableCell>Hours Assigned: {courseData?.hours}</TableCell>
                                 </TableRow>
                             </TableHead>
                         </Table>
