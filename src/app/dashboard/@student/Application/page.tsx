@@ -250,6 +250,21 @@ const Application = () => {
                     )
                     setOpenSnackBar(true)
                     return
+                } else if (coursePreference.grade === 'NotTaken' && coursePreference.explainNotTaken === '') {
+                    setSnackbarMessage(
+                        'One of your applications is for a course you have not taken, please provide an explanation'
+                    )
+                    setOpenSnackBar(true)
+                    return
+                } else if (
+                    (coursePreference.markedPreviously === true || coursePreference.tutoredPreviously === true) &&
+                    coursePreference.explainNotPrevious === ''
+                ) {
+                    setSnackbarMessage(
+                        'One of your applications is for a course you have not marked or tutored, please provide an explanation'
+                    )
+                    setOpenSnackBar(true)
+                    return
                 }
             }
             const res = await postCourseApplications(formValues)
