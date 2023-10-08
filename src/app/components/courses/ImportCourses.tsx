@@ -95,7 +95,11 @@ export default function ImportCourses() {
             body: JSON.stringify(duplicatedCourses),
         })
             .then((response) => {
-                if (response.status === 201) {
+                if (response.status === 403) {
+                    return response.json().then((data) => {
+                        throw new Error(data.message || 'Access denied')
+                    })
+                } else if (response.status === 201) {
                     setSnackbarMessage('Courses successfully imported!')
                     setSnackbarSeverity('success')
                     setSnackbarOpen(true)
@@ -162,7 +166,7 @@ export default function ImportCourses() {
                         variant="contained"
                         color="primary"
                         onClick={() => setOpenDialog(true)}
-                        disabled={!sourceSemester || !targetSemester || sourceSemester === targetSemester}
+                        disabled={!sourceSemester || !targetSemester || sourceSemester === targetSemester || isLoading}
                         fullWidth
                     >
                         Import
