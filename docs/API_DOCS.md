@@ -18,7 +18,7 @@ Made by Dylan Choy (the One Man Army)
     - `/api/courses/[courseId]/markers`
 5. Supervisors
     - `/api/supervisors`
-5. Users (will be refactored)
+5. Users
     - `/api/users`
 6. Changelog
 
@@ -277,8 +277,6 @@ model Application {
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
     - Returns:
         - An array of `Application`s for a given `Course`.
-- `PATCH /api/courses/[courseId]/applications/[applicationId]`
-    - Updates the preference number and qualification status for a `Student` `Application` for a given `Course`.
 - `GET /api/students/[studentUpi]/applications`
     - Retrieves all `Application`s for a given `Student`.
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
@@ -289,6 +287,19 @@ model Application {
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
     - Returns:
         - The specified `Application` for a given `Student`.
+- `PATCH /api/students/[studentUpi]/applications/[applicationId]`
+    - Updates the preference number and qualification status for a `Student` `Application` for a given `Course`.
+    - You must be a `Coordinator` to access this endpoint.
+    - Data Required:
+    ```typescript
+    // At least one of the following is required
+    {
+        preferenceId?: number | null,
+        isQualified?: boolean | null,
+    }
+    ```
+    - Returns:
+        - The updated `Student`'s `Application`
 - `GET /api/students/me/applications`
     - Retrieves a `Student`'s own `Application`s.
     - You must be a `Student` to access this endpoint.
@@ -382,7 +393,7 @@ model Application {
 
 There is no schema defined for `Marker`, rather `Application` is reused. For the purpose of this API, a `Marker` is represented by an `Application` that has been approved by a `Coordinator`. This is done to eliminate potential data redundancy and to simplify the database schema.
 
-### Supervisor (WIP)
+### Supervisors
 
 **Schema:**
 ```prisma
@@ -474,8 +485,26 @@ model User {
 
 - v1.0
     - Initial release
+        - Added `Courses` section
+        - Added `Students` section
+        - Added `Applications` section
+        - Added `Markers` section
+        - Added `Supervisors` section (WIP)
+        - Added `Users` section (WIP)
 - v1.1
     - Added `Changelog` section
-    - Added `supervisor` and `supervisorId` fields to `Course` schema
-    - Updated `Supervisor` section
-    - Added `User` section
+    - Updated `Course` schema:
+        - Added `supervisor` and `supervisorId` fields
+    - Updated `Supervisors` section
+        - Added `GET /api/supervisors` endpoint
+        - Added `GET /api/supervisors/me` endpoint
+        - Added `GET /api/supervisors/me/courses` endpoint
+        - Added `GET /api/supervisors/[supervisorId]` endpoint
+        - Added `GET /api/supervisors/[supervisorId]/courses` endpoint
+    - Updated `Users` section
+        - Added `GET /api/users` endpoint
+        - Added `GET /api/users/[userId]` endpoint
+        - Added `PATCH /api/users/[userId]` endpoint
+- v1.2
+    - Updated `Applications` section:
+        - Added `PATCH /api/students/[studentUpi]/applications/[applicationId]` endpoint
