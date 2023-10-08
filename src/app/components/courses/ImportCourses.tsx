@@ -16,6 +16,7 @@ import {
     CircularProgress,
     InputLabel,
     FormControl,
+    Paper,
 } from '@mui/material'
 
 type Course = {
@@ -44,12 +45,17 @@ export default function ImportCourses() {
             .catch((error) => {
                 console.error('Error fetching courses:', error)
                 setIsLoading(false)
-                // TODO: display an error message using the Snackbar
+                setSnackbarMessage('Failed to fetch courses.')
+                setSnackbarSeverity('error')
+                setSnackbarOpen(true)
             })
     }, [])
 
     const getAllSemesters = (): string[] => {
-        return courses.map((course) => course.semester).filter((value, index, self) => self.indexOf(value) === index)
+        return courses
+            .map((course) => course.semester)
+            .filter((value, index, self) => self.indexOf(value) === index)
+            .sort()
     }
 
     const getTargetSemesters = (): string[] => {
@@ -113,88 +119,90 @@ export default function ImportCourses() {
     }
 
     return (
-        <Container>
-            <Typography variant="h4">Import Courses</Typography>
+        <Container style={{ marginTop: 20, width: '100%' }}>
+            <Paper elevation={3} style={{ padding: '20px' }}>
+                <Typography variant="h4">Import Courses</Typography>
 
-            <FormControl fullWidth margin="normal">
-                <InputLabel id="source-semester-label">Source Semester</InputLabel>
-                <Select
-                    labelId="source-semester-label"
-                    value={sourceSemester}
-                    label="Source Semester"
-                    onChange={(e) => setSourceSemester(e.target.value as string)}
-                    inputProps={{ id: 'source-semester' }}
-                >
-                    {getAllSemesters().map((semester) => (
-                        <MenuItem key={semester} value={semester}>
-                            {semester}
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+                <FormControl fullWidth margin="normal">
+                    <InputLabel id="source-semester-label">Source Semester</InputLabel>
+                    <Select
+                        labelId="source-semester-label"
+                        value={sourceSemester}
+                        label="Source Semester"
+                        onChange={(e) => setSourceSemester(e.target.value as string)}
+                        inputProps={{ id: 'source-semester' }}
+                    >
+                        {getAllSemesters().map((semester) => (
+                            <MenuItem key={semester} value={semester}>
+                                {semester}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
 
-            <FormControl fullWidth margin="normal">
-                <InputLabel id="target-semester-label">Target Semester</InputLabel>
-                <Select
-                    labelId="target-semester-label"
-                    value={targetSemester}
-                    label="Target Semester"
-                    onChange={(e) => setTargetSemester(e.target.value as string)}
-                    inputProps={{ id: 'target-semester' }}
-                >
-                    {getTargetSemesters().map((semester) => (
-                        <MenuItem key={semester} value={semester}>
-                            {semester}
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+                <FormControl fullWidth margin="normal">
+                    <InputLabel id="target-semester-label">Target Semester</InputLabel>
+                    <Select
+                        labelId="target-semester-label"
+                        value={targetSemester}
+                        label="Target Semester"
+                        onChange={(e) => setTargetSemester(e.target.value as string)}
+                        inputProps={{ id: 'target-semester' }}
+                    >
+                        {getTargetSemesters().map((semester) => (
+                            <MenuItem key={semester} value={semester}>
+                                {semester}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
 
-            <Box mt={3}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => setOpenDialog(true)}
-                    disabled={!sourceSemester || !targetSemester || sourceSemester === targetSemester}
-                    fullWidth
-                >
-                    Import
-                </Button>
-            </Box>
-
-            {isLoading && (
-                <Box display="flex" justifyContent="center" mt={3}>
-                    <CircularProgress />
+                <Box mt={3}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => setOpenDialog(true)}
+                        disabled={!sourceSemester || !targetSemester || sourceSemester === targetSemester}
+                        fullWidth
+                    >
+                        Import
+                    </Button>
                 </Box>
-            )}
 
-            <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-                <DialogTitle>Confirm Import</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Are you sure you want to import all courses from {sourceSemester} to {targetSemester}? You can
-                        delete any unneeded courses later.
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenDialog(false)} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={handleImport} color="primary">
-                        Confirm
-                    </Button>
-                </DialogActions>
-            </Dialog>
-            <Snackbar
-                open={snackbarOpen}
-                autoHideDuration={6000}
-                onClose={() => setSnackbarOpen(false)}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-            >
-                <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} variant="filled">
-                    {snackbarMessage}
-                </Alert>
-            </Snackbar>
+                {isLoading && (
+                    <Box display="flex" justifyContent="center" mt={3}>
+                        <CircularProgress />
+                    </Box>
+                )}
+
+                <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+                    <DialogTitle>Confirm Import</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Are you sure you want to import all courses from {sourceSemester} to {targetSemester}? You
+                            can delete any unneeded courses later.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setOpenDialog(false)} color="primary">
+                            Cancel
+                        </Button>
+                        <Button onClick={handleImport} color="primary">
+                            Confirm
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+                <Snackbar
+                    open={snackbarOpen}
+                    autoHideDuration={6000}
+                    onClose={() => setSnackbarOpen(false)}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                >
+                    <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} variant="filled">
+                        {snackbarMessage}
+                    </Alert>
+                </Snackbar>
+            </Paper>
         </Container>
     )
 }
