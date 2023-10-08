@@ -13,6 +13,8 @@ import Tooltip from '@mui/material/Tooltip'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
@@ -62,6 +64,29 @@ export default function CourseTable() {
 
     const { data: session } = useSession()
     const [searchTerm, setSearchTerm] = useState<string>('')
+    const [sortField, setSortField] = useState<'courseCode' | 'semester' | 'needMarkers' | null>(null)
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
+
+    const handleSort = (field: 'courseCode' | 'semester' | 'needMarkers') => {
+        if (sortField === field) {
+            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+        } else {
+            setSortField(field)
+            setSortDirection('asc')
+        }
+    }
+
+    useEffect(() => {
+        const sortedData = [...data]
+        if (sortField) {
+            sortedData.sort((a, b) => {
+                if (a[sortField] < b[sortField]) return sortDirection === 'asc' ? -1 : 1
+                if (a[sortField] > b[sortField]) return sortDirection === 'asc' ? 1 : -1
+                return 0
+            })
+        }
+        setData(sortedData)
+    }, [sortField, sortDirection])
 
     useEffect(() => {
         if (session && session.role === 'coordinator') {
@@ -92,16 +117,19 @@ export default function CourseTable() {
                 <Table style={{ paddingTop: 40 }}>
                     <TableHead>
                         <TableRow>
-                            <TableCell style={{ textAlign: 'center' }}>
-                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                            <TableCell style={{ textAlign: 'center' }} onClick={() => handleSort('courseCode')}>
+                                <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
                                     Course
-                                    {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
+                                    {sortField === 'courseCode' &&
+                                        (sortDirection === 'asc' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />)}
                                 </div>
                             </TableCell>
-                            <TableCell style={{ textAlign: 'center' }}>
-                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                    Semester{' '}
-                                    {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
+
+                            <TableCell style={{ textAlign: 'center' }} onClick={() => handleSort('semester')}>
+                                <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                                    Semester
+                                    {sortField === 'semester' &&
+                                        (sortDirection === 'asc' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />)}
                                 </div>
                             </TableCell>
                             <TableCell style={{ textAlign: 'center' }}>
@@ -133,12 +161,11 @@ export default function CourseTable() {
                             ) : (
                                 <></>
                             )}
-                            <TableCell style={{ textAlign: 'center' }}>
-                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                    Status{' '}
-                                    <Tooltip title="status">
-                                        <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
-                                    </Tooltip>
+                            <TableCell style={{ textAlign: 'center' }} onClick={() => handleSort('needMarkers')}>
+                                <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                                    Status
+                                    {sortField === 'needMarkers' &&
+                                        (sortDirection === 'asc' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />)}
                                 </div>
                             </TableCell>
                         </TableRow>
