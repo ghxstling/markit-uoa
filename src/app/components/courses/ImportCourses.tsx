@@ -52,6 +52,20 @@ export default function ImportCourses() {
         return courses.map((course) => course.semester).filter((value, index, self) => self.indexOf(value) === index)
     }
 
+    const getTargetSemesters = (): string[] => {
+        if (!sourceSemester) {
+            return []
+        }
+        const { year, period } = parseSemester(sourceSemester)
+        return [`${year + 1}${period}`, `${year + 2}${period}`]
+    }
+
+    const parseSemester = (semester: string): { year: number; period: string } => {
+        const year = parseInt(semester.substring(0, 4), 10)
+        const period = semester.substring(4)
+        return { year, period }
+    }
+
     const handleImport = () => {
         setIsLoading(true)
         // 1. Filter courses from the source semester
@@ -128,7 +142,7 @@ export default function ImportCourses() {
                     onChange={(e) => setTargetSemester(e.target.value as string)}
                     inputProps={{ id: 'target-semester' }}
                 >
-                    {getAllSemesters().map((semester) => (
+                    {getTargetSemesters().map((semester) => (
                         <MenuItem key={semester} value={semester}>
                             {semester}
                         </MenuItem>
