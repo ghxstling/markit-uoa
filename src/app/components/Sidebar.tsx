@@ -24,6 +24,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications'
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
 import CalendarViewDayIcon from '@mui/icons-material/CalendarViewDay'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import LogoutIcon from '@mui/icons-material/Logout'
 import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
@@ -47,6 +48,7 @@ const icons: Record<string, OverridableComponent<SvgIconTypeMap<{}, 'svg'>>> = {
     ManageAccountsIcon: ManageAccountsIcon,
     CreateNewFolderIcon: CreateNewFolderIcon,
     CalendarViewDayIcon: CalendarViewDayIcon,
+    ContentCopyIcon: ContentCopyIcon,
 }
 
 //Create Sidebar Content
@@ -193,6 +195,7 @@ const Sidebar = () => {
                     email,
                     [
                         ['Create New Course', '/dashboard/courses', 'CreateNewFolderIcon'],
+                        ['Import Courses', '/dashboard/importCourses', 'ContentCopyIcon'],
                         ['View All Courses', '/dashboard/viewAllCoursespage', 'CalendarViewDayIcon'],
                         ['Manage User Roles', '/dashboard/manageUsers', 'ManageAccountsIcon'],
                     ],
