@@ -1,10 +1,21 @@
-import { courseInputHelper } from '@/helpers/testHelper'
+import { courseInputHelper, resetDatabase } from '@/helpers/testHelper'
 import CourseRepo from './courseRepo'
+import UserRepo from './userRepo'
+import SupervisorRepo from './supervisorRepo'
 import prisma from '@/libs/prisma'
-import type { Prisma } from '@prisma/client'
+
+beforeAll(async () => {
+    await resetDatabase()
+})
 
 beforeEach(async () => {
     await prisma.course.deleteMany()
+    await prisma.supervisor.deleteMany()
+    await prisma.user.deleteMany()
+})
+
+afterAll(async () => {
+    await resetDatabase()
 })
 
 describe('CourseRepo', () => {
@@ -42,6 +53,55 @@ describe('CourseRepo', () => {
         await CourseRepo.addCourse(courseInput2)
         const result = await CourseRepo.getAllCourses()
         expect(result).toMatchObject([courseInput, courseInput2])
+    })
+    it('can get supervisor courses', async () => {
+        const courseName = 'Compsci101'
+        const courseDescription = 'Intro to computer science'
+        const courseName2 = 'Compsci120'
+        const courseDescription2 = 'Learn some maths'
+        const courseName3 = 'Compsci130'
+        const courseDescription3 = 'More Python'
+
+        const courseInput = courseInputHelper(courseName, courseDescription)
+        const courseInput2 = courseInputHelper(courseName2, courseDescription2)
+        const courseInput3 = courseInputHelper(courseName3, courseDescription3)
+
+        let course1 = await CourseRepo.addCourse(courseInput)
+        let course2 = await CourseRepo.addCourse(courseInput2)
+        let course3 = await CourseRepo.addCourse(courseInput3)
+
+        const email = 'example@gmail.com'
+        const userInput = { email }
+        const user = await UserRepo.createUser(userInput)
+        const supervisorInput = {
+            userId: user.id,
+        }
+        const supervisor = await SupervisorRepo.createSupervisorFromEmail(email, supervisorInput)
+
+        const courseUpdateInput = {
+            supervisor: {
+                connect: {
+                    id: supervisor.id,
+                }
+            }
+        }
+        course1 = await CourseRepo.updateCourse(course1.id, courseUpdateInput)
+        course2 = await CourseRepo.updateCourse(course2.id, courseUpdateInput)
+
+        const result = await CourseRepo.getSupervisorCourses(email)
+        expect(result).toMatchObject([course1, course2])
+        expect(course1.supervisorId).toBe(supervisor.id)
+        expect(course2.supervisorId).toBe(supervisor.id)
+        expect(course3.supervisorId).toBe(null)
+
+        const result2 = await CourseRepo.getSupervisorCourses('idontexist@email.com')
+        expect(result2).toBe(null)
+
+        const email2 = 'example2@gmail.com'
+        const userInput2 = { email: email2 }
+        const user2 = await UserRepo.createUser(userInput2)
+        const result3 = await CourseRepo.getSupervisorCourses(email2)
+        expect(result3).toBe(null)
     })
     it('can update a course', async () => {
         const courseName = 'Compsci101'

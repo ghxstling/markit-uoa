@@ -14,7 +14,8 @@ export const resetDatabase = async () => {
     const deleteApplication = prisma.application.deleteMany()
     const deleteStudent = prisma.student.deleteMany()
     const deleteUser = prisma.user.deleteMany()
-    await prisma.$transaction([deleteCourse, deleteApplication, deleteStudent, deleteUser])
+    const deleteSupervisor = prisma.supervisor.deleteMany()
+    await prisma.$transaction([deleteCourse, deleteApplication, deleteStudent, deleteUser, deleteSupervisor])
 }
 
 export const courseInputHelper = (courseCode: string, courseDescription: string): Prisma.CourseCreateInput => {
