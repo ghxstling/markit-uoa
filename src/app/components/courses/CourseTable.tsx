@@ -10,6 +10,9 @@ import TableHead from '@mui/material/TableHead'
 import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import Tooltip from '@mui/material/Tooltip'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
@@ -58,6 +61,7 @@ export default function CourseTable() {
     }
 
     const { data: session } = useSession()
+    const [searchTerm, setSearchTerm] = useState<string>('')
 
     useEffect(() => {
         if (session && session.role === 'coordinator') {
@@ -66,64 +70,94 @@ export default function CourseTable() {
     }, [session])
 
     return (
-        <TableContainer component={Paper} style={{ marginTop: 20 }}>
-            <Table style={{ paddingTop: 40 }}>
-                <TableHead>
-                    <TableRow>
-                        <TableCell style={{ textAlign: 'center' }}>
-                            <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                Course
-                                {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
-                            </div>
-                        </TableCell>
-                        <TableCell style={{ textAlign: 'center' }}>
-                            <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                Semester{' '}
-                                {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
-                            </div>
-                        </TableCell>
-                        <TableCell style={{ textAlign: 'center' }}>
-                            {isCoordinator ? (
-                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>View Course Details</div>
-                            ) : (
-                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>Edit Course Details</div>
-                            )}
-                        </TableCell>
-                        <TableCell style={{ textAlign: 'center' }}>
-                            <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                Markers Assigned/Needed
-                                <Tooltip title="number of marker assigned / number of markers needed">
-                                    <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
-                                </Tooltip>
-                                {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
-                            </div>
-                        </TableCell>
-                        {/*TODO add this collumn<TableCell style={{textAlign:'center'}}><div style={{display:'flex', alignItems: 'center', flexWrap: 'wrap',}}>Number of Applicants <Tooltip title="Applicants"><InfoOutlinedIcon style={{marginLeft:5, verticalAlign:"middle"}}/></Tooltip> <ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/></div></TableCell>*/}
-                        {isCoordinator ? (
+        <>
+            <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Typography variant="h4" fontWeight={600} style={{ marginBottom: '20px', fontSize: '2.2rem' }}>
+                    Course List
+                </Typography>
+                <TextField
+                    variant="outlined"
+                    margin="normal"
+                    id="search"
+                    label="Search by Course or Semester"
+                    name="search"
+                    size="medium"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{ width: '260px' }}
+                />
+            </Box>
+
+            <TableContainer component={Paper} style={{ marginTop: 20 }}>
+                <Table style={{ paddingTop: 40 }}>
+                    <TableHead>
+                        <TableRow>
                             <TableCell style={{ textAlign: 'center' }}>
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                    Hours Assigned/Needed
-                                    <Tooltip title="number of hours assigned / number of hours needed">
+                                    Course
+                                    {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
+                                </div>
+                            </TableCell>
+                            <TableCell style={{ textAlign: 'center' }}>
+                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                    Semester{' '}
+                                    {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
+                                </div>
+                            </TableCell>
+                            <TableCell style={{ textAlign: 'center' }}>
+                                {isCoordinator ? (
+                                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>View Course Details</div>
+                                ) : (
+                                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>Edit Course Details</div>
+                                )}
+                            </TableCell>
+                            <TableCell style={{ textAlign: 'center' }}>
+                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                    Markers Assigned/Needed
+                                    <Tooltip title="number of marker assigned / number of markers needed">
+                                        <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
+                                    </Tooltip>
+                                    {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
+                                </div>
+                            </TableCell>
+                            {/*TODO add this collumn<TableCell style={{textAlign:'center'}}><div style={{display:'flex', alignItems: 'center', flexWrap: 'wrap',}}>Number of Applicants <Tooltip title="Applicants"><InfoOutlinedIcon style={{marginLeft:5, verticalAlign:"middle"}}/></Tooltip> <ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/></div></TableCell>*/}
+                            {isCoordinator ? (
+                                <TableCell style={{ textAlign: 'center' }}>
+                                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                        Hours Assigned/Needed
+                                        <Tooltip title="number of hours assigned / number of hours needed">
+                                            <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
+                                        </Tooltip>
+                                    </div>
+                                </TableCell>
+                            ) : (
+                                <></>
+                            )}
+                            <TableCell style={{ textAlign: 'center' }}>
+                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                    Status{' '}
+                                    <Tooltip title="status">
                                         <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
                                     </Tooltip>
                                 </div>
                             </TableCell>
-                        ) : (
-                            <></>
-                        )}
-                        <TableCell style={{ textAlign: 'center' }}>
-                            <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                Status{' '}
-                                <Tooltip title="status">
-                                    <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
-                                </Tooltip>
-                            </div>
-                        </TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {(rowsPerPage > 0 ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : data).map(
-                        (course, index) => (
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {(rowsPerPage > 0
+                            ? data
+                                  .filter(
+                                      (course) =>
+                                          course.courseCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                          course.semester.toLowerCase().includes(searchTerm.toLowerCase())
+                                  )
+                                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            : data.filter(
+                                  (course) =>
+                                      course.courseCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                      course.semester.toLowerCase().includes(searchTerm.toLowerCase())
+                              )
+                        ).map((course, index) => (
                             <TableRow key={index} style={{}}>
                                 <TableCell style={{ textAlign: 'center' }}>{course.courseCode}</TableCell>
                                 <TableCell style={{ textAlign: 'center' }}>{course.semester}</TableCell>
@@ -156,28 +190,34 @@ export default function CourseTable() {
                                     )}
                                 </TableCell>
                             </TableRow>
-                        )
-                    )}
-                    {emptyRows > 0 && (
-                        <TableRow style={{ height: 69.5 * emptyRows }}>
-                            <TableCell colSpan={6} />
-                        </TableRow>
-                    )}
-                </TableBody>
-            </Table>
-            <TablePagination
-                component="div"
-                sx={{ width: '100%' }}
-                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                colSpan={3}
-                count={data.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-                showFirstButton={true}
-                showLastButton={true}
-            />
-        </TableContainer>
+                        ))}
+                        {emptyRows > 0 && (
+                            <TableRow style={{ height: 69.5 * emptyRows }}>
+                                <TableCell colSpan={6} />
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+                <TablePagination
+                    component="div"
+                    sx={{ width: '100%' }}
+                    rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                    colSpan={3}
+                    count={
+                        data.filter(
+                            (course) =>
+                                course.courseCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                course.semester.toLowerCase().includes(searchTerm.toLowerCase())
+                        ).length
+                    }
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                    showFirstButton={true}
+                    showLastButton={true}
+                />
+            </TableContainer>
+        </>
     )
 }
