@@ -12,11 +12,12 @@ const DebugPage = () => {
 
     const makeApiCall = async () => {
         try {
-            const data = { 
+           const data = { 
                 preferenceId: 2,
             }
             const res = await fetch('/api/students/infinit/applications', {
                 method: 'GET',
+
                 headers: {
                     'Content-Type': 'application/json',
                 },

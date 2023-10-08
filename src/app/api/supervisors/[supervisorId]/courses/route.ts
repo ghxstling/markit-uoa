@@ -3,32 +3,41 @@ import { getToken } from 'next-auth/jwt'
 import { Role } from '@/models/role'
 import SupervisorRepo from '@/data/supervisorRepo'
 import CourseRepo from '@/data/courseRepo'
+import UserRepo from '@/data/userRepo'
 
-// GET /api/supervisors/me/courses
-export async function GET(req: NextRequest) {
+type Params = {
+    params: {
+        supervisorId: string
+    }
+}
+
+// GET /api/supervisors/[supervisorId]/courses
+export async function GET(req: NextRequest, { params }: Params) {
     const token = await getToken({ req })
-    if(token!.role != Role.Supervisor) {
+    if(token!.role != Role.Coordinator) {
         return new NextResponse(
             JSON.stringify({
                 success: false,
-                message: 'Only supervisors can access this endpoint'
+                message: 'Only coordinators can access this endpoint'
             }),
             { status: 403, headers: { 'content-type': 'application/json' } }
         )
     }
 
-    const supervisor = await SupervisorRepo.getSupervisorbyEmail(token!.email!)
+    const supervisorId = parseInt(params.supervisorId)
+    const supervisor = await SupervisorRepo.getSupervisorByUserId(supervisorId)
     if (!supervisor) {
         return NextResponse.json( 
             {
                 status: 400,
-                statusText: 'Internal Error: Supervisor Object with email ' + token!.email! + ' does not exist.',
+                statusText: 'Supervisor ID ' + supervisorId + ' does not exist.',
             },
             { status: 400 }
         )
     }
 
-    const courses = await CourseRepo.getSupervisorCourses(token!.email!)
+    const user = await UserRepo.getUserById(supervisorId)
+    const courses = await CourseRepo.getSupervisorCourses(user!.email)
     return NextResponse.json(courses, 
         {
             status: 200,

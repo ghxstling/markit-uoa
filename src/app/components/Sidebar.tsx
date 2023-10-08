@@ -99,7 +99,8 @@ let content = (
                     </Link>
                 </ListItem>
 
-                <ListItem disablePadding>
+                {/* =============== Notifications are not implemented yet ============= */}
+                {/* <ListItem disablePadding>
                     <Link href="./" passHref style={linkStyle}>
                         <ListItemButton>
                             <ListItemIcon>
@@ -108,7 +109,7 @@ let content = (
                             <ListItemText>Notifications</ListItemText>
                         </ListItemButton>
                     </Link>
-                </ListItem>
+                </ListItem> */}
 
                 {Links.map((link, index) => (
                     <ListItem disablePadding key={index}>
