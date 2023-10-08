@@ -15,6 +15,11 @@ import {
     Input,
     TextField,
     IconButton,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import React, { useEffect, useState } from 'react'
@@ -47,6 +52,7 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
 
     const [isEditing, setIsEditing] = useState(true)
     const [isSaved, setIsSaved] = useState(false)
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
 
     const originalCourseDataRef = React.useRef<OriginalCourseData | null>(null)
 
@@ -308,6 +314,22 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
         router.push('/dashboard/viewAllCoursespage')
     }
 
+    const handleOpenDeleteDialog = () => {
+        setOpenDeleteDialog(true)
+    }
+
+    const handleCloseDeleteDialog = () => {
+        setOpenDeleteDialog(false)
+    }
+
+    const handleDeleteCourse = () => {
+        // For now, just logging the delete action
+        console.log('Course deleted!')
+
+        // Close the delete confirmation dialog
+        handleCloseDeleteDialog()
+    }
+
     return (
         <Container maxWidth="sm" style={{ marginTop: '2em' }}>
             <Paper elevation={3} style={{ padding: '2em' }}>
@@ -545,6 +567,11 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
                                 </Grid>
                             </>
                         )}
+                        <Grid item>
+                            <Button variant="contained" color="error" onClick={handleOpenDeleteDialog}>
+                                DELETE COURSE
+                            </Button>
+                        </Grid>
                     </Grid>
                 </Grid>
             </Paper>
@@ -560,6 +587,23 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
                     </IconButton>
                 }
             />
+
+            <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
+                <DialogTitle>Confirm Deletion</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to delete this course? This action cannot be undone.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDeleteDialog} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleDeleteCourse} color="error">
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Container>
     )
 }
