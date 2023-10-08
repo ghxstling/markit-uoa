@@ -206,17 +206,26 @@ describe('ApplicationRepo', () => {
         expect(application2!.preferenceId).toEqual(2)
         expect(application3!.preferenceId).toEqual(3)
         
-        const updatedApplication3 = await ApplicationRepo.updateCoursePreference(application3!.id, 1)
-        const updatedApplication1 = await ApplicationRepo.getApplicationById(application1!.id)
-        const updatedApplication2 = await ApplicationRepo.getApplicationById(application2!.id)
+        let updatedApplication3 = await ApplicationRepo.updateCoursePreference(application3!.id, 2)
+        let updatedApplication1 = await ApplicationRepo.getApplicationById(application1!.id)
+        let updatedApplication2 = await ApplicationRepo.getApplicationById(application2!.id)
+        
+        expect(updatedApplication3!.id).toBe(application3.id)
+        expect(updatedApplication1!.preferenceId).toEqual(1)
+        expect(updatedApplication2!.preferenceId).toEqual(3)
+        expect(updatedApplication3!.preferenceId).toEqual(2)
+        
+        updatedApplication2 = await ApplicationRepo.updateCoursePreference(application2!.id, 1)
+        updatedApplication1 = await ApplicationRepo.getApplicationById(application1!.id)
+        updatedApplication3 = await ApplicationRepo.getApplicationById(application3!.id)
 
-        for (const app of (await ApplicationRepo.getStudentApplications(student1!.upi))) {
-            console.log(app)
-        }
-        expect(updatedApplication3.id).toBe(application3.id)
+        expect(updatedApplication2!.id).toBe(application2.id)
         expect(updatedApplication1!.preferenceId).toEqual(3)
-        expect(updatedApplication2!.preferenceId).toEqual(2)
-        expect(updatedApplication3!.preferenceId).toEqual(1)
+        expect(updatedApplication2!.preferenceId).toEqual(1)
+        expect(updatedApplication3!.preferenceId).toEqual(2)
+
+        const result = await ApplicationRepo.updateCoursePreference(application1!.id, 999)
+        expect(result).toEqual(null)
     })
     it('can update allocated hours for student application', async () => {
         const applicationInput = createApplicationInput(student1!.id, course1!.id)

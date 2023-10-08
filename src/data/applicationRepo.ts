@@ -67,25 +67,34 @@ export default class ApplicationRepo {
     }
 
     static async updateCoursePreference(id: number, prefId: number) {
+        const application = await prisma.application.findUnique({
+            where: { id },
+        })
+        let studentApplications = await prisma.application.findMany({
+            where: { studentId: application!.studentId },
+        })
+        if (prefId > studentApplications.length) {
+            return null
+        }
+
         const updatedApplication = await prisma.application.update({
             where: { id },
             data: { preferenceId: prefId },
         })
 
-        const studentApplications = await prisma.application.findMany({
-            where: { studentId: updatedApplication!.studentId },
-        })
+        let prefArray = []
         for (let i=1; i <= studentApplications.length; i++) {
-            let application = studentApplications[i-1]
-            if (application.id === id && i !== studentApplications.length) {
-                application = studentApplications[i]
-            }
             if (i !== prefId) {
-                await prisma.application.update({
-                    where: { id: application.id },
-                    data: { preferenceId: i },
-                })
+                prefArray.push(i)
             }
+        }
+        studentApplications = studentApplications.filter(app => app.id !== id)
+        for (let i=0; i < prefArray.length; i++) {
+            const app = studentApplications[i]
+            await prisma.application.update({
+                where: { id: app.id },
+                data: { preferenceId: prefArray[i] }
+            })
         }
         return updatedApplication
     }
