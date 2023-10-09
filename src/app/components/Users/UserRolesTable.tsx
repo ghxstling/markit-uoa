@@ -18,6 +18,7 @@ import {
 } from '@mui/material'
 import { Role } from '@/models/role'
 import React, { useEffect, useState } from 'react'
+import { useSession } from 'next-auth/react'
 
 export default function UserRolesTable() {
     interface User {
@@ -27,6 +28,7 @@ export default function UserRolesTable() {
         role: string
     }
 
+    const { data: session } = useSession()
     const [users, setUsers] = useState<User[]>([])
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(5)
@@ -40,7 +42,8 @@ export default function UserRolesTable() {
             try {
                 const response = await fetch('/api/users', { method: 'GET' })
                 const jsonData = await response.json()
-                setUsers(jsonData)
+                const userData = jsonData.filter((user: User) => user.email !== session?.user?.email)
+                setUsers(userData)
             } catch (error) {
                 console.error('Error fetching data:', error)
             }
