@@ -127,24 +127,8 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         )
     }
     
-    let updatedApplication 
-    const body = await req.json()
-    if (body.preferenceId !== null) {
-        updatedApplication = await ApplicationRepo.updateCoursePreference(id, body.preferenceId)
-        if (!updatedApplication) {
-            const totalApplications = (await ApplicationRepo.getStudentApplications(upi)).length
-            return NextResponse.json( 
-                {
-                    status: 400,
-                    statusText: 'Internal Error: preferenceId ' + body.preferenceId + ' should be between 1 and ' + totalApplications + ' for student ' + upi,
-                },
-                { status: 400 }
-            )
-        }
-    }
-    if (body.isQualified !== null) {
-        updatedApplication = await ApplicationRepo.updateApplication(id, { isQualified: body.isQualified })
-    }
+    const { isQualified } = await req.json()
+    const updatedApplication = await ApplicationRepo.updateApplication(id, { isQualified })
     return NextResponse.json(updatedApplication, 
         {
             status: 200,

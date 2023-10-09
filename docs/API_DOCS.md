@@ -288,14 +288,12 @@ model Application {
     - Returns:
         - The specified `Application` for a given `Student`.
 - `PATCH /api/students/[studentUpi]/applications/[applicationId]`
-    - Updates the preference number and qualification status for a `Student` `Application` for a given `Course`.
+    - Updates the qualification status of a `Student` `Application` for a given `Course`.
     - You must be a `Supevisor` or `Coordinator` to access this endpoint.
     - Data Required:
     ```typescript
-    // At least one of the following is required
     {
-        preferenceId?: number | null,
-        isQualified?: boolean | null,
+        isQualified: boolean,
     }
     ```
     - Returns:
@@ -483,7 +481,7 @@ model User {
 
 ### Changelog
 
-- v1.0
+- v1.0.0
     - Initial release
         - Added `Courses` section
         - Added `Students` section
@@ -491,7 +489,7 @@ model User {
         - Added `Markers` section
         - Added `Supervisors` section (WIP)
         - Added `Users` section (WIP)
-- v1.1
+- v1.1.0
     - Added `Changelog` section
     - Updated `Course` schema:
         - Added `supervisor` and `supervisorId` fields
@@ -505,6 +503,10 @@ model User {
         - Added `GET /api/users` endpoint
         - Added `GET /api/users/[userId]` endpoint
         - Added `PATCH /api/users/[userId]` endpoint
-- v1.2
+- v1.1.1
     - Updated `Applications` section:
         - Added `PATCH /api/students/[studentUpi]/applications/[applicationId]` endpoint
+- v1.1.2
+    - Updated `Applications` section:
+        - Updated `PATCH /api/students/[studentUpi]/applications/[applicationId]` endpoint
+            - Changed `Data Required` to `isQualified: boolean` only
