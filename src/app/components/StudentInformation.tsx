@@ -146,7 +146,7 @@ export default function ViewStudentInformation({ studentUpi }: ViewStudentInform
                                                 >
                                                         {openRows[index] ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                                             </IconButton>
-                                            <TableCell style={{textAlign:'center'}}>{application.course?.courseCode}</TableCell>
+                                            <TableCell style={{textAlign:'left'}}>{application.course?.courseCode}</TableCell>
                                         </TableRow>
                                         <TableRow>
                                             <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
