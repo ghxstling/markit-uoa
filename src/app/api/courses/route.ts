@@ -19,8 +19,7 @@ export async function GET(req: NextRequest) {
 // POST /api/courses/
 export async function POST(req: NextRequest) {
     const token = await getToken({ req })
-    if (token!.role != Role.Supervisor &&
-        token!.role != Role.Coordinator) {
+    if (token!.role != Role.Supervisor && token!.role != Role.Coordinator) {
         return new NextResponse(
             JSON.stringify({
                 success: false,
