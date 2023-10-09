@@ -13,7 +13,7 @@ const DebugPage = () => {
     const makeApiCall = async () => {
         try {
 
-            const res = await fetch('/api/students/me', {
+            const res = await fetch('/api/supervisors/4102/courses', {
                 method: 'GET',
 
                 headers: {
