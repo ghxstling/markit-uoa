@@ -289,7 +289,7 @@ model Application {
         - The specified `Application` for a given `Student`.
 - `PATCH /api/students/[studentUpi]/applications/[applicationId]`
     - Updates the preference number and qualification status for a `Student` `Application` for a given `Course`.
-    - You must be a `Coordinator` to access this endpoint.
+    - You must be a `Supevisor` or `Coordinator` to access this endpoint.
     - Data Required:
     ```typescript
     // At least one of the following is required

@@ -82,11 +82,12 @@ export async function GET(req: NextRequest, { params }: Params) {
 // PATCH /api/students/[studentUpi]/applications/[applicationId]
 export async function PATCH(req: NextRequest, { params }: Params) {
     const token = await getToken({ req })
-    if(token!.role != Role.Coordinator) {
+    if(token!.role != Role.Coordinator &&
+        token!.role != Role.Supervisor) {
         return new NextResponse(
             JSON.stringify({
                 success: false,
-                message: 'Only coordinators can access this endpoint'
+                message: 'Only supervisors and coordinators can access this endpoint'
             }),
             { status: 403, headers: { 'content-type': 'application/json' } }
         )
