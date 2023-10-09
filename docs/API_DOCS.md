@@ -16,10 +16,11 @@ Made by Dylan Choy (the One Man Army)
     - `/api/students/.../applications`
 4. Markers
     - `/api/courses/[courseId]/markers`
-5. **[WIP]** Supervisors
+5. Supervisors
     - `/api/supervisors`
 5. Users (will be refactored)
     - `/api/users`
+6. Changelog
 
 ### Courses
 
@@ -29,6 +30,8 @@ model Course {
   id                     Int           @id @default(autoincrement())
   courseCode             String
   courseDescription      String
+  supervisor             Supervisor?   @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
+  supervisorId           Int?          
   numOfEstimatedStudents Int
   numOfEnrolledStudents  Int
   markerHours            Int
@@ -37,7 +40,6 @@ model Course {
   markersNeeded          Int
   semester               String
   modifiedAt             DateTime      @default(now()) @updatedAt
-
   // one to one with Application
   application            Application[]
 }
@@ -48,6 +50,7 @@ model Course {
     - Retrieves all `Course`s from the database.
     - Returns:
         - An array of `Course`s.
+    
 - `POST /api/courses`
     - Creates a new `Course` in the database from the data provided in the request body.
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
@@ -66,11 +69,19 @@ model Course {
         }
         ```
     - Returns:
+        
         - The newly created `Course`.
+    
+- `GET /api/courses/with-markers`
+
+    - Returns:
+        - An array of `Course`s with `totalMarkers` and `totalHours` included.
+
 - `GET /api/courses/[courseId]`
     - Retrieves a `Course` from the database with the given `courseId`.
     - Returns:
         - The `Course` with the given `courseId`.
+    
 - `PATCH /api/courses/[courseId]`
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
     - Updates an existing `Course` in the database with the given `courseId`.
@@ -89,6 +100,7 @@ model Course {
         }
         ```
     - Returns:
+        
         - The updated `Course`.
 
 ### Students
@@ -125,7 +137,7 @@ model Student {
     - Retrieves all `Student`s from the database.
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
     - Returns:
-        - An array of `Student`s.
+        - An array of `Student`s with `Application`s.
 - `POST /api/students`
     - Creates a new `Student` in the database from the data provided in the request body.
     - You must be a `Student` to access this endpoint.
@@ -147,12 +159,13 @@ model Student {
         }
         ```
     - Returns:
+        
         - The newly created `Student`.
 - `GET /api/students/[studentUpi]`
     - Retrieves a `Student` from the database with the given `studentId`.
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
     - Returns:
-        - The `Student` with the given `studentUpi`.
+        - The `Student` with the given `studentUpi` and `application`s and `course`s.
 - `GET /api/students/[studentUpi]/cv`
     - Retrieves a `Student`'s CV from the connected AWS S3 bucket.
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
@@ -252,6 +265,7 @@ model Application {
     - Returns:
         - An array of `Application`s.
 - `POST /api/applications`
+    
     - Creates one or more `Student` `Application`s in the database.
     - You must be a `Student` to access this endpoint.
     - Data Required:
@@ -269,6 +283,7 @@ model Application {
         }[]
         ```
     - Returns:
+        
         - An array of newly created `Application`s.
 - `GET /api/courses/[courseId]/applications`
     - Retrieves `Student` `Application`s for a given `Course`.
@@ -367,6 +382,7 @@ model Application {
         }
         ```
     - Returns:
+        
         - The updated `Marker` for a given `Course`.
 - `DELETE /api/courses/[courseId]/markers/[markerId]`
     - Removes a `Marker` from a given `Course`.
@@ -380,21 +396,99 @@ There is no schema defined for `Marker`, rather `Application` is reused. For the
 
 ### Supervisor (WIP)
 
-This section is a work in progress. Information regarding this section is subject to change.
-
 **Schema:**
 ```prisma
 model Supervisor {
-    id          @id         @default(autoincrement())
-    user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId      Int         @unique
-    courses     Courses[]
+  id        Int       @id @default(autoincrement())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int       @unique
+  courses   Course[]
 }
 ```
+
 **Endpoints:**
 
 - `GET /api/supervisors`
-- `POST /api/supervisors`
-- `GET /api/supervisors/[supervisorId]`
-- `GET /api/supervisors/[supervisorId]/courses`
+    - Retrieves all `Supervisor`s from the database.
+    - You must be a `Coordinator` to access this endpoint.
+    - Returns:
+        - An array of `Supervisor`s.
+- `GET /api/supervisors/me`
+    - Retrieves a `Supervisor`'s own information.
+    - You must be a `Supervisor` to access this endpoint
+    - Returns:
+        - The respective `Supervisor`.
 - `GET /api/supervisors/me/courses`
+    - Retrieves a `Supervisor`'s own `Course`s.
+    - You must be a `Supervisor` or `Coordinator` to access this endpoint.
+    - Returns:
+        - An array of the `Supervisor`'s own `Course`s.
+- `GET /api/supervisors/[supervisorId]`
+    - Retrieves a `Student` from the database with the given `supervisorId`.
+    - You must be a `Coordinator` to access this endpoint.
+    - Returns:
+        - The `Student` with the given `supervisorId`.
+- `GET /api/supervisors/[supervisorId]/courses`
+    - Retrieves all `Course`s for a given `Supervisor`.
+    - You must be a `Coordinator` to access this endpoint.
+    - Returns:
+        - An array of `Course`s for a given `Supervisor`.
+
+**Additional Notes:**
+
+Similar to `Student` endpoints, there are two different groups of endpoints for `Supervisor`s:
+- `/api/supervisors/[supervisorId]`
+- `/api/supervisors/me`
+
+Although there is limited information to show for a `Supervisor`, a `Supervisor` should not be allowed access to other `Supervisor`s' information, and should only be allowed to view their own, should these endpoints be used in the future. Whereas, `Coordinator`s have the ability to see each `Supervisor`'s information, hence the protected `/api/supervisors/[supervisorId]` endpoint.
+
+### Users
+
+**Schema:**
+```prisma
+model User {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  name        String?
+  role        String   @default("student") // Refer to the role enum in models/role.ts
+  // one to one with Student
+  student     Student?
+  // one to one with Supervisor
+  supervisor  Supervisor?
+}
+```
+
+**Endpoints:**
+
+- `GET /api/users`
+    - Retrieves all `User`s from the database.
+    - You must be a `Coordinator` to access this endpoint.
+    - Returns:
+        - An array of `User`s.
+- `GET /api/users/[userId]`
+    - Retrieves a `User` from the database with the given `userId`.
+    - You must be a `Coordinator` to access this endpoint.
+    - Returns:
+        - The `User` with the given `userId`.
+- `PATCH /api/users/[userId]`
+    - Updates a `User`'s role for a given `userId`.
+    - You must be a `Coordinator` to access this endpoint.
+    - Data Required:
+        ```typescript
+        {
+            role: Role
+        }
+        ```
+    - Returns:
+        
+        - The updated `User` for a given `userId`.
+
+### Changelog
+
+- v1.0
+    - Initial release
+- v1.1
+    - Added `Changelog` section
+    - Added `supervisor` and `supervisorId` fields to `Course` schema
+    - Updated `Supervisor` section
+    - Added `User` section

@@ -14,6 +14,8 @@ model Course {
   id                     Int           @id @default(autoincrement())
   courseCode             String
   courseDescription      String
+  supervisor             Supervisor?   @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
+  supervisorId           Int?          
   numOfEstimatedStudents Int
   numOfEnrolledStudents  Int
   markerHours            Int
@@ -29,12 +31,21 @@ model Course {
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String?
-  role    String   @default("student") // Refer to the role enum in models/role.ts
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  name        String?
+  role        String   @default("student") // Refer to the role enum in models/role.ts
   // one to one with Student
-  student Student?
+  student     Student?
+  // one to one with Supervisor
+  supervisor  Supervisor?
+}
+
+model Supervisor {
+  id        Int       @id @default(autoincrement())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int       @unique
+  courses   Course[]
 }
 
 model Student {
