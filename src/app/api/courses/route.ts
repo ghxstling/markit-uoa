@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
-import CourseRepo from '@/data/courseRepo'
-import { courseSchema } from '@/models/ZodSchemas'
 import { getToken } from 'next-auth/jwt'
 import { Role } from '@/models/role'
+import CourseRepo from '@/data/courseRepo'
+import { courseSchema } from '@/models/ZodSchemas'
+import CourseService from '@/services/courseService'
 
 // GET /api/courses/
 export async function GET(req: NextRequest) {
-    // Get all courses from the database
     const courses = await CourseRepo.getAllCourses()
+    const newCourses = await CourseService.createCourseObjecs(courses)
 
-    // Return the courses with status code 200 OK
-    return NextResponse.json(courses, {
+    return NextResponse.json(newCourses, {
         status: 200,
         statusText: 'OK',
     })
