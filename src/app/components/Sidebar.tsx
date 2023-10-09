@@ -195,6 +195,7 @@ const Sidebar = () => {
                     email,
                     [
                         ['Create New Course', '/dashboard/courses', 'CreateNewFolderIcon'],
+                        ['Import Courses', '/dashboard/importCourses', 'ContentCopyIcon'],
                         ['View All Courses', '/dashboard/viewAllCourses', 'CalendarViewDayIcon'],
                         ['Manage User Roles', '/dashboard/manageUsers', 'ManageAccountsIcon'],
                     ],
