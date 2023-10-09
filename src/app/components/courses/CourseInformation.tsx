@@ -56,6 +56,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         studentId: number
         applicationStatus: string
         student: Student
+        allocatedHours: number
     }
     
     interface Course {
@@ -450,7 +451,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     </TableCell>
                                     <TableCell style={{ textAlign: 'center' }}>
                                         {' '}
-                                        25{/*applicant total allocated hours */}
+                                        {application.allocatedHours}
                                     </TableCell>
                                     <TableCell style={{ textAlign: 'center' }}>
                                         {studentData.find((student) => student.id === application.studentId)?.maxWorkHours}
