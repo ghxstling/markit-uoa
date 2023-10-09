@@ -193,7 +193,7 @@ const Sidebar = () => {
                     email,
                     [
                         ['Create New Course', '/dashboard/courses', 'CreateNewFolderIcon'],
-                        ['View All Courses', '/dashboard/viewAllCoursespage', 'CalendarViewDayIcon'],
+                        ['View All Courses', '/dashboard/viewAllCourses', 'CalendarViewDayIcon'],
                         ['Manage User Roles', '/dashboard/manageUsers', 'ManageAccountsIcon'],
                     ],
                     open,
