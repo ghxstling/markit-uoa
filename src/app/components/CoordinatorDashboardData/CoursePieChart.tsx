@@ -72,7 +72,7 @@ export default function CoursePieChart() {
             setApplicationStats(stats.slice(0, 10)) // Update the state with the fetched data
             setIsLoading(false)
         })
-    }, [applicationStats])
+    }, [])
 
     if (isLoading) {
         return <CircularProgress />
