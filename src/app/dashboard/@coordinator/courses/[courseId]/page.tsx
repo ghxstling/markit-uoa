@@ -27,7 +27,7 @@ export default function CreateCoursePage() {
                 <Box
                     sx={{
                         mt: '30px',
-                        ml: { xs: '15px', lg: '150px', xl: '250px', xxl: '350px', xxxl: '450px' },
+                        ml: { xs: '5px', lg: '100px', xl: '200px' },
                     }}
                 >
                     <DynamicBreadcrumb />

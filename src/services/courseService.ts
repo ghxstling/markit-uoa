@@ -32,7 +32,12 @@ export default class CourseService {
     }
 
     static async _getAllocatedHours(applications: Application[]) {
-        const hours = applications.reduce((total, app) => total + app.allocatedHours, 0)
+        const hours = applications.reduce((total, app) => {
+            if (app.applicationStatus === ApplicationStatus.Approved) {
+                return total + app.allocatedHours
+            }
+            return 0
+        }, 0)
         return hours
     }
 }
