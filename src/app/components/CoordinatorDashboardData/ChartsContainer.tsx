@@ -16,19 +16,15 @@ function CustomTabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props
 
     return (
-        <div
+        <Box
             role="tabpanel"
             hidden={value !== index}
             id={`simple-tabpanel-${index}`}
             aria-labelledby={`simple-tab-${index}`}
             {...other}
         >
-            {value === index && (
-                <Box sx={{ p: 2 }}>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
-        </div>
+            {value === index && <Box sx={{ p: 2 }}>{children}</Box>}
+        </Box>
     )
 }
 
@@ -39,7 +35,7 @@ function a11yProps(index: number) {
     }
 }
 
-export default function BasicTabs() {
+export default function ChartsContainer() {
     const [value, setValue] = React.useState(0)
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
