@@ -165,7 +165,7 @@ model Student {
     - Retrieves a `Student` from the database with the given `studentId`.
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
     - Returns:
-        - The `Student` with the given `studentUpi`.
+        - The `Student` with the given `studentUpi` and `application` s.
 - `GET /api/students/[studentUpi]/cv`
     - Retrieves a `Student`'s CV from the connected AWS S3 bucket.
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
