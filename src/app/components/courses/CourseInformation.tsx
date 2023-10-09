@@ -54,13 +54,13 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         studentId: number
         applicationStatus: string
     }
-    
+
     interface Course {
         markersNeeded: number
         markerHours: number
     }
 
-    interface CourseData{
+    interface CourseData {
         markers: ApplicantsData[]
         hours: number
     }
@@ -74,9 +74,9 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     const [courseName, setCourseName] = useState('')
     const [checkedStudents, setCheckedStudents] = useState<number[]>([])
     const [selected, setSelected] = useState(new Array(applications.length).fill(false))
-    const [approvedStudents, setApprovedStudents] = useState<ApplicantsData[]>([]);
-    const [courseData, setCourseData] = useState<CourseData>();
-    const [course, setCourse] = useState<Course>();
+    const [approvedStudents, setApprovedStudents] = useState<ApplicantsData[]>([])
+    const [courseData, setCourseData] = useState<CourseData>()
+    const [course, setCourse] = useState<Course>()
 
     const emptyRows = page >= 0 ? Math.max(0, (1 + page) * rowsPerPage - studentData.length) : 0
 
@@ -108,20 +108,20 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
             const jsonData = await response.json()
             setApplications(jsonData)
             setSelected(new Array(jsonData.length).fill(false))
-            jsonData.sort((a, b) => {
+            jsonData.sort((a: { applicationStatus: string }, b: { applicationStatus: string }) => {
                 if (a.applicationStatus === 'approved' && b.applicationStatus !== 'approved') {
-                return -1; // "approved" comes first
-            } else if (a.applicationStatus !== 'approved' && b.applicationStatus === 'approved') {
-                return 1; // "approved" comes first
-            } else if (a.applicationStatus === 'pending' && b.applicationStatus !== 'pending') {
-                return -1; // "pending" comes next
-            } else if (a.applicationStatus !== 'pending' && b.applicationStatus === 'pending') {
-                return 1; // "pending" comes next
-            } else {
-                // For other statuses, "denied" comes last
-                return a.applicationStatus.localeCompare(b.applicationStatus);
-            }
-            });
+                    return -1 // "approved" comes first
+                } else if (a.applicationStatus !== 'approved' && b.applicationStatus === 'approved') {
+                    return 1 // "approved" comes first
+                } else if (a.applicationStatus === 'pending' && b.applicationStatus !== 'pending') {
+                    return -1 // "pending" comes next
+                } else if (a.applicationStatus !== 'pending' && b.applicationStatus === 'pending') {
+                    return 1 // "pending" comes next
+                } else {
+                    // For other statuses, "denied" comes last
+                    return a.applicationStatus.localeCompare(b.applicationStatus)
+                }
+            })
         } catch (error) {
             console.error('Error fetching data:', error)
         }
@@ -199,73 +199,71 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         // Check if the studentId is already in the checkedStudents array
         if (checkedStudents.includes(studentId)) {
             // Remove the studentId from the checkedStudents array
-            setCheckedStudents(checkedStudents.filter((id) => id !== studentId));
+            setCheckedStudents(checkedStudents.filter((id) => id !== studentId))
 
             // Remove the corresponding Application from the approvedStudents array
             setApprovedStudents((prevApprovedStudents) =>
                 prevApprovedStudents.filter((application) => application.studentId !== studentId)
-            );
+            )
         } else {
             // Add the studentId to the checkedStudents array
-            setCheckedStudents([...checkedStudents, studentId]);
+            setCheckedStudents([...checkedStudents, studentId])
 
             // Find the Application for the selected studentId
-            const selectedApplication = applications.find((application) => application.studentId === studentId);
+            const selectedApplication = applications.find((application) => application.studentId === studentId)
             console.log(selectedApplication)
 
             // Add the selected Application to the approvedStudents array
             if (selectedApplication) {
-                setApprovedStudents((prevApprovedStudents) => [...prevApprovedStudents, selectedApplication]);
+                setApprovedStudents((prevApprovedStudents) => [...prevApprovedStudents, selectedApplication])
             }
         }
-    };
+    }
 
     const handleMarkerSubmit = async () => {
-        
         if (checkedStudents.length === 0) {
             // No students selected error
-            return;
+            return
         }
-    
+
         const payload = {
             students: approvedStudents,
-        };
+        }
         try {
-            const response = await fetch('/api/courses/'+courseId+'/markers', {
+            const response = await fetch('/api/courses/' + courseId + '/markers', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(approvedStudents),
-            });
-    
+            })
+
             // Parse the response JSON
-            const data = await response.json();
-    
+            const data = await response.json()
+
             if (response.ok) {
-                console.log('Students submitted successfully');
+                console.log('Students submitted successfully')
                 setCheckedStudents([])
                 setApprovedStudents([])
                 fetchApplicants()
                 courseInformation()
                 retrieveCourseData()
             } else {
-                console.log('Failed to submit students:', data.message); // Log the error message from the server
+                console.log('Failed to submit students:', data.message) // Log the error message from the server
             }
-             
         } catch (error) {
             // Handle network or other unknown errors
-            console.log('Error submitting students:', error);
+            console.log('Error submitting students:', error)
         }
-    };
+    }
 
     useEffect(() => {
         courseInformation()
     }, [])
 
-    const courseInformation =async () => {
+    const courseInformation = async () => {
         try {
-            const response = await fetch('/api/courses/'+courseId+'/markers', {method: 'GET',});
+            const response = await fetch('/api/courses/' + courseId + '/markers', { method: 'GET' })
             const jsonData = await response.json()
             setCourseData(jsonData)
             console.log(courseData?.hours)
@@ -278,9 +276,9 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         retrieveCourseData()
     }, [])
 
-    const retrieveCourseData =async () => {
+    const retrieveCourseData = async () => {
         try {
-            const response = await fetch('/api/courses/'+courseId, {method: 'GET',});
+            const response = await fetch('/api/courses/' + courseId, { method: 'GET' })
             const jsonData = await response.json()
             setCourse(jsonData)
         } catch (error) {
@@ -288,11 +286,8 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         }
     }
 
-    
-    
     return (
         <>
-
             <Card sx={{ p: '20px' }}>
                 <Box display="flex" alignItems="center">
                     <Typography variant="h5" fontWeight="bold">
@@ -307,7 +302,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                         Edit Course
                     </Button>
 
-                    <TableContainer sx={{ width: '60%', border: '2px solid black', ml: 11 , borderRadius:2.5}}>
+                    <TableContainer sx={{ width: '60%', border: '2px solid black', ml: 11, borderRadius: 2.5 }}>
                         <Table>
                             <TableHead>
                                 <TableRow>
@@ -399,8 +394,17 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                 ? applications.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 : applications
                             ).map((application, index) => (
-                                
-                                <TableRow key={application.id} style={{backgroundColor: application.applicationStatus === 'denied' ? 'rgba(255, 0, 0, 0.25)' : application.applicationStatus === 'approved' ? 'rgba(0, 128, 0, 0.25)': 'transparent'}}>
+                                <TableRow
+                                    key={application.id}
+                                    style={{
+                                        backgroundColor:
+                                            application.applicationStatus === 'denied'
+                                                ? 'rgba(255, 0, 0, 0.25)'
+                                                : application.applicationStatus === 'approved'
+                                                ? 'rgba(0, 128, 0, 0.25)'
+                                                : 'transparent',
+                                    }}
+                                >
                                     <TableCell padding="checkbox" style={{ textAlign: 'center' }}>
                                         <Checkbox
                                             checked={checkedStudents.includes(application.studentId) || false}
@@ -424,7 +428,12 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                                             )?.userId
                                                     )?.name
                                                 }{' '}
-                                                ({studentData.find((student) => student.id === application.studentId)?.upi})
+                                                (
+                                                {
+                                                    studentData.find((student) => student.id === application.studentId)
+                                                        ?.upi
+                                                }
+                                                )
                                             </Button>
                                         </Link>
                                     </TableCell>
@@ -436,7 +445,8 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     </TableCell>
                                     <TableCell style={{ textAlign: 'center' }}>
                                         {String(
-                                            studentData.find((student) => student.id === application.studentId)?.overseas
+                                            studentData.find((student) => student.id === application.studentId)
+                                                ?.overseas
                                         )}
                                     </TableCell>
                                     <TableCell style={{ textAlign: 'center' }}>
@@ -444,7 +454,10 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                         25{/*applicant total allocated hours */}
                                     </TableCell>
                                     <TableCell style={{ textAlign: 'center' }}>
-                                        {studentData.find((student) => student.id === application.studentId)?.maxWorkHours}
+                                        {
+                                            studentData.find((student) => student.id === application.studentId)
+                                                ?.maxWorkHours
+                                        }
                                     </TableCell>
                                     <TableCell style={{ textAlign: 'center' }}>
                                         {/*<Chip
