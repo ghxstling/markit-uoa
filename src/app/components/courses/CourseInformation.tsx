@@ -40,18 +40,13 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         userId: number
     }
 
-    type Application = {
-        id: number
-        hasMarkedCourse: boolean
-        previouslyAchievedGrade: string
-        studentId: number
-    }
-
     interface ApplicantsData {
         id: number
         hasMarkedCourse: boolean
         previouslyAchievedGrade: string
         studentId: number
+        courseId: number
+        isQualified: boolean
         applicationStatus: string
     }
 
@@ -72,6 +67,8 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     const [page, setPage] = React.useState(0)
     const [rowsPerPage, setRowsPerPage] = React.useState(5)
     const [courseName, setCourseName] = useState('')
+    const [markersNeeded, setMarkersNeeded] = useState(0)
+    const [markerHoursNeeded, setMarkerHoursNeeded] = useState(0)
     const [checkedStudents, setCheckedStudents] = useState<number[]>([])
     const [selected, setSelected] = useState(new Array(applications.length).fill(false))
     const [approvedStudents, setApprovedStudents] = useState<ApplicantsData[]>([])
@@ -82,14 +79,16 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
 
     //fetch the course name
     useEffect(() => {
-        fetchCourseName()
+        fetchCourseInfo()
     }, [])
 
-    const fetchCourseName = async () => {
+    const fetchCourseInfo = async () => {
         try {
             const response = await fetch('/api/courses', { method: 'GET' })
             const jsonData = await response.json()
             setCourseName(jsonData.filter((course: any) => course.id == courseId)[0].courseCode)
+            setMarkersNeeded(jsonData.filter((course: any) => course.id == courseId)[0].markersNeeded)
+            setMarkerHoursNeeded(jsonData.filter((course: any) => course.id == courseId)[0].markerHours)
         } catch (error) {
             console.error('Error fetching data:', error)
         }
@@ -108,6 +107,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
             const jsonData = await response.json()
             setApplications(jsonData)
             setSelected(new Array(jsonData.length).fill(false))
+            setQualified()
             jsonData.sort((a: { applicationStatus: string }, b: { applicationStatus: string }) => {
                 if (a.applicationStatus === 'approved' && b.applicationStatus !== 'approved') {
                     return -1 // "approved" comes first
@@ -125,6 +125,29 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         } catch (error) {
             console.error('Error fetching data:', error)
         }
+    }
+
+    const setQualified = () => {
+        let newSelected = [...selected]
+        for (let i = 0; i < newSelected.length; i++) {
+            newSelected[i] = applications[i].isQualified
+        }
+        setSelected(newSelected)
+    }
+
+    const handleQualifiedChange = (index: number) => {
+        //get application that is being changed
+        const changedApplication = applications[index]
+        const courseId = changedApplication.courseId
+
+        //patch changed application
+        const response = fetch(`/api/courses/${courseId}/markers/[markerId]`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(changedApplication),
+        })
     }
 
     //fetch all students
@@ -306,6 +329,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                         <Table>
                             <TableHead>
                                 <TableRow>
+
                                     <TableCell>Markers Needed: {course?.markersNeeded}</TableCell>
                                     <TableCell>Markers Assigned: {courseData?.markers.length}</TableCell>
                                     <TableCell>Hours Needed: {course?.markerHours}</TableCell>
@@ -472,6 +496,8 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                                 setSelected((selected) => {
                                                     let newSelected = [...selected]
                                                     newSelected[index] = !newSelected[index]
+                                                    //applications[index].isQualified = newSelected[index]
+                                                    //handleQualifiedChange(index)
                                                     setSelected(newSelected)
                                                     return newSelected
                                                 })
@@ -482,14 +508,13 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     </TableCell>
                                 </TableRow>
                             ))}
-
-                            {emptyRows > 0 && (
-                                <TableRow style={{ height: 69.5 * emptyRows }}>
-                                    <TableCell colSpan={8} />
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
+                        {emptyRows > 0 && (
+                            <TableRow style={{ height: 69.5 * emptyRows }}>
+                                <TableCell colSpan={8} />
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
                     <TableFooter>
                         <TableRow>
                             <TableCell sx={{ width: '600px' }} colSpan={4}>
@@ -507,7 +532,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     sx={{ width: '100%' }}
                                     rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
                                     colSpan={3}
-                                    count={studentData.length}
+                                    count={applications.length}
                                     rowsPerPage={rowsPerPage}
                                     page={page}
                                     onPageChange={handleChangePage}

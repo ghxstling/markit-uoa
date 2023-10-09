@@ -87,7 +87,6 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
     }
 
     const handleApplicationUpdate = () => {
-        console.log(formData) //remvoe this later
         const updatedApplication: CourseApplicationType = {
             id: thisApplicationId,
             courseName: formData.courseName,
