@@ -308,6 +308,17 @@ model Application {
     - You must be a `Student` to access this endpoint.
     - Returns:
         - The specified `Application` that belongs to the `Student`.
+- `PATCH /api/students/me/applications/[applicationId]`
+    - Updates the `preferenceId` of a `Student`'s own `Application`, and reorders the `preferenceId`s of all `Application`s.
+    - You must be a `Student` to access this endpoint.
+    - Data Required:
+    ```typescript
+    {
+        isQualified: boolean,
+    }
+    ```
+    - Returns:
+        - The updated `Student`'s `Application`
 
 **Additional Notes:**
 
@@ -510,3 +521,4 @@ model User {
     - Updated `Applications` section:
         - Updated `PATCH /api/students/[studentUpi]/applications/[applicationId]` endpoint
             - Changed `Data Required` to `isQualified: boolean` only
+        - Added `PATCH /api/students/me/applications/[applicationId]` endpoint
