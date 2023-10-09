@@ -50,6 +50,7 @@ model Course {
     - Retrieves all `Course`s from the database.
     - Returns:
         - An array of `Course`s.
+    
 - `POST /api/courses`
     - Creates a new `Course` in the database from the data provided in the request body.
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
@@ -68,11 +69,19 @@ model Course {
         }
         ```
     - Returns:
+        
         - The newly created `Course`.
+    
+- `GET /api/courses/with-markers`
+
+    - Returns:
+        - An array of `Course`s with `totalMarkers` and `totalHours` included.
+
 - `GET /api/courses/[courseId]`
     - Retrieves a `Course` from the database with the given `courseId`.
     - Returns:
         - The `Course` with the given `courseId`.
+    
 - `PATCH /api/courses/[courseId]`
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
     - Updates an existing `Course` in the database with the given `courseId`.
@@ -91,6 +100,7 @@ model Course {
         }
         ```
     - Returns:
+        
         - The updated `Course`.
 
 ### Students
@@ -127,7 +137,7 @@ model Student {
     - Retrieves all `Student`s from the database.
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
     - Returns:
-        - An array of `Student`s.
+        - An array of `Student`s with `Application`s.
 - `POST /api/students`
     - Creates a new `Student` in the database from the data provided in the request body.
     - You must be a `Student` to access this endpoint.
@@ -149,12 +159,13 @@ model Student {
         }
         ```
     - Returns:
+        
         - The newly created `Student`.
 - `GET /api/students/[studentUpi]`
     - Retrieves a `Student` from the database with the given `studentId`.
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
     - Returns:
-        - The `Student` with the given `studentUpi`.
+        - The `Student` with the given `studentUpi` and `application`s and `course`s.
 - `GET /api/students/[studentUpi]/cv`
     - Retrieves a `Student`'s CV from the connected AWS S3 bucket.
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
@@ -254,6 +265,7 @@ model Application {
     - Returns:
         - An array of `Application`s.
 - `POST /api/applications`
+    
     - Creates one or more `Student` `Application`s in the database.
     - You must be a `Student` to access this endpoint.
     - Data Required:
@@ -271,6 +283,7 @@ model Application {
         }[]
         ```
     - Returns:
+        
         - An array of newly created `Application`s.
 - `GET /api/courses/[courseId]/applications`
     - Retrieves `Student` `Application`s for a given `Course`.
@@ -369,6 +382,7 @@ model Application {
         }
         ```
     - Returns:
+        
         - The updated `Marker` for a given `Course`.
 - `DELETE /api/courses/[courseId]/markers/[markerId]`
     - Removes a `Marker` from a given `Course`.
@@ -466,6 +480,7 @@ model User {
         }
         ```
     - Returns:
+        
         - The updated `User` for a given `userId`.
 
 ### Changelog

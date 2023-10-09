@@ -8,9 +8,7 @@ import CourseService from '@/services/courseService'
 // GET /api/courses/
 export async function GET(req: NextRequest) {
     const courses = await CourseRepo.getAllCourses()
-    const newCourses = await CourseService.createCourseObjecs(courses)
-
-    return NextResponse.json(newCourses, {
+    return NextResponse.json(courses, {
         status: 200,
         statusText: 'OK',
     })
@@ -19,8 +17,7 @@ export async function GET(req: NextRequest) {
 // POST /api/courses/
 export async function POST(req: NextRequest) {
     const token = await getToken({ req })
-    if (token!.role != Role.Supervisor &&
-        token!.role != Role.Coordinator) {
+    if (token!.role != Role.Supervisor && token!.role != Role.Coordinator) {
         return new NextResponse(
             JSON.stringify({
                 success: false,
