@@ -326,7 +326,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     <TableCell>Markers Needed: {course?.markersNeeded}</TableCell>
                                     <TableCell>Markers Assigned: {courseData?.markers ? courseData?.markers.length : 0}</TableCell>
                                     <TableCell>Hours Needed: {course?.markerHours|| 0}</TableCell>
-                                    <TableCell>Hours Assigned: {courseData?.hours}</TableCell>
+                                    <TableCell>Hours Assigned: {courseData?.hours || 0}</TableCell>
                                 </TableRow>
                             </TableHead>
                         </Table>

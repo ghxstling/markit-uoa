@@ -35,7 +35,7 @@ export default function CourseTable() {
     
     const fetchData = async () => {
         try {
-            const response = await fetch('/api/courses', { method: 'GET' })
+            const response = await fetch('/api/courses/with-markers', { method: 'GET' })
             const jsonData = await response.json()
             setData(jsonData)
         } catch (error) {
@@ -140,8 +140,8 @@ export default function CourseTable() {
                                 {/*TODO add this data<TableCell style={{textAlign:'center'}}>{course.applicants}</TableCell>*/}
                                 {isCoordinator ? (
                                     <>
-                                        <TableCell style={{ textAlign: 'center' }}>{course.totalHours}/{course.markersNeeded}</TableCell>
-                                        <TableCell style={{ textAlign: 'center' }}>{course.totalMarkers}/{course.markerHours}</TableCell>
+                                        <TableCell style={{ textAlign: 'center' }}>{course.totalMarkers}/{course.markersNeeded}</TableCell>
+                                        <TableCell style={{ textAlign: 'center' }}>{course.totalHours}/{course.markerHours}</TableCell>
                                     </>
                                 ) : (
                                     <TableCell style={{ textAlign: 'center' }}>2/{course.markersNeeded}</TableCell>
