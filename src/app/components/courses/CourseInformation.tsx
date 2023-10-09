@@ -320,191 +320,192 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                         </Table>
                     </TableContainer>
                 </Box>
-
-                <Table sx={{ mt: 4 }}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell style={{ textAlign: 'center', width: '150px' }}>
-                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                    Select
-                                    <Tooltip title="Click on checkboxes to assign markers">
-                                        <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
-                                    </Tooltip>
-                                </div>
-                            </TableCell>
-                            <TableCell style={{ textAlign: 'center', width: '200px' }}>
-                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                    Applicant
-                                    <Tooltip title="Click on student name to view student information">
-                                        <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
-                                    </Tooltip>
-                                    {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
-                                </div>
-                            </TableCell>
-                            <TableCell style={{ textAlign: 'center', width: '50px' }}>
-                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                    Grade
-                                    {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
-                                </div>
-                            </TableCell>
-                            <TableCell style={{ textAlign: 'center', width: '250px' }}>
-                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                    Marked Before
-                                    <Tooltip title="Has the student marked the course before">
-                                        <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
-                                    </Tooltip>
-                                    {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
-                                </div>
-                            </TableCell>
-                            <TableCell style={{ textAlign: 'center', width: '150px' }}>
-                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                    Overseas
-                                    <Tooltip title="Is the student overseas">
-                                        <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
-                                    </Tooltip>
-                                    {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
-                                </div>
-                            </TableCell>
-                            <TableCell style={{ textAlign: 'center', width: '200px' }}>
-                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                    Total Allocated Hours
-                                    <Tooltip title="Total hours allocated to student across all courses">
-                                        <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
-                                    </Tooltip>
-                                    {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
-                                </div>
-                            </TableCell>
-                            <TableCell style={{ textAlign: 'center', width: '200px' }}>
-                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                    Maximum Hours Per Week
-                                    <Tooltip title="Maximum hours student willing to work per week">
-                                        <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
-                                    </Tooltip>
-                                    {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
-                                </div>
-                            </TableCell>
-                            <TableCell style={{ textAlign: 'center', width: '150px' }}>
-                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                    Qualification
-                                    <Tooltip title="Is the student qualified to mark the course">
-                                        <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
-                                    </Tooltip>
-                                    {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
-                                </div>
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {(rowsPerPage > 0
-                            ? applications.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            : applications
-                        ).map((application, index) => (
-                            
-                            <TableRow key={application.id} style={{backgroundColor: application.applicationStatus === 'denied' ? 'rgba(255, 0, 0, 0.25)' : application.applicationStatus === 'approved' ? 'rgba(0, 128, 0, 0.25)': 'transparent'}}>
-                                <TableCell padding="checkbox" style={{ textAlign: 'center' }}>
-                                    <Checkbox
-                                        checked={checkedStudents.includes(application.studentId) || false}
-                                        onChange={() => handleCheckedStudents(application.studentId)}
-                                        disabled={application.applicationStatus === 'approved'}
-                                    />
+                <TableContainer>
+                    <Table sx={{ mt: 4 }}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell style={{ textAlign: 'center', width: '150px' }}>
+                                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                        Select
+                                        <Tooltip title="Click on checkboxes to assign markers">
+                                            <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
+                                        </Tooltip>
+                                    </div>
                                 </TableCell>
-                                <TableCell style={{ textAlign: 'center' }}>
-                                    <Link
-                                        href="src/app/dashboard/students/[studentId]/page.tsx"
-                                        as={`/dashboard/students/${application.studentId}`}
-                                        passHref
-                                    >
-                                        <Button>
-                                            {
-                                                users.find(
-                                                    (user) =>
-                                                        user.id ===
-                                                        studentData.find(
-                                                            (student) => student.id === application.studentId
-                                                        )?.userId
-                                                )?.name
-                                            }{' '}
-                                            ({studentData.find((student) => student.id === application.studentId)?.upi})
-                                        </Button>
-                                    </Link>
+                                <TableCell style={{ textAlign: 'center', width: '200px' }}>
+                                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                        Applicant
+                                        <Tooltip title="Click on student name to view student information">
+                                            <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
+                                        </Tooltip>
+                                        {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
+                                    </div>
                                 </TableCell>
-                                <TableCell style={{ textAlign: 'center' }}>
-                                    {application.previouslyAchievedGrade}
+                                <TableCell style={{ textAlign: 'center', width: '50px' }}>
+                                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                        Grade
+                                        {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
+                                    </div>
                                 </TableCell>
-                                <TableCell style={{ textAlign: 'center' }}>
-                                    {String(application.hasMarkedCourse)}
+                                <TableCell style={{ textAlign: 'center', width: '250px' }}>
+                                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                        Marked Before
+                                        <Tooltip title="Has the student marked the course before">
+                                            <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
+                                        </Tooltip>
+                                        {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
+                                    </div>
                                 </TableCell>
-                                <TableCell style={{ textAlign: 'center' }}>
-                                    {String(
-                                        studentData.find((student) => student.id === application.studentId)?.overseas
-                                    )}
+                                <TableCell style={{ textAlign: 'center', width: '150px' }}>
+                                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                        Overseas
+                                        <Tooltip title="Is the student overseas">
+                                            <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
+                                        </Tooltip>
+                                        {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
+                                    </div>
                                 </TableCell>
-                                <TableCell style={{ textAlign: 'center' }}>
-                                    {' '}
-                                    25{/*applicant total allocated hours */}
+                                <TableCell style={{ textAlign: 'center', width: '200px' }}>
+                                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                        Total Allocated Hours
+                                        <Tooltip title="Total hours allocated to student across all courses">
+                                            <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
+                                        </Tooltip>
+                                        {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
+                                    </div>
                                 </TableCell>
-                                <TableCell style={{ textAlign: 'center' }}>
-                                    {studentData.find((student) => student.id === application.studentId)?.maxWorkHours}
+                                <TableCell style={{ textAlign: 'center', width: '200px' }}>
+                                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                        Maximum Hours Per Week
+                                        <Tooltip title="Maximum hours student willing to work per week">
+                                            <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
+                                        </Tooltip>
+                                        {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
+                                    </div>
                                 </TableCell>
-                                <TableCell style={{ textAlign: 'center' }}>
-                                    {/*<Chip
-                                    onClick={() => setSelected((selected) => {
-                                        selected[index] = !selected[index]
-                                    })}
-                                    color={selected[index] ? 'primary' : 'secondary'}
-                                    label={selected[index] ? 'Qualified' : 'Unqualified'}
-                                    /> */}
-                                    <Chip
-                                        onClick={() =>
-                                            setSelected((selected) => {
-                                                let newSelected = [...selected]
-                                                newSelected[index] = !newSelected[index]
-                                                setSelected(newSelected)
-                                                return newSelected
-                                            })
-                                        }
+                                <TableCell style={{ textAlign: 'center', width: '150px' }}>
+                                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                        Qualification
+                                        <Tooltip title="Is the student qualified to mark the course">
+                                            <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
+                                        </Tooltip>
+                                        {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {(rowsPerPage > 0
+                                ? applications.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                : applications
+                            ).map((application, index) => (
+                                
+                                <TableRow key={application.id} style={{backgroundColor: application.applicationStatus === 'denied' ? 'rgba(255, 0, 0, 0.25)' : application.applicationStatus === 'approved' ? 'rgba(0, 128, 0, 0.25)': 'transparent'}}>
+                                    <TableCell padding="checkbox" style={{ textAlign: 'center' }}>
+                                        <Checkbox
+                                            checked={checkedStudents.includes(application.studentId) || false}
+                                            onChange={() => handleCheckedStudents(application.studentId)}
+                                            disabled={application.applicationStatus === 'approved'}
+                                        />
+                                    </TableCell>
+                                    <TableCell style={{ textAlign: 'center' }}>
+                                        <Link
+                                            href="src/app/dashboard/students/[studentId]/page.tsx"
+                                            as={`/dashboard/students/${application.studentId}`}
+                                            passHref
+                                        >
+                                            <Button>
+                                                {
+                                                    users.find(
+                                                        (user) =>
+                                                            user.id ===
+                                                            studentData.find(
+                                                                (student) => student.id === application.studentId
+                                                            )?.userId
+                                                    )?.name
+                                                }{' '}
+                                                ({studentData.find((student) => student.id === application.studentId)?.upi})
+                                            </Button>
+                                        </Link>
+                                    </TableCell>
+                                    <TableCell style={{ textAlign: 'center' }}>
+                                        {application.previouslyAchievedGrade}
+                                    </TableCell>
+                                    <TableCell style={{ textAlign: 'center' }}>
+                                        {String(application.hasMarkedCourse)}
+                                    </TableCell>
+                                    <TableCell style={{ textAlign: 'center' }}>
+                                        {String(
+                                            studentData.find((student) => student.id === application.studentId)?.overseas
+                                        )}
+                                    </TableCell>
+                                    <TableCell style={{ textAlign: 'center' }}>
+                                        {' '}
+                                        25{/*applicant total allocated hours */}
+                                    </TableCell>
+                                    <TableCell style={{ textAlign: 'center' }}>
+                                        {studentData.find((student) => student.id === application.studentId)?.maxWorkHours}
+                                    </TableCell>
+                                    <TableCell style={{ textAlign: 'center' }}>
+                                        {/*<Chip
+                                        onClick={() => setSelected((selected) => {
+                                            selected[index] = !selected[index]
+                                        })}
                                         color={selected[index] ? 'primary' : 'secondary'}
                                         label={selected[index] ? 'Qualified' : 'Unqualified'}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                                        /> */}
+                                        <Chip
+                                            onClick={() =>
+                                                setSelected((selected) => {
+                                                    let newSelected = [...selected]
+                                                    newSelected[index] = !newSelected[index]
+                                                    setSelected(newSelected)
+                                                    return newSelected
+                                                })
+                                            }
+                                            color={selected[index] ? 'primary' : 'secondary'}
+                                            label={selected[index] ? 'Qualified' : 'Unqualified'}
+                                        />
+                                    </TableCell>
+                                </TableRow>
+                            ))}
 
-                        {emptyRows > 0 && (
-                            <TableRow style={{ height: 69.5 * emptyRows }}>
-                                <TableCell colSpan={8} />
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-                <TableFooter>
-                    <TableRow>
-                        <TableCell sx={{ width: '600px' }} colSpan={4}>
-                            <Button
-                                variant="contained"
-                                sx={{ backgroundColor: '#01579B' }}
-                                onClick={handleMarkerSubmit}
-                            >
-                                Submit Marker Assignment
-                            </Button>
-                        </TableCell>
-                        <TableCell sx={{ width: '600px' }} colSpan={4}>
-                            <TablePagination
-                                component="div"
-                                sx={{ width: '100%' }}
-                                rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                                colSpan={3}
-                                count={studentData.length}
-                                rowsPerPage={rowsPerPage}
-                                page={page}
-                                onPageChange={handleChangePage}
-                                onRowsPerPageChange={handleChangeRowsPerPage}
-                                showFirstButton={true}
-                                showLastButton={true}
-                            />
-                        </TableCell>
-                    </TableRow>
-                </TableFooter>
+                            {emptyRows > 0 && (
+                                <TableRow style={{ height: 69.5 * emptyRows }}>
+                                    <TableCell colSpan={8} />
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                    <TableFooter>
+                        <TableRow>
+                            <TableCell sx={{ width: '600px' }} colSpan={4}>
+                                <Button
+                                    variant="contained"
+                                    sx={{ backgroundColor: '#01579B' }}
+                                    onClick={handleMarkerSubmit}
+                                >
+                                    Submit Marker Assignment
+                                </Button>
+                            </TableCell>
+                            <TableCell sx={{ width: '600px' }} colSpan={4}>
+                                <TablePagination
+                                    component="div"
+                                    sx={{ width: '100%' }}
+                                    rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                    colSpan={3}
+                                    count={studentData.length}
+                                    rowsPerPage={rowsPerPage}
+                                    page={page}
+                                    onPageChange={handleChangePage}
+                                    onRowsPerPageChange={handleChangeRowsPerPage}
+                                    showFirstButton={true}
+                                    showLastButton={true}
+                                />
+                            </TableCell>
+                        </TableRow>
+                    </TableFooter>
+                </TableContainer>
             </Card>
             <Dialog open={open} onClose={closeDialog} maxWidth="md" fullWidth>
                 <EditCourseDetails courseId={courseId} />
