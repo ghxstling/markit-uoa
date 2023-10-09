@@ -5,15 +5,15 @@ import { ApplicationStatus } from '@/models/applicationStatus'
 
 type Application = Exclude<Prisma.PromiseReturnType<typeof ApplicationRepo.getApplicationById>, null>
 type Course = Exclude<Prisma.PromiseReturnType<typeof CourseRepo.getCourseById>, null>
-type CourseWithMarkeData = Course & { totalMarkers: number, totalHours: number }
+type CourseWithMarkeData = Course & { totalMarkers: number; totalHours: number }
 
 export default class CourseService {
-
     static async createCourseObjecs(courses: Course[]) {
         let coursesArray = new Array<CourseWithMarkeData>()
         for (const c of courses) {
-            const courseApplications = (await ApplicationRepo.getAllApplications())
-                .filter(app => app.courseId === c.id)
+            const courseApplications = (await ApplicationRepo.getAllApplications()).filter(
+                (app) => app.courseId === c.id
+            )
             const totalMarkers = (await this._getAssignedMarkers(courseApplications)).length
             const totalHours = await this._getAllocatedHours(courseApplications)
             const modifiedCourses = {
