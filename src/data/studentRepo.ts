@@ -15,6 +15,9 @@ export default class StudentRepo {
     static async getStudentByUpi(upi: string) {
         return await prisma.student.findUnique({
             where: { upi },
+            include: {
+                applications: true,
+            },
         })
     }
 
