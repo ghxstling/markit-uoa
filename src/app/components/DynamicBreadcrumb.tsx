@@ -2,21 +2,35 @@
 
 import { Breadcrumbs, Link, Stack, Typography } from '@mui/material'
 import { usePathname } from 'next/navigation'
-import StarIcon from '@mui/icons-material/Star'
 import NextLink from 'next/link'
+import path from 'path'
 
 const DynamicBreadcrumb = () => {
     const pathName = usePathname()
 
     let pathArray = pathName.split('/')
-    pathArray = pathArray.filter((path) => path !== '')
+    pathArray = pathArray.filter((segment) => segment !== '')
+    let index = pathArray.indexOf('courses')
+    if (index !== undefined && index === pathArray.length - 1) {
+        pathArray.splice(index, 0, 'CreateCourse')
+    }
+
+    pathArray = pathArray.filter((segment) => segment !== 'courses')
 
     const breadcrumbs = pathArray.map((path, index) => {
-        const href = '/' + pathArray.slice(0, index + 1).join('/')
-        return {
-            href,
-            label: path.charAt(0).toUpperCase() + path.slice(1),
-            isCurrent: index === pathArray.length - 1,
+        console.log(path)
+        if (path === 'CreateCourse') {
+            const href = '/' + pathArray.slice(0, index).join('/') + '/courses'
+            return {
+                href,
+                label: 'CreateCourse',
+            }
+        } else {
+            const href = '/' + pathArray.slice(0, index + 1).join('/')
+            return {
+                href,
+                label: path.charAt(0).toUpperCase() + path.slice(1),
+            }
         }
     })
 
@@ -26,16 +40,10 @@ const DynamicBreadcrumb = () => {
                 <Breadcrumbs separator="›" aria-label="breadcrumb">
                     {breadcrumbs.map((breadcrumb, index) => (
                         <Typography key={index}>
-                            {/* <StarIcon
-                                sx={{ mb: -0.2, mr: 0.5 }}
-                                fontSize="inherit"
-                                fill="#000000"
-                            /> */}
                             <Link
                                 component={NextLink}
                                 href={breadcrumb.href}
                                 underline="none"
-                                // fontFamily={'Roboto'}
                                 fontSize={'15px'}
                                 color={'#000000'}
                             >
