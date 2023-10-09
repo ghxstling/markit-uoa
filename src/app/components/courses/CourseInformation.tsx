@@ -107,7 +107,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
             const jsonData = await response.json()
             setApplications(jsonData)
             setSelected(new Array(jsonData.length).fill(false))
-            setQualified()
+            //setQualified()
             jsonData.sort((a: { applicationStatus: string }, b: { applicationStatus: string }) => {
                 if (a.applicationStatus === 'approved' && b.applicationStatus !== 'approved') {
                     return -1 // "approved" comes first
@@ -183,23 +183,6 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
             console.error('Error fetching data:', error)
         }
     }
-
-    //fetch checked students
-    /*
-    useEffect(() => {
-        fetchCheckedStudents()
-    }, [])
-
-    const fetchCheckedStudents = async () => {
-        try {
-            const response = await fetch('url to fetch checked students', { method: 'GET' })
-            const jsonData = await response.json()
-            setChecked(jsonData)
-        } catch (error) {
-            console.error('Error fetching data:', error)
-        }
-    }
-    */
 
     const openEdit = () => {
         setOpen(true)
@@ -329,7 +312,6 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                         <Table>
                             <TableHead>
                                 <TableRow>
-
                                     <TableCell>Markers Needed: {course?.markersNeeded}</TableCell>
                                     <TableCell>Markers Assigned: {courseData?.markers.length}</TableCell>
                                     <TableCell>Hours Needed: {course?.markerHours}</TableCell>
@@ -484,37 +466,29 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                         }
                                     </TableCell>
                                     <TableCell style={{ textAlign: 'center' }}>
-                                        {/*<Chip
-                                        onClick={() => setSelected((selected) => {
-                                            selected[index] = !selected[index]
-                                        })}
-                                        color={selected[index] ? 'primary' : 'secondary'}
-                                        label={selected[index] ? 'Qualified' : 'Unqualified'}
-                                        /> */}
                                         <Chip
-                                            onClick={() =>
-                                                setSelected((selected) => {
-                                                    let newSelected = [...selected]
-                                                    newSelected[index] = !newSelected[index]
-                                                    //applications[index].isQualified = newSelected[index]
-                                                    //handleQualifiedChange(index)
-                                                    setSelected(newSelected)
-                                                    return newSelected
-                                                })
-                                            }
+                                            onClick={() => {
+                                                let newSelected = [...selected]
+                                                newSelected[index] = !newSelected[index]
+                                                //applications[index].isQualified = newSelected[index]
+                                                //handleQualifiedChange(index)
+                                                setSelected(newSelected)
+                                                console.log(newSelected)
+                                                return newSelected
+                                            }}
                                             color={selected[index] ? 'primary' : 'secondary'}
                                             label={selected[index] ? 'Qualified' : 'Unqualified'}
                                         />
                                     </TableCell>
                                 </TableRow>
                             ))}
-                        {emptyRows > 0 && (
-                            <TableRow style={{ height: 69.5 * emptyRows }}>
-                                <TableCell colSpan={8} />
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
+                            {emptyRows > 0 && (
+                                <TableRow style={{ height: 69.5 * emptyRows }}>
+                                    <TableCell colSpan={8} />
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
                     <TableFooter>
                         <TableRow>
                             <TableCell sx={{ width: '600px' }} colSpan={4}>
