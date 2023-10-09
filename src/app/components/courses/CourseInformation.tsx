@@ -14,13 +14,14 @@ import {
     Checkbox,
     Chip,
     TableContainer,
+    Drawer,
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { Card } from '@mui/material'
 import EditCourseDetails from './EditCourseDetails'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { CourseApplicationType } from '@/types/CourseApplicationType'
-import Link from 'next/link'
+import ViewStudentInformation from '../StudentInformation'
 
 type CourseInformationProps = {
     courseId: string // Assuming courseId is a string
@@ -45,6 +46,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         hasMarkedCourse: boolean
         previouslyAchievedGrade: string
         studentId: number
+        
     }
 
     interface ApplicantsData {
@@ -53,6 +55,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         previouslyAchievedGrade: string
         studentId: number
         applicationStatus: string
+        student: Student
     }
     
     interface Course {
@@ -77,6 +80,8 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     const [approvedStudents, setApprovedStudents] = useState<ApplicantsData[]>([]);
     const [courseData, setCourseData] = useState<CourseData>();
     const [course, setCourse] = useState<Course>();
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    
 
     const emptyRows = page >= 0 ? Math.max(0, (1 + page) * rowsPerPage - studentData.length) : 0
 
@@ -195,6 +200,14 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         setPage(0)
     }
 
+    const handleDrawerOpen = () => {
+        setIsDrawerOpen(true);
+    };
+
+    const handleDrawerClose = () => {
+        setIsDrawerOpen(false);
+    };
+
     const handleCheckedStudents = (studentId: number) => {
         // Check if the studentId is already in the checkedStudents array
         if (checkedStudents.includes(studentId)) {
@@ -289,7 +302,6 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     }
 
     
-    
     return (
         <>
 
@@ -312,8 +324,8 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                             <TableHead>
                                 <TableRow>
                                     <TableCell>Markers Needed: {course?.markersNeeded}</TableCell>
-                                    <TableCell>Markers Assigned: {courseData?.markers.length}</TableCell>
-                                    <TableCell>Hours Needed: {course?.markerHours}</TableCell>
+                                    <TableCell>Markers Assigned: {courseData?.markers ? courseData?.markers.length : 0}</TableCell>
+                                    <TableCell>Hours Needed: {course?.markerHours|| 0}</TableCell>
                                     <TableCell>Hours Assigned: {courseData?.hours}</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -409,24 +421,21 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                         />
                                     </TableCell>
                                     <TableCell style={{ textAlign: 'center' }}>
-                                        <Link
-                                            href="src/app/dashboard/students/[studentId]/page.tsx"
-                                            as={`/dashboard/students/${application.studentId}`}
-                                            passHref
-                                        >
-                                            <Button>
-                                                {
-                                                    users.find(
-                                                        (user) =>
-                                                            user.id ===
-                                                            studentData.find(
-                                                                (student) => student.id === application.studentId
-                                                            )?.userId
-                                                    )?.name
-                                                }{' '}
-                                                ({studentData.find((student) => student.id === application.studentId)?.upi})
-                                            </Button>
-                                        </Link>
+                                    <Button onClick={handleDrawerOpen}>
+                                        {
+                                            users.find(
+                                                (user) =>
+                                                    user.id ===
+                                                    studentData.find(
+                                                        (student) => student.id === application.studentId
+                                                    )?.userId
+                                            )?.name
+                                        }{' '}
+                                        ({studentData.find((student) => student.id === application.studentId)?.upi})
+                                    </Button>
+                                    <Drawer anchor="right" open={isDrawerOpen} onClose={handleDrawerClose}>
+                                        <ViewStudentInformation studentUpi= {studentData.find((student) => student.id === application.studentId)?.upi}/>
+                                    </Drawer>
                                     </TableCell>
                                     <TableCell style={{ textAlign: 'center' }}>
                                         {application.previouslyAchievedGrade}

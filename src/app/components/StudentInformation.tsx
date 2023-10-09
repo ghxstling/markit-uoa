@@ -19,11 +19,11 @@ import Button from '@mui/material/Button';
 import Link from 'next/link';
 
 type ViewStudentInformationProps = {
-  studentId: string
+  studentUpi: string
 }
 
 
-export default function ViewStudentInformation({ studentId }: ViewStudentInformationProps){
+export default function ViewStudentInformation({ studentUpi }: ViewStudentInformationProps){
 
   interface Course {
     courseCode: string
@@ -54,7 +54,7 @@ export default function ViewStudentInformation({ studentId }: ViewStudentInforma
         id: number
         upi: string
         auid: number
-        email: string
+        preferredEmail: string
         overseas: boolean
         residencyStatus: boolean
         validWorkVisa: boolean
@@ -69,14 +69,14 @@ export default function ViewStudentInformation({ studentId }: ViewStudentInforma
     const [data, setData] = useState<Student>();
     
     useEffect(() => {
-        if (studentId) {
-          fetchData(studentId as string);
+        if (studentUpi) {
+          fetchData(studentUpi as string);
         }
-      }, [studentId]);
+      }, [studentUpi]);
 
-      const fetchData = async (studentId: string) => {
+      const fetchData = async (studentId: string | undefined) => {
         try {
-          const response = await fetch(`/api/users/${studentId}`, { method: 'GET' });
+          const response = await fetch(`/api/students/${studentUpi}`, { method: 'GET' });
           if (response.ok) {
             const jsonData = await response.json();
             setData(jsonData);
@@ -87,7 +87,7 @@ export default function ViewStudentInformation({ studentId }: ViewStudentInforma
           console.error('Error fetching data:', error);
         }
       };
-  
+
       const [openRows, setOpenRows] = useState(Array((data?.applications?.length ?? 0)).fill(false));
   
       const toggleRow = (index : number) => {
@@ -98,12 +98,12 @@ export default function ViewStudentInformation({ studentId }: ViewStudentInforma
 
     return(
         <>
-          <div style={{ display: 'flex', justifyContent: 'center', width: '100%'}}>
+          <div style={{ display: 'flex', justifyContent: 'center', width: '500px'}}>
             <Box>
                 <h1>{data?.upi}-{data?.auid}</h1>
                 <h2>Student Info</h2>
                 <Divider/>
-                <p>Email: {data?.email}</p>
+                <p>Email: {data?.preferredEmail}</p>
                 <Divider/>
                 {data?.overseas ? (
                 <p>Living Overseas: Yes</p>
@@ -123,9 +123,9 @@ export default function ViewStudentInformation({ studentId }: ViewStudentInforma
                 <Divider/>
                 <p>Degree Type: {data?.degreeType}</p>
                 <Divider/>
-                <Link href='http://localhost:3000/api/students/[studentId]/cv' as={`/dashboard/courses/${data?.upi}`}><a target="_blank"><Button>Student CV</Button></a></Link>
+                <Link legacyBehavior href='/api/students/[studentId]/cv' as={`/api/students/${String(data?.upi)}/cv`}><a target="_blank"><Button>Student CV</Button></a></Link>
                 <Divider/>
-                <Link href='http://localhost:3000/api/students/[studentId]/transcript' as={`/dashboard/courses/${data?.upi}`}><a target="_blank"><Button>Student Transcript</Button></a></Link>
+                <Link legacyBehavior href='/api/students/[studentId]/transcript' as={`/api/students/${String(data?.upi)}/transcript`}><a target="_blank"><Button>Student Transcript</Button></a></Link>
                 <h2>Student Applications</h2>
                 <TableContainer component={Paper} style={{marginTop:20}}>
                         <Table style={{paddingTop:40}}>
