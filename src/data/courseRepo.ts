@@ -12,13 +12,22 @@ export default class CourseRepo {
         });
     }
 
-    static async getUpdatedCoures() {
+    static async getSupervisorCourses(email: string) {
+        const user = await prisma.user.findUnique({
+            where: { email },
+        })
+        if (user == null) {
+            return null
+        }
+        const supervisor = await prisma.supervisor.findUnique({
+            where: { userId: user.id }
+        })
+        if (supervisor == null) {
+            return null
+        }
         return await prisma.course.findMany({
-            orderBy: {
-                modifiedAt: "desc",
-            },
-            take: 20,
-        });
+            where: { supervisorId: supervisor.id }
+        })
     }
 
     static async addCourse(data: Prisma.CourseCreateInput) {
