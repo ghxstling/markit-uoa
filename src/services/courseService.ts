@@ -8,7 +8,7 @@ type Course = Exclude<Prisma.PromiseReturnType<typeof CourseRepo.getCourseById>,
 type CourseWithMarkeData = Course & { totalMarkers: number; totalHours: number }
 
 export default class CourseService {
-    static async createCourseObjecs(courses: Course[]) {
+    static async createCourseObjects(courses: Course[]) {
         let coursesArray = new Array<CourseWithMarkeData>()
         for (const c of courses) {
             const courseApplications = (await ApplicationRepo.getAllApplications()).filter(
