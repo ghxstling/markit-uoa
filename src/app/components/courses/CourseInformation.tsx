@@ -137,18 +137,22 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         setSelected(newSelected)
     }
 
-    const handleQualifiedChange = (index: number) => {
+    const handleQualifiedChange = async (index: number) => {
         //get application that is being changed
         const changedApplication = applications[index]
         const studentUpi = studentData.find((student) => student.id === changedApplication.studentId)?.upi
         //patch changed application
-        const response = fetch(`/api/students/${studentUpi}/applications/${changedApplication.id}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(changedApplication),
-        })
+        try {
+            const response = await fetch(`/api/students/${studentUpi}/applications/${changedApplication.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(changedApplication),
+            })
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
     }
 
     //fetch all students
