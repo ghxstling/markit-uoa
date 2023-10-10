@@ -12,16 +12,16 @@ const DebugPage = () => {
 
     const makeApiCall = async () => {
         try {
-           const data = { 
-                preferenceId: 2,
+            const data = {
+                sourceSemester: '2030S1',
+                targetSemester: '2020S1',
             }
-            const res = await fetch('/api/students/infinit/applications', {
-                method: 'GET',
-
+            const res = await fetch('/api/courses', {
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                // body: JSON.stringify(data)
+                body: JSON.stringify(data)
             })
             setApiResponse(await res.json())
             setError(null)
