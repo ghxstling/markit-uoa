@@ -47,9 +47,9 @@ export default class CourseRepo {
         })
     }
 
-    static async updateCourses(id: number, data: Prisma.CourseUpdateInput) {
-        return await prisma.course.update({
-            where: { id },
+    static async updateCourseSemesters(semester: string, data: Prisma.CourseUpdateManyMutationInput) {
+        return await prisma.course.updateMany({
+            where: { semester },
             data,
         })
     }
