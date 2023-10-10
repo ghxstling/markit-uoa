@@ -141,7 +141,7 @@ export default function CourseTable() {
                                 {isCoordinator ? (
                                     <>
                                         <TableCell style={{ textAlign: 'center' }}>{course.totalMarkers}/{course.markersNeeded}</TableCell>
-                                        <TableCell style={{ textAlign: 'center' }}>{course.totalHours}/{course.markerHours}</TableCell>
+                                        <TableCell style={{ textAlign: 'center' }}>{course.totalMarkers === 0 ? 0 : course.totalHours}/{course.markerHours}</TableCell>
                                     </>
                                 ) : (
                                     <TableCell style={{ textAlign: 'center' }}>2/{course.markersNeeded}</TableCell>
