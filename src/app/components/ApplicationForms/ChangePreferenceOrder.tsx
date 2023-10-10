@@ -15,7 +15,7 @@ import {
 } from '@mui/material'
 
 export default function ChangePreferenceOrder() {
-    interface CoursePreference {
+    interface Application {
         id: number
         preferenceId: number
         courseId: number
@@ -27,7 +27,7 @@ export default function ChangePreferenceOrder() {
         semester: string
     }
 
-    const [preferences, setPreferences] = useState<CoursePreference[]>([])
+    const [applications, setApplications] = useState<Application[]>([])
     const [courseInfo, setCourseInfo] = useState<Courses[]>([])
 
     useEffect(() => {
@@ -37,9 +37,10 @@ export default function ChangePreferenceOrder() {
     const fetchApplications = async () => {
         try {
             const response = await fetch('/api/students/me/applications')
-            const jsonData = await response.json()
+            let jsonData = await response.json()
+            jsonData = jsonData.sort((a: Application, b: Application) => a.preferenceId - b.preferenceId)
             if (response.ok) {
-                setPreferences(jsonData)
+                setApplications(jsonData)
             }
         } catch (error) {
             console.error('Error fetching data:', error)
@@ -65,16 +66,31 @@ export default function ChangePreferenceOrder() {
     const handleOnDragEnd = (result: any) => {
         if (!result.destination) return
 
-        const items = Array.from(preferences)
+        const items = Array.from(applications)
         const [reorderedItem] = items.splice(result.source.index, 1)
         items.splice(result.destination.index, 0, reorderedItem)
 
-        setPreferences(items.map((item, index) => ({ ...item, preferenceId: index + 1 })))
+        setApplications(items.map((item, index) => ({ ...item, preferenceId: index + 1 })))
     }
 
-    const submitPreferences = () => {
-        const currentPreferences = [...preferences]
-        console.log(currentPreferences)
+    const submitPreferences = async () => {
+        const currentPreferences = [...applications]
+        currentPreferences.forEach((application: Application) => handlePreferenceUpdate(application))
+        fetchCourseInfo()
+    }
+
+    const handlePreferenceUpdate = async (application: Application) => {
+        try {
+            const response = await fetch(`/api/students/me/applications/${application.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(application),
+            })
+        } catch (error) {
+            console.error('Error updating data:', error)
+        }
     }
 
     return (
@@ -98,10 +114,10 @@ export default function ChangePreferenceOrder() {
                             <Droppable droppableId="preferences">
                                 {(provided) => (
                                     <TableBody {...provided.droppableProps} ref={provided.innerRef}>
-                                        {preferences.map((preference, index) => (
+                                        {applications.map((application, index) => (
                                             <Draggable
-                                                key={preference.id}
-                                                draggableId={String(preference.id)}
+                                                key={application.id}
+                                                draggableId={String(application.id)}
                                                 index={index}
                                             >
                                                 {(provided) => (
@@ -111,19 +127,19 @@ export default function ChangePreferenceOrder() {
                                                         {...provided.dragHandleProps}
                                                     >
                                                         <TableCell style={{ textAlign: 'center' }}>
-                                                            {preference.preferenceId}
+                                                            {application.preferenceId}
                                                         </TableCell>
                                                         <TableCell style={{ textAlign: 'center' }}>
                                                             {
                                                                 courseInfo.find(
-                                                                    (course) => course.id === preference.courseId
+                                                                    (course) => course.id === application.courseId
                                                                 )?.courseCode
                                                             }
                                                         </TableCell>
                                                         <TableCell style={{ textAlign: 'center' }}>
                                                             {
                                                                 courseInfo.find(
-                                                                    (course) => course.id === preference.courseId
+                                                                    (course) => course.id === application.courseId
                                                                 )?.semester
                                                             }
                                                         </TableCell>
