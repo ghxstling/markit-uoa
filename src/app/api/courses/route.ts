@@ -85,7 +85,7 @@ export async function PATCH(req: NextRequest) {
     }
     
     return NextResponse.json(importedCourses, {
-            status: 200,
+            status: 201,
             statusText: 'Courses successfully imported from ' + sourceSemester + ' to ' + targetSemester
         }
     )
