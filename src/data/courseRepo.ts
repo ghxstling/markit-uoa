@@ -48,6 +48,13 @@ export default class CourseRepo {
     }
 
     static async updateCourseSemesters(semester: string, data: Prisma.CourseUpdateManyMutationInput) {
+        await prisma.application.deleteMany({
+            where: {
+                course: {
+                    semester
+                }
+            }
+        })
         return await prisma.course.updateMany({
             where: { semester },
             data,
