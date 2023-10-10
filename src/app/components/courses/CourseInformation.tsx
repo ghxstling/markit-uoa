@@ -101,6 +101,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     >(null)
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
     const [studentNameLookup, setStudentNameLookup] = useState<{ [key: number]: string }>({})
+    const [applicationsLength, setApplicationsLength] = useState(0)
 
     const emptyRows = page >= 0 ? Math.max(0, (1 + page) * rowsPerPage - studentData.length) : 0
 
@@ -262,6 +263,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
             })
             const jsonData = await response.json()
             setApplications(jsonData)
+            setApplicationsLength(jsonData.length)
             jsonData.sort((a: { applicationStatus: string }, b: { applicationStatus: string }) => {
                 if (a.applicationStatus === 'approved' && b.applicationStatus !== 'approved') {
                     return -1 // "approved" comes first
@@ -423,6 +425,22 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         }
     }
 
+    const filterApplications = (searchTerm: string) => {
+        const filtered = applications.filter((application) => {
+            const studentName = studentNameLookup[application.studentId]
+            const searchTermLower = searchTerm.toLowerCase()
+
+            if (studentName && studentName.toLowerCase().includes(searchTermLower)) {
+                return true
+            }
+
+            const student = studentData.find((student) => student.id === application.studentId)
+            return student && student.upi.toLowerCase().includes(searchTermLower)
+        })
+
+        setApplicationsLength(filtered.length)
+    }
+
     useEffect(() => {
         courseInformation()
     }, [])
@@ -492,7 +510,10 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                         name="search"
                         size="medium"
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={(e) => {
+                            setSearchTerm(e.target.value)
+                            filterApplications(e.target.value)
+                        }}
                         sx={{ width: '400px' }}
                     />
                 </Box>
@@ -762,7 +783,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     sx={{ width: '100%' }}
                                     rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
                                     colSpan={3}
-                                    count={applications.length}
+                                    count={applicationsLength}
                                     rowsPerPage={rowsPerPage}
                                     page={page}
                                     onPageChange={handleChangePage}
