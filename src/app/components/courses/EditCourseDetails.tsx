@@ -21,9 +21,6 @@ import {
     DialogContentText,
     DialogTitle,
     Autocomplete,
-    RadioGroup,
-    FormControlLabel,
-    Radio,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import React, { useEffect, useState } from 'react'
@@ -162,6 +159,7 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
             console.log(course.supervisorId)
             const foundSupervisor = supervisors.find((sup) => sup.id === course.supervisorId)
             setSelectedSupervisor(foundSupervisor)
+            console.log('Supervisors Array:', supervisors)
         } catch (error) {
             console.error('Error fetching course data:', error)
             setSnackbarMessage('Failed to fetch course data.')
@@ -169,6 +167,36 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
             setOpenSnackbar(true)
         }
     }
+
+    useEffect(() => {
+        if (session?.role !== 'coordinator') {
+            return // Exit early if not a coordinator
+        }
+
+        async function fetchData() {
+            try {
+                const response = await fetch('/api/supervisors/')
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`)
+                }
+
+                const data = await response.json()
+                setSupervisors(data)
+            } catch (error) {
+                console.error('Fetching supervisors failed:', error)
+            }
+        }
+
+        fetchData()
+    }, [session?.role]) // session.role is added to dependency array
+
+    useEffect(() => {
+        if (supervisorId !== null && supervisors.length > 0) {
+            const foundSupervisor = supervisors.find((sup) => sup.id === supervisorId)
+            setSelectedSupervisor(foundSupervisor)
+        }
+    }, [supervisorId, supervisors])
 
     useEffect(() => {
         async function fetchCourseDetails() {
