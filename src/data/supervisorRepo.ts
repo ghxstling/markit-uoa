@@ -47,7 +47,11 @@ export default class SupervisorRepo {
     }
 
     static async getAllSupervisors() {
-        return await prisma.supervisor.findMany()
+        return await prisma.supervisor.findMany({
+            include: {
+                user: true,
+            },
+        });
     }
 
 }

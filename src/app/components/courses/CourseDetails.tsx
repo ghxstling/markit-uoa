@@ -15,10 +15,16 @@ import {
     Input,
     TextField,
     IconButton,
+    Autocomplete,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+
+interface Supervisor {
+    id: number
+    // ... other properties ...
+}
 
 export default function CourseDetails() {
     const [courseCode, setCourseCode] = useState('')
@@ -40,6 +46,8 @@ export default function CourseDetails() {
     const [snackbarMessage, setSnackbarMessage] = React.useState('')
     const [snackbarSeverity, setSnackbarSeverity] = React.useState<'success' | 'error'>('success')
     const router = useRouter()
+    const [supervisors, setSupervisors] = useState<any[]>([])
+    const [selectedSupervisor, setSelectedSupervisor] = useState<Supervisor | null>(null)
 
     const handleManualInputChange = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -72,6 +80,25 @@ export default function CourseDetails() {
         setDescription(newDescription)
         setWordCount(newWordCount)
     }
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const response = await fetch('/api/supervisors/')
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`)
+                }
+
+                const data = await response.json()
+                setSupervisors(data)
+            } catch (error) {
+                console.error('Fetching supervisors failed:', error)
+            }
+        }
+
+        fetchData()
+    }, [])
 
     async function handleSubmit() {
         // Validation checks
@@ -130,6 +157,13 @@ export default function CourseDetails() {
             return
         }
 
+        if (!selectedSupervisor) {
+            setSnackbarMessage('Please select a supervisor.')
+            setSnackbarSeverity('error')
+            setOpenSnackbar(true)
+            return
+        }
+
         const finalCourseCode = `COMPSCI ${courseCode}`
 
         const formData = {
@@ -142,6 +176,7 @@ export default function CourseDetails() {
             markersNeeded: markersNeeded.slider,
             semester: `${selectedYear}${selectedSemester}`,
             markerResponsibilities: description,
+            supervisorId: selectedSupervisor.id, // Include supervisor's ID
         }
         //Test to check submission data
         //console.log('Submitting form with data:', formData)
@@ -234,7 +269,6 @@ export default function CourseDetails() {
                             </Grid>
                         </Grid>
                     </Grid>
-
                     <Grid item>
                         <TextField
                             label="Course Description"
@@ -303,7 +337,6 @@ export default function CourseDetails() {
                             </Grid>
                         </Grid>
                     </Grid>
-
                     <Grid item xs={12}>
                         <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
                             <Grid item>
@@ -327,7 +360,6 @@ export default function CourseDetails() {
                             </Grid>
                         </Grid>
                     </Grid>
-
                     <Grid item xs={12}>
                         <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
                             <Grid item>
@@ -351,7 +383,6 @@ export default function CourseDetails() {
                             </Grid>
                         </Grid>
                     </Grid>
-
                     <Grid item xs={12}>
                         <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
                             <Grid item>
@@ -375,7 +406,6 @@ export default function CourseDetails() {
                             </Grid>
                         </Grid>
                     </Grid>
-
                     <Grid item xs={12}>
                         <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
                             <Grid item>
@@ -389,6 +419,27 @@ export default function CourseDetails() {
                                     onChange={handleDescriptionChange}
                                 />
                                 <FormHelperText>{`${wordCount}/100`}</FormHelperText>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
+                            <Grid item>
+                                <Typography gutterBottom>Course Supervisor:</Typography>
+                            </Grid>
+                            <Grid item>
+                                <Autocomplete
+                                    options={supervisors}
+                                    getOptionLabel={(option) => (option && option.user ? option.user.name : 'N/A')}
+                                    value={selectedSupervisor}
+                                    onChange={(event, newValue) => {
+                                        setSelectedSupervisor(newValue)
+                                    }}
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Select Supervisor" variant="outlined" fullWidth />
+                                    )}
+                                />
                             </Grid>
                         </Grid>
                     </Grid>
