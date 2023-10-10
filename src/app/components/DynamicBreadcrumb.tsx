@@ -5,10 +5,12 @@ import { usePathname } from 'next/navigation'
 import NextLink from 'next/link'
 import path from 'path'
 import { useSession } from 'next-auth/react'
+import { useState } from 'react'
 
 const DynamicBreadcrumb = () => {
     const { data: session } = useSession()
     const pathName = usePathname()
+    const [courseCode, setCourseCode] = useState('')
 
     let pathArray = pathName.split('/')
     pathArray = pathArray.filter((segment) => segment !== '')
@@ -23,6 +25,24 @@ const DynamicBreadcrumb = () => {
             return {
                 href,
                 label: 'ViewAllCourses',
+            }
+        } else if (isNaN(parseInt(path)) === false) {
+            const href = '/' + pathArray.slice(0, index + 1).join('/')
+            const fetchData = async () => {
+                try {
+                    const response = await fetch('/api/courses/' + path, { method: 'GET' })
+                    const jsonData = await response.json()
+                    return jsonData
+                } catch (error) {
+                    console.error('Error fetching data:', error)
+                }
+            }
+            fetchData().then((data) => {
+                setCourseCode(data.courseCode)
+            })
+            return {
+                href,
+                label: courseCode,
             }
         } else {
             const href = '/' + pathArray.slice(0, index + 1).join('/')
