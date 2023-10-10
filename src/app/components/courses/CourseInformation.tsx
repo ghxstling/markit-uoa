@@ -16,6 +16,7 @@ import {
     TableContainer,
     Drawer,
     TableSortLabel,
+    TextField,
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { Card } from '@mui/material'
@@ -482,8 +483,21 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                         </Table>
                     </TableContainer>
                 </Box>
+                <Box display={'flex'} justifyContent="center" alignItems="center" sx={{ mt: 1 }}>
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        id="search"
+                        label="Search by Student Name or UPI"
+                        name="search"
+                        size="medium"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        sx={{ width: '400px' }}
+                    />
+                </Box>
                 <TableContainer>
-                    <Table sx={{ mt: 4 }}>
+                    <Table sx={{ mt: 1 }}>
                         <TableHead>
                             <TableRow>
                                 <TableCell
@@ -607,8 +621,28 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                         </TableHead>
                         <TableBody>
                             {(rowsPerPage > 0
-                                ? applications.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                : applications
+                                ? applications
+                                      .filter(
+                                          (application) =>
+                                              studentNameLookup[application.studentId]
+                                                  .toLowerCase()
+                                                  .includes(searchTerm.toLowerCase()) ||
+                                              studentData
+                                                  .find((student) => student.id === application.studentId)
+                                                  ?.upi.toLowerCase()
+                                                  .includes(searchTerm.toLowerCase())
+                                      )
+                                      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                : applications.filter(
+                                      (application) =>
+                                          studentNameLookup[application.studentId]
+                                              .toLowerCase()
+                                              .includes(searchTerm.toLowerCase()) ||
+                                          studentData
+                                              .find((student) => student.id === application.studentId)
+                                              ?.upi.toLowerCase()
+                                              .includes(searchTerm.toLowerCase())
+                                  )
                             ).map((application) => (
                                 <TableRow
                                     key={application.id}
