@@ -32,4 +32,15 @@ export default class CourseService {
         }, 0)
         return hours
     }
+
+    static async importCourses(source: string, target: string) {
+        const coursesToUpdate = (await CourseRepo.getAllCourses()).filter((course) => course.semester === source)
+        const updatedCoursesCount = await CourseRepo.updateCourseSemesters(source, { semester: target, needMarkers: true })
+        if (coursesToUpdate.length === updatedCoursesCount.count) {
+            const updatedCourses = (await CourseRepo.getAllCourses()).filter((course) => course.semester === target)
+            return updatedCourses
+        } else {
+            return null
+        }
+    }
 }
