@@ -9,7 +9,7 @@ export default class CourseService {
     static async getCourseWithMarkerData() {
         const courses = await CourseRepo.getAllCourses()
         const coursesWithMarkerData = courses.map((course) => {
-            const assignedMarkers = this._getAssignedMarkers(course.application)
+            const assignedMarkers = this._getAssignedMarkers(course.application).length
             const allocatedHours = this._getAllocatedHours(course.application)
             const { application, ...courseWithoutApplication } = course
             return { ...courseWithoutApplication, assignedMarkers, allocatedHours }
