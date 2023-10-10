@@ -27,7 +27,7 @@ const DynamicBreadcrumb = () => {
                 label: 'ViewAllCourses',
             }
         } else if (isNaN(parseInt(path)) === false) {
-            const href = '/' + pathArray.slice(0, index + 1).join('/')
+            const href = '/dashboard/courses/' + path
             const fetchData = async () => {
                 try {
                     const response = await fetch('/api/courses/' + path, { method: 'GET' })
