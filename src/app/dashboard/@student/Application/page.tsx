@@ -68,6 +68,7 @@ const postStudentDetails = async (formValues: IFormValues) => {
 }
 
 const postCourseApplications = async (formValues: IFormValues) => {
+    console.log(formValues.coursePreferences)
     const courseApplications = formValues.coursePreferences
     const res = await fetch('/api/applications', {
         method: 'POST',
@@ -123,7 +124,7 @@ const Application = () => {
     const [openSnackBar, setOpenSnackBar] = useState(false)
     const [openSnackBarSuccess, setOpenSnackBarSuccess] = useState(false)
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('Student submitted successfully!')
-    const [currentAppliations, setCurrentApplications] = useState<ApplicantsData[]>([])
+    const [currentApplicationIds, setCurrentApplicationIds] = useState<number[]>([])
 
     //fetch existing student and application details, get relevant values and update formValues
 
@@ -137,7 +138,9 @@ const Application = () => {
             const response2 = await fetch(`/api/students/me`, { method: 'GET' })
             if (response1.ok && response2.ok) {
                 let jsonData1 = await response1.json()
-                setCurrentApplications(jsonData1)
+                const currentIds: number[] = []
+                jsonData1.forEach((application: ApplicantsData) => currentIds.push(application.courseId))
+                setCurrentApplicationIds(currentIds)
                 jsonData1 = jsonData1.sort((a: any, b: any) => a.preferenceId - b.preferenceId)
                 const jsonData2 = await response2.json()
                 let currentCoursePreferences = jsonData1.map((application: any) => {
@@ -166,7 +169,9 @@ const Application = () => {
                 })
             } else if (response1.ok && !response2.ok) {
                 let jsonData1 = await response1.json()
-                setCurrentApplications(jsonData1)
+                const currentIds: number[] = []
+                jsonData1.forEach((application: ApplicantsData) => currentIds.push(application.courseId))
+                setCurrentApplicationIds(currentIds)
                 jsonData1 = jsonData1.sort((a: any, b: any) => a.preferenceId - b.preferenceId)
                 let currentCoursePreferences = jsonData1.map((application: any) => {
                     return {
@@ -251,9 +256,6 @@ const Application = () => {
         if (activeStep === steps.length - 1) {
             //check all applications
             let uniqueCourses: Set<number> = new Set()
-            if (currentAppliations.length !== 0) {
-                currentAppliations.forEach((application: ApplicantsData) => uniqueCourses.add(application.courseId))
-            }
             for (let coursePreference of formValues.coursePreferences) {
                 if (coursePreference.courseName === '' || coursePreference.course === '') {
                     setSnackbarMessage(
@@ -262,14 +264,32 @@ const Application = () => {
                     setOpenSnackBar(true)
                     return
                 } else {
-                    if (!uniqueCourses.has(coursePreference.course)) {
-                        uniqueCourses.add(coursePreference.course)
+                    if (currentApplicationIds.length !== 0) {
+                        //if the course id exists in current applications, add it to unique id's and continue
+                        if (currentApplicationIds.includes(coursePreference.course)) {
+                            uniqueCourses.add(coursePreference.course)
+                        }
+                        //if it is not in current applications and is not in the unique course list yet, add it and continue
+                        else if (!uniqueCourses.has(coursePreference.course)) {
+                            uniqueCourses.add(coursePreference.course)
+                        } else {
+                            setSnackbarMessage(
+                                'You have more than one application for a course, please select a unique course for all applications'
+                            )
+                            setOpenSnackBar(true)
+                            return
+                        }
                     } else {
-                        setSnackbarMessage(
-                            'You have more than one application for a course, please select a unique course for all applications'
-                        )
-                        setOpenSnackBar(true)
-                        return
+                        //if it is not in current applications and is not in the unique course list yet, add it and continue
+                        if (!uniqueCourses.has(coursePreference.course)) {
+                            uniqueCourses.add(coursePreference.course)
+                        } else {
+                            setSnackbarMessage(
+                                'You have more than one application for a course, please select a unique course for all applications'
+                            )
+                            setOpenSnackBar(true)
+                            return
+                        }
                     }
                 }
                 if (coursePreference.grade === '') {

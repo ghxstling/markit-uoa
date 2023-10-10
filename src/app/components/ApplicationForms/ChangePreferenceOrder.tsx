@@ -31,6 +31,7 @@ export default function ChangePreferenceOrder() {
     const [courseInfo, setCourseInfo] = useState<Courses[]>([])
 
     useEffect(() => {
+        console.log('fetching applications')
         fetchApplications()
     }, [])
 
@@ -38,6 +39,7 @@ export default function ChangePreferenceOrder() {
         try {
             const response = await fetch('/api/students/me/applications')
             let jsonData = await response.json()
+            console.log(jsonData)
             jsonData = jsonData.sort((a: Application, b: Application) => a.preferenceId - b.preferenceId)
             if (response.ok) {
                 setApplications(jsonData)
@@ -54,7 +56,7 @@ export default function ChangePreferenceOrder() {
     const fetchCourseInfo = async () => {
         try {
             const response = await fetch('/api/courses', { method: 'GET' })
-            const jsonData = await response.json()
+            let jsonData = await response.json()
             if (response.ok) {
                 setCourseInfo(jsonData)
             }
@@ -76,7 +78,7 @@ export default function ChangePreferenceOrder() {
     const submitPreferences = async () => {
         const currentPreferences = [...applications]
         handlePreferenceUpdate(currentPreferences)
-        fetchCourseInfo()
+        fetchApplications()
     }
 
     const handlePreferenceUpdate = async (applications: Application[]) => {
