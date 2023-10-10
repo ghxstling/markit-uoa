@@ -40,7 +40,7 @@ export default function CoursePieChart() {
     }
 
     useEffect(() => {
-        fetchCoursesData().then(async (courses) => {
+        fetchCoursesData().then((courses) => {
             const stats: ChartData[] = []
 
             for (const course of courses) {
