@@ -74,7 +74,7 @@ model Student {
 model Application {
   id                      Int     @id @default(autoincrement())
   applicationStatus       String  @default("pending") // refer to the applicationStatus enum in models/applicationStatus.ts
-  allocatedHours          Int     @default(5) // needed if applicationStatus is 'accepted'
+  allocatedHours          Int     @default(0) // needed if applicationStatus is 'accepted'
   preferenceId            Int
   // many to one with Student
   student                 Student @relation(fields: [studentId], references: [id], onDelete: Cascade)

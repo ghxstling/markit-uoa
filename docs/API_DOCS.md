@@ -236,7 +236,7 @@ The rationale behind this is that a `Student` should not be allowed access to ot
 model Application {
   id                      Int     @id @default(autoincrement())
   applicationStatus       String  @default("pending")
-  allocatedHours          Int     @default(5)
+  allocatedHours          Int     @default(0)
   preferenceId            Int
   // many to one with Student
   student                 Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
@@ -322,7 +322,7 @@ Refer to the **Additonal Notes** under the **Students** section for `/api/studen
 model Application {
   id                      Int     @id @default(autoincrement())
   applicationStatus       String  // applicationStatus must be "approved" to be a marker
-  allocatedHours          Int     @default(5)
+  allocatedHours          Int     @default(0)
   preferenceId            Int
   // many to one with Student
   student                 Student @relation(fields: [studentId], references: [id], onDelete: Cascade)

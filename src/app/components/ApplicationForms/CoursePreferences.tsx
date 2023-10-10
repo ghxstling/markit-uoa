@@ -1,5 +1,5 @@
 import { Button, Grid, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CourseApplication from './CourseApplication'
 import { IFormValues } from '@/types/IFormValues'
 import { CourseApplicationType } from '@/types/CourseApplicationType'
@@ -11,6 +11,31 @@ interface CoursePreferenceProps {
 
 const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFormValues }) => {
     const [coursePreferenceID, setCoursePreferenceID] = useState(1)
+
+    useEffect(() => {
+        fetchApplications()
+    }, [formValues.coursePreferences.length])
+
+    const fetchApplications = async () => {
+        try {
+            const response = await fetch(`/api/students/me/applications`, { method: 'GET' })
+            if (response.ok) {
+                const jsonData = await response.json()
+                let maxId = 0
+                jsonData.forEach((application: any) => {
+                    maxId = Math.max(application.preferenceId, maxId)
+                })
+                if (formValues.coursePreferences.length !== 0) {
+                    formValues.coursePreferences.forEach((pref) => (maxId = Math.max(maxId, pref.prefId)))
+                }
+                setCoursePreferenceID(maxId + 1)
+            } else {
+                return
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
+    }
 
     const addCourseApplication = () => {
         let newApplications: CourseApplicationType[] = [
@@ -46,7 +71,7 @@ const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFor
             (coursePreference) => coursePreference.id !== id
         )
         updatedApplications.forEach((coursePreference, index) => {
-            coursePreference.prefId = index + 1
+            coursePreference.prefId = index + coursePreferenceID - formValues.coursePreferences.length
             prefIdCounter++
         })
         setFormValues({ ...formValues, coursePreferences: updatedApplications })

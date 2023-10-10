@@ -35,7 +35,7 @@ export default function GradeBarChart() {
         const fetchApplications = async () => {
             try {
                 // get all applications
-                const response = await fetch('api/applications/', { method: 'GET' })
+                const response = await fetch('api/applications', { method: 'GET' })
                 const applicationsJson = await response.json()
                 return applicationsJson
             } catch (error) {

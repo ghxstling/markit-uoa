@@ -186,7 +186,6 @@ const Sidebar = () => {
             session.user.name.slice(session.user.name.lastIndexOf(' '))[1] +
             '.'
         const email: string = session.user.email
-        console.log(session.role)
         switch (session.role) {
             case 'coordinator':
                 sidebarContent = content(
@@ -194,7 +193,7 @@ const Sidebar = () => {
                     email,
                     [
                         ['Create New Course', '/dashboard/courses', 'CreateNewFolderIcon'],
-                        ['View All Courses', '/dashboard/viewAllCoursespage', 'CalendarViewDayIcon'],
+                        ['View All Courses', '/dashboard/viewAllCourses', 'CalendarViewDayIcon'],
                         ['Manage User Roles', '/dashboard/manageUsers', 'ManageAccountsIcon'],
                     ],
                     open,
