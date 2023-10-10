@@ -1,17 +1,13 @@
 'use client'
 
-import Sidebar from '../../../../components/Sidebar'
 import DynamicBreadcrumb from '@/app/components/DynamicBreadcrumb'
-import { usePathname } from 'next/navigation'
-import { ThemeProvider } from '@mui/material/styles'
-import CustomTheme from '@/app/CustomTheme'
+import Sidebar from '@/app/components/Sidebar'
+import ImportCourses from '@/app/components/courses/ImportCourses'
 import { Box, Stack } from '@mui/material'
-import CourseInformation from '@/app/components/courses/CourseInformation'
+import CustomTheme from '@/app/CustomTheme'
+import { ThemeProvider } from '@mui/material/styles'
 
-export default function CreateCoursePage() {
-    const pathname = usePathname()
-    const courseId = pathname.split('/').pop() || ''
-
+export default function AllCourseView() {
     return (
         <ThemeProvider theme={CustomTheme}>
             <Sidebar />
@@ -26,7 +22,7 @@ export default function CreateCoursePage() {
             >
                 <Box
                     sx={{
-                        mt: '30px',
+                        mt: '20px',
                         ml: { xs: '5px', lg: '100px', xl: '200px' },
                     }}
                 >
@@ -34,13 +30,13 @@ export default function CreateCoursePage() {
                 </Box>
                 <Box
                     sx={{
-                        mt: '40px',
+                        mt: '50px',
                         ml: { xs: '5px', lg: '150px', xl: '250px' },
                         mr: { xs: '5px', lg: '150px', xl: '250px' },
-                        mb: '50px',
+                        mb: '100px',
                     }}
                 >
-                    <CourseInformation courseId={courseId} />
+                    <ImportCourses />
                 </Box>
             </Box>
         </ThemeProvider>

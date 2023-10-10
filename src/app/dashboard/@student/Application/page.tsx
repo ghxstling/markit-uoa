@@ -5,7 +5,7 @@ import EmploymentDetails from '@/app/components/ApplicationForms/EmploymentDetai
 import PersonalDetails from '@/app/components/ApplicationForms/PersonalDetails'
 import { IFormValues } from '@/types/IFormValues'
 import { Box, Button, Container, Paper, Snackbar, Step, StepLabel, Stepper, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import validator from 'validator'
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
 import CoursePreferences from '@/app/components/ApplicationForms/CoursePreferences'
@@ -76,8 +76,18 @@ const postCourseApplications = async (formValues: IFormValues) => {
         },
         body: JSON.stringify(courseApplications),
     })
-    console.log(JSON.stringify(courseApplications))
     return res
+}
+
+const getCourseNameById = async (courseId: number) => {
+    const res = await fetch(`/api/courses/${courseId}`, {
+        method: 'GET',
+    })
+    if (res.ok) {
+        return res.statusText.split(' ')[2] + ' ' + res.statusText.split(' ')[3]
+    } else {
+        alert('Error occured on get course name')
+    }
 }
 
 const Application = () => {
@@ -98,12 +108,85 @@ const Application = () => {
         coursePreferences: [],
     })
 
-    //TODO Fetch existing application, get relevant values and update formValues
-
     const [snackbarMessage, setSnackbarMessage] = useState('Please enter 9 digits for your student ID')
     const [openSnackBar, setOpenSnackBar] = useState(false)
     const [openSnackBarSuccess, setOpenSnackBarSuccess] = useState(false)
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('Student submitted successfully!')
+
+    //fetch existing student and application details, get relevant values and update formValues
+
+    useEffect(() => {
+        fetchApplicationsAndStudentData()
+    }, [])
+
+    const fetchApplicationsAndStudentData = async () => {
+        try {
+            const response1 = await fetch(`/api/students/me/applications`, { method: 'GET' })
+            const response2 = await fetch(`/api/students/me`, { method: 'GET' })
+            if (response1.ok && response2.ok) {
+                let jsonData1 = await response1.json()
+                jsonData1 = jsonData1.sort((a: any, b: any) => a.preferenceId - b.preferenceId)
+                const jsonData2 = await response2.json()
+                let currentCoursePreferences = jsonData1.map((application: any) => {
+                    return {
+                        id: application.id,
+                        courseName: getCourseNameById(application.courseId),
+                        prefId: application.preferenceId,
+                        course: application.courseId,
+                        grade: application.previouslyAchievedGrade,
+                        explainNotTaken: application.notTakenExplanation,
+                        markedPreviously: application.hasMarkedCourse,
+                        tutoredPreviously: application.hasTutoredCourse,
+                        explainNotPrevious: application.equivalentQualification,
+                    }
+                })
+                setFormValues({
+                    ...formValues,
+                    AUID: jsonData2.auid,
+                    currentlyOverseas: jsonData2.overseas === false ? 'No' : 'Yes',
+                    citizenOrPermanentResident: jsonData2.residencyStatus === false ? 'No' : 'Yes',
+                    workVisa: jsonData2.validWorkVisa === false ? 'No' : 'Yes',
+                    degree: jsonData2.degreeType,
+                    degreeYears: jsonData2.degreeYear,
+                    workHours: jsonData2.maxWorkHours,
+                    coursePreferences: currentCoursePreferences,
+                })
+            } else if (response1.ok && !response2.ok) {
+                let jsonData1 = await response1.json()
+                jsonData1 = jsonData1.sort((a: any, b: any) => a.preferenceId - b.preferenceId)
+                let currentCoursePreferences = jsonData1.map((application: any) => {
+                    return {
+                        id: application.id,
+                        courseName: getCourseNameById(application.courseId),
+                        prefId: application.preferenceId,
+                        course: application.courseId,
+                        grade: application.previouslyAchievedGrade,
+                        explainNotTaken: application.notTakenExplanation,
+                        markedPreviously: application.hasMarkedCourse,
+                        tutoredPreviously: application.hasTutoredCourse,
+                        explainNotPrevious: application.equivalentQualification,
+                    }
+                })
+                setFormValues({ ...formValues, coursePreferences: currentCoursePreferences })
+            } else if (response2.ok && !response1.ok) {
+                const jsonData2 = await response2.json()
+                setFormValues({
+                    ...formValues,
+                    AUID: jsonData2.auid,
+                    currentlyOverseas: jsonData2.overseas === false ? 'No' : 'Yes',
+                    citizenOrPermanentResident: jsonData2.residencyStatus === false ? 'No' : 'Yes',
+                    workVisa: jsonData2.validWorkVisa === false ? 'No' : 'Yes',
+                    degree: jsonData2.degreeType,
+                    degreeYears: jsonData2.degreeYear,
+                    workHours: jsonData2.maxWorkHours,
+                })
+            } else if (!response1.ok && !response2.ok) {
+                throw new Error('Something went wrong')
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
+    }
 
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
@@ -126,7 +209,7 @@ const Application = () => {
                 setSnackbarMessage('Please enter a valid email address')
                 setOpenSnackBar(true)
                 return
-            } else if ((formValues.AUID as string).length !== 9) {
+            } else if (String(formValues.AUID).length !== 9) {
                 setSnackbarMessage('Please enter 9 digits for your student ID')
                 setOpenSnackBar(true)
                 return
@@ -153,6 +236,7 @@ const Application = () => {
 
         if (activeStep === steps.length - 1) {
             //check all applications
+            let uniqueCourses: Set<number> = new Set()
             for (let coursePreference of formValues.coursePreferences) {
                 if (coursePreference.courseName === '' || coursePreference.course === '') {
                     setSnackbarMessage(
@@ -160,26 +244,49 @@ const Application = () => {
                     )
                     setOpenSnackBar(true)
                     return
-                } else if (coursePreference.grade === '') {
+                } else {
+                    if (!uniqueCourses.has(coursePreference.course)) {
+                        uniqueCourses.add(coursePreference.course)
+                    } else {
+                        setSnackbarMessage(
+                            'You have more than one application for a course, please select a unique course for all applications'
+                        )
+                        setOpenSnackBar(true)
+                        return
+                    }
+                }
+                if (coursePreference.grade === '') {
                     setSnackbarMessage(
                         'One of your applications does not contain a selected Grade, please select a grade for all applications or select Not Taken Previously'
                     )
                     setOpenSnackBar(true)
                     return
-                }
-                const res = await postCourseApplications(formValues)
-                if (res.ok) {
-                    setSnackbarSuccessMessage('Course selection submitted successfully')
-                    setOpenSnackBarSuccess(true)
-                } else {
-                    setSnackbarMessage('Error submitting course selection details, please try again')
+                } else if (coursePreference.grade === 'NotTaken' && coursePreference.explainNotTaken === '') {
+                    setSnackbarMessage(
+                        'One of your applications is for a course you have not taken, please provide an explanation'
+                    )
+                    setOpenSnackBar(true)
+                    return
+                } else if (
+                    (coursePreference.markedPreviously === true || coursePreference.tutoredPreviously === true) &&
+                    coursePreference.explainNotPrevious === ''
+                ) {
+                    setSnackbarMessage(
+                        'One of your applications is for a course you have not marked or tutored, please provide an explanation'
+                    )
                     setOpenSnackBar(true)
                     return
                 }
             }
-
-            //TODO: check that there are 2 selected files (do this after the file storage method has been confirmed)
-            console.log(formValues)
+            const res = await postCourseApplications(formValues)
+            if (res.ok) {
+                setSnackbarSuccessMessage('Course selection submitted successfully')
+                setOpenSnackBarSuccess(true)
+            } else {
+                setSnackbarMessage('Error submitting course selection details, please try again')
+                setOpenSnackBar(true)
+                return
+            }
         }
         setActiveStep(activeStep + 1)
 

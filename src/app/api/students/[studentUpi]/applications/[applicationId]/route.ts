@@ -78,3 +78,61 @@ export async function GET(req: NextRequest, { params }: Params) {
         }
     )
 }
+
+// PATCH /api/students/[studentUpi]/applications/[applicationId]
+export async function PATCH(req: NextRequest, { params }: Params) {
+    const token = await getToken({ req })
+    if(token!.role != Role.Coordinator &&
+        token!.role != Role.Supervisor) {
+        return new NextResponse(
+            JSON.stringify({
+                success: false,
+                message: 'Only supervisors and coordinators can access this endpoint'
+            }),
+            { status: 403, headers: { 'content-type': 'application/json' } }
+        )
+    }
+
+    const upi = params.studentUpi
+    const student = await StudentRepo.getStudentByUpi(upi)
+    if (!student) {
+        return NextResponse.json( 
+            {
+                status: 404,
+                statusText: 'Student ' + upi + ' does not exist',
+            },
+            { status: 404 }
+        )
+    }
+
+    const id = parseInt(params.applicationId)
+    const application = await ApplicationRepo.getApplicationById(id)
+    if (!application) {
+        return NextResponse.json( 
+            {
+                status: 404,
+                statusText: 'Application ID ' + id + ' does not exist',
+            },
+            { status: 404 }
+        )
+    }
+
+    if (application.studentId !== student.id) {
+        return NextResponse.json( 
+            {
+                status: 403,
+                statusText: 'Internal Error: Application ID ' + id + ' doesn\'t exist for student ' + upi,
+            },
+            { status: 403 }
+        )
+    }
+    
+    const { isQualified } = await req.json()
+    const updatedApplication = await ApplicationRepo.updateApplication(id, { isQualified })
+    return NextResponse.json(updatedApplication, 
+        {
+            status: 200,
+            statusText: 'Application ID ' + id + ' updated successfully',
+        }
+    )
+}

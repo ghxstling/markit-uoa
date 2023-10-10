@@ -39,24 +39,13 @@ export default function CoursePieChart() {
         }
     }
 
-    const fetchApplications = async (courseId: number) => {
-        try {
-            // get all applications for each course based on courseId (PK)
-            const response = await fetch('/api/courses/' + courseId.toString() + '/applications', { method: 'GET' })
-            const applicationsJson = await response.json()
-            return applicationsJson
-        } catch (error) {
-            console.error('Error fetching data:', error)
-        }
-    }
-
     useEffect(() => {
-        fetchCoursesData().then(async (courses) => {
+        fetchCoursesData().then((courses) => {
             const stats: ChartData[] = []
 
             for (const course of courses) {
                 const courseId = course.id
-                const applications = await fetchApplications(courseId)
+                const applications = course.application
                 const numOfApplications = applications.length
                 const courseCode = course.courseCode
 
@@ -72,7 +61,7 @@ export default function CoursePieChart() {
             setApplicationStats(stats.slice(0, 10)) // Update the state with the fetched data
             setIsLoading(false)
         })
-    }, [applicationStats])
+    }, [])
 
     if (isLoading) {
         return <CircularProgress />

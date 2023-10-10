@@ -28,6 +28,8 @@ export default function CourseTable() {
         needMarkers: boolean
         id: number
         markerHours: number
+        assignedMarkers: number
+        allocatedHours: number
     }
 
     const [data, setData] = useState<Course[]>([])
@@ -38,7 +40,7 @@ export default function CourseTable() {
 
     const fetchData = async () => {
         try {
-            const response = await fetch('/api/courses', { method: 'GET' })
+            const response = await fetch('/api/courses/with-markers', { method: 'GET' })
             const jsonData = await response.json()
             setData(jsonData)
         } catch (error) {
@@ -199,8 +201,13 @@ export default function CourseTable() {
                                 {/*TODO add this data<TableCell style={{textAlign:'center'}}>{course.applicants}</TableCell>*/}
                                 {isCoordinator ? (
                                     <>
-                                        <TableCell style={{ textAlign: 'center' }}>2/{course.markersNeeded}</TableCell>
-                                        <TableCell style={{ textAlign: 'center' }}>30/{course.markerHours}</TableCell>
+                                        <TableCell style={{ textAlign: 'center' }}>
+                                            {course.assignedMarkers}/{course.markersNeeded}
+                                        </TableCell>
+                                        <TableCell style={{ textAlign: 'center' }}>
+                                            {course.allocatedHours === 0 ? 0 : course.allocatedHours}/
+                                            {course.markerHours}
+                                        </TableCell>
                                     </>
                                 ) : (
                                     <TableCell style={{ textAlign: 'center' }}>2/{course.markersNeeded}</TableCell>

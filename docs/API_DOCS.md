@@ -18,7 +18,7 @@ Made by Dylan Choy (the One Man Army)
     - `/api/courses/[courseId]/markers`
 5. Supervisors
     - `/api/supervisors`
-5. Users (will be refactored)
+5. Users
     - `/api/users`
 6. Changelog
 
@@ -50,6 +50,7 @@ model Course {
     - Retrieves all `Course`s from the database.
     - Returns:
         - An array of `Course`s.
+    
 - `POST /api/courses`
     - Creates a new `Course` in the database from the data provided in the request body.
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
@@ -68,11 +69,19 @@ model Course {
         }
         ```
     - Returns:
+      
         - The newly created `Course`.
+    
+- `GET /api/courses/with-markers`
+
+    - Returns:
+        - An array of `Course`s with `allocatedHours` and `assignedMarkers` included.
+
 - `GET /api/courses/[courseId]`
     - Retrieves a `Course` from the database with the given `courseId`.
     - Returns:
         - The `Course` with the given `courseId`.
+    
 - `PATCH /api/courses/[courseId]`
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
     - Updates an existing `Course` in the database with the given `courseId`.
@@ -91,6 +100,7 @@ model Course {
         }
         ```
     - Returns:
+      
         - The updated `Course`.
 
 ### Students
@@ -127,7 +137,7 @@ model Student {
     - Retrieves all `Student`s from the database.
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
     - Returns:
-        - An array of `Student`s.
+        - An array of `Student`s with `Application`s.
 - `POST /api/students`
     - Creates a new `Student` in the database from the data provided in the request body.
     - You must be a `Student` to access this endpoint.
@@ -149,12 +159,13 @@ model Student {
         }
         ```
     - Returns:
+      
         - The newly created `Student`.
 - `GET /api/students/[studentUpi]`
     - Retrieves a `Student` from the database with the given `studentId`.
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
     - Returns:
-        - The `Student` with the given `studentUpi`.
+        - The `Student` with the given `studentUpi` and `application`s and `course`s.
 - `GET /api/students/[studentUpi]/cv`
     - Retrieves a `Student`'s CV from the connected AWS S3 bucket.
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
@@ -225,7 +236,7 @@ The rationale behind this is that a `Student` should not be allowed access to ot
 model Application {
   id                      Int     @id @default(autoincrement())
   applicationStatus       String  @default("pending")
-  allocatedHours          Int     @default(5)
+  allocatedHours          Int     @default(0)
   preferenceId            Int
   // many to one with Student
   student                 Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
@@ -254,6 +265,7 @@ model Application {
     - Returns:
         - An array of `Application`s.
 - `POST /api/applications`
+  
     - Creates one or more `Student` `Application`s in the database.
     - You must be a `Student` to access this endpoint.
     - Data Required:
@@ -271,6 +283,7 @@ model Application {
         }[]
         ```
     - Returns:
+      
         - An array of newly created `Application`s.
 - `GET /api/courses/[courseId]/applications`
     - Retrieves `Student` `Application`s for a given `Course`.
@@ -287,6 +300,17 @@ model Application {
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
     - Returns:
         - The specified `Application` for a given `Student`.
+- `PATCH /api/students/[studentUpi]/applications/[applicationId]`
+    - Updates the qualification status of a `Student` `Application` for a given `Course`.
+    - You must be a `Supevisor` or `Coordinator` to access this endpoint.
+    - Data Required:
+    ```typescript
+    {
+        isQualified: boolean,
+    }
+    ```
+    - Returns:
+        - The updated `Student`'s `Application`
 - `GET /api/students/me/applications`
     - Retrieves a `Student`'s own `Application`s.
     - You must be a `Student` to access this endpoint.
@@ -297,6 +321,17 @@ model Application {
     - You must be a `Student` to access this endpoint.
     - Returns:
         - The specified `Application` that belongs to the `Student`.
+- `PATCH /api/students/me/applications/[applicationId]`
+    - Updates the `preferenceId` of a `Student`'s own `Application`, and reorders the `preferenceId`s of all `Application`s.
+    - You must be a `Student` to access this endpoint.
+    - Data Required:
+    ```typescript
+    {
+        isQualified: boolean,
+    }
+    ```
+    - Returns:
+        - The updated `Student`'s `Application`
 
 **Additional Notes:**
 
@@ -309,7 +344,7 @@ Refer to the **Additonal Notes** under the **Students** section for `/api/studen
 model Application {
   id                      Int     @id @default(autoincrement())
   applicationStatus       String  // applicationStatus must be "approved" to be a marker
-  allocatedHours          Int     @default(5)
+  allocatedHours          Int     @default(0)
   preferenceId            Int
   // many to one with Student
   student                 Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
@@ -369,6 +404,7 @@ model Application {
         }
         ```
     - Returns:
+      
         - The updated `Marker` for a given `Course`.
 - `DELETE /api/courses/[courseId]/markers/[markerId]`
     - Removes a `Marker` from a given `Course`.
@@ -380,7 +416,7 @@ model Application {
 
 There is no schema defined for `Marker`, rather `Application` is reused. For the purpose of this API, a `Marker` is represented by an `Application` that has been approved by a `Coordinator`. This is done to eliminate potential data redundancy and to simplify the database schema.
 
-### Supervisor (WIP)
+### Supervisors
 
 **Schema:**
 ```prisma
@@ -466,14 +502,38 @@ model User {
         }
         ```
     - Returns:
+      
         - The updated `User` for a given `userId`.
 
 ### Changelog
 
-- v1.0
+- v1.0.0
     - Initial release
-- v1.1
+        - Added `Courses` section
+        - Added `Students` section
+        - Added `Applications` section
+        - Added `Markers` section
+        - Added `Supervisors` section (WIP)
+        - Added `Users` section (WIP)
+- v1.1.0
     - Added `Changelog` section
-    - Added `supervisor` and `supervisorId` fields to `Course` schema
-    - Updated `Supervisor` section
-    - Added `User` section
+    - Updated `Course` schema:
+        - Added `supervisor` and `supervisorId` fields
+    - Updated `Supervisors` section
+        - Added `GET /api/supervisors` endpoint
+        - Added `GET /api/supervisors/me` endpoint
+        - Added `GET /api/supervisors/me/courses` endpoint
+        - Added `GET /api/supervisors/[supervisorId]` endpoint
+        - Added `GET /api/supervisors/[supervisorId]/courses` endpoint
+    - Updated `Users` section
+        - Added `GET /api/users` endpoint
+        - Added `GET /api/users/[userId]` endpoint
+        - Added `PATCH /api/users/[userId]` endpoint
+- v1.1.1
+    - Updated `Applications` section:
+        - Added `PATCH /api/students/[studentUpi]/applications/[applicationId]` endpoint
+- v1.1.2
+    - Updated `Applications` section:
+        - Updated `PATCH /api/students/[studentUpi]/applications/[applicationId]` endpoint
+            - Changed `Data Required` to `isQualified: boolean` only
+        - Added `PATCH /api/students/me/applications/[applicationId]` endpoint
