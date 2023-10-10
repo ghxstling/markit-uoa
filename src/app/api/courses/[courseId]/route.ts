@@ -29,12 +29,23 @@ export async function GET(req: NextRequest, { params }: Params) {
         )
     }
 
-    // Return the course with status code 200 OK
-    return NextResponse.json(course, {
+    // Extract the supervisor's name and ID
+    const supervisorName = course?.supervisor?.user?.name;
+    const supervisorId = course?.supervisorId;
+
+    // Return the course with status code 200 OK, including only the supervisor's name and ID
+    return NextResponse.json({
+        ...course,
+        supervisor: {
+            name: supervisorName,
+            id: supervisorId
+        }
+    }, {
         status: 200,
         statusText: 'Found course ' + course.courseCode,
     })
 }
+
 
 // PATCH /api/courses/{courseId}
 export async function PATCH(req: NextRequest, { params }: Params) {

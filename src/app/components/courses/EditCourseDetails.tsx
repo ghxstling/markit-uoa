@@ -60,11 +60,8 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
     const [isEditing, setIsEditing] = useState(true)
     const [isSaved, setIsSaved] = useState(false)
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
-    const [supervisors, setSupervisors] = useState<any[]>([])
-    const [selectedSupervisor, setSelectedSupervisor] = useState<Supervisor | null>(null)
-    const { data: session } = useSession()
-    const [isUserSupervisor, setIsUserSupervisor] = useState<string>('no')
     const [supervisorId, setSupervisorId] = useState<number | null>(null)
+    const { data: session } = useSession()
 
     const originalCourseDataRef = React.useRef<OriginalCourseData | null>(null)
 
@@ -102,7 +99,10 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
         markerHours: number
         markersNeeded: number
         description: string
-        supervisorId: number
+        supervisor: {
+            name: string
+            id: number
+        }
     }
 
     type Course = {
@@ -114,7 +114,10 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
         markerHours: number
         markersNeeded: number
         markerResponsibilities: string
-        supervisorId: number
+        supervisor: {
+            name: string
+            id: number
+        }
     }
 
     async function populateForm(course: Course) {
@@ -130,7 +133,10 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
                 markerHours: course.markerHours,
                 markersNeeded: course.markersNeeded,
                 description: course.markerResponsibilities,
-                supervisorId: course.supervisorId,
+                supervisor: {
+                    name: course.supervisor.name,
+                    id: course.supervisor.id,
+                },
             }
 
             setCourseCode(course.courseCode.substring(8))
@@ -152,14 +158,9 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
             setDescription(course.markerResponsibilities)
             const wordCount = course.markerResponsibilities.split(/\s+/).filter(Boolean).length
             setWordCount(wordCount)
-            setSelectedSupervisor({
-                id: course.supervisorId,
-            })
-            setSupervisorId(course.supervisorId)
-            console.log(course.supervisorId)
-            const foundSupervisor = supervisors.find((sup) => sup.id === course.supervisorId)
-            setSelectedSupervisor(foundSupervisor)
-            console.log('Supervisors Array:', supervisors)
+            setSupervisorId(course.supervisor?.id)
+            console.log(course.supervisor?.id)
+            console.log(course.supervisor?.name)
         } catch (error) {
             console.error('Error fetching course data:', error)
             setSnackbarMessage('Failed to fetch course data.')
@@ -167,36 +168,6 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
             setOpenSnackbar(true)
         }
     }
-
-    useEffect(() => {
-        if (session?.role !== 'coordinator') {
-            return // Exit early if not a coordinator
-        }
-
-        async function fetchData() {
-            try {
-                const response = await fetch('/api/supervisors/')
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`)
-                }
-
-                const data = await response.json()
-                setSupervisors(data)
-            } catch (error) {
-                console.error('Fetching supervisors failed:', error)
-            }
-        }
-
-        fetchData()
-    }, [session?.role]) // session.role is added to dependency array
-
-    useEffect(() => {
-        if (supervisorId !== null && supervisors.length > 0) {
-            const foundSupervisor = supervisors.find((sup) => sup.id === supervisorId)
-            setSelectedSupervisor(foundSupervisor)
-        }
-    }, [supervisorId, supervisors])
 
     useEffect(() => {
         async function fetchCourseDetails() {
@@ -590,33 +561,9 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
                         <Grid item xs={12}>
                             <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
                                 <Grid item>
-                                    <Typography gutterBottom>Course Supervisor:</Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Autocomplete
-                                        options={supervisors}
-                                        getOptionLabel={(option) => (option && option.user ? option.user.name : 'N/A')}
-                                        value={selectedSupervisor}
-                                        style={{ width: '350px' }}
-                                        onChange={(event, newValue) => {
-                                            setSelectedSupervisor(newValue)
-                                        }}
-                                        renderOption={(props, option) => (
-                                            <li {...props} key={option.id}>
-                                                {' '}
-                                                {option.user ? option.user.name : 'N/A'}
-                                            </li>
-                                        )}
-                                        renderInput={(params) => (
-                                            <TextField
-                                                {...params}
-                                                label="Select Supervisor"
-                                                variant="outlined"
-                                                fullWidth
-                                            />
-                                        )}
-                                    />
-                                    <FormHelperText>If no supervisor, leave the field blank.</FormHelperText>
+                                    <Typography gutterBottom>
+                                        Course Supervisor: {originalCourseDataRef.current?.supervisor.name}
+                                    </Typography>
                                 </Grid>
                             </Grid>
                         </Grid>

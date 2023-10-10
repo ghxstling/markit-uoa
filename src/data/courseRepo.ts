@@ -13,8 +13,16 @@ export default class CourseRepo {
     static async getCourseById(id: number) {
         return await prisma.course.findUnique({
             where: { id },
+            include: {
+                supervisor: {
+                    include: {
+                        user: true
+                    }
+                }
+            }
         })
     }
+    
 
     static async getSupervisorCourses(email: string) {
         const user = await prisma.user.findUnique({
