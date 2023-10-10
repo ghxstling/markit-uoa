@@ -79,6 +79,12 @@ export default class StudentRepo {
         })
     }
 
+    static async getStudentById(id: number) {
+        return await prisma.student.findUnique({
+            where: { id },
+        })
+    }
+
     static async setCVFilename(upi: string, fileName: string) {
         return await prisma.student.update({
             where: { upi },
