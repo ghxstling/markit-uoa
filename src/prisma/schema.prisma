@@ -14,7 +14,7 @@ model Course {
   id                     Int           @id @default(autoincrement())
   courseCode             String
   courseDescription      String
-  supervisor             Supervisor?   @relation(fields: [supervisorId], references: [id], onDelete: Cascade)
+  supervisor             Supervisor?   @relation(fields: [supervisorId], references: [id])
   supervisorId           Int?          
   numOfEstimatedStudents Int
   numOfEnrolledStudents  Int
