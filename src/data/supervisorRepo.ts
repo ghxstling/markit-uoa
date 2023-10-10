@@ -8,23 +8,28 @@ export default class SupervisorRepo {
         })
     }
 
-    static async createSupervisorFromEmail(email: string, data: Prisma.SupervisorUncheckedCreateInput) {
+    static async createSupervisorFromEmail(email: string, additionalData: Partial<Prisma.SupervisorUncheckedCreateInput> = {}) {
         const user = await prisma.user.findUnique({
             where: { email },
         })
+        if (!user) {
+            throw new Error(`User with email ${email} not found.`);
+        }
+        
+        const fullData = {
+            ...additionalData,
+            userId: user.id,
+        };
+    
         return await prisma.supervisor.upsert({
             where: {
-                userId: user!.id,
+                userId: user.id,
             },
-            update: {
-                ...data,
-            },
-            create: {
-                ...data,
-                userId: user!.id,
-            }
+            update: fullData,
+            create: fullData
         })
     }
+    
 
     static async getSupervisorByUserId(userId: number) {
         return await prisma.supervisor.findUnique({
