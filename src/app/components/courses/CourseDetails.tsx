@@ -16,6 +16,9 @@ import {
     TextField,
     IconButton,
     Autocomplete,
+    RadioGroup,
+    FormControlLabel,
+    Radio,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import React, { useState, useEffect } from 'react'
@@ -50,6 +53,7 @@ export default function CourseDetails() {
     const [supervisors, setSupervisors] = useState<any[]>([])
     const [selectedSupervisor, setSelectedSupervisor] = useState<Supervisor | null>(null)
     const { data: session } = useSession()
+    const [isUserSupervisor, setIsUserSupervisor] = useState<string>('no')
 
     const handleManualInputChange = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -84,6 +88,10 @@ export default function CourseDetails() {
     }
 
     useEffect(() => {
+        if (session?.role !== 'coordinator') {
+            return // Exit early if not a coordinator
+        }
+
         async function fetchData() {
             try {
                 const response = await fetch('/api/supervisors/')
@@ -100,7 +108,7 @@ export default function CourseDetails() {
         }
 
         fetchData()
-    }, [])
+    }, [session?.role]) // session.role is added to dependency array
 
     async function handleSubmit() {
         // Validation checks
@@ -158,6 +166,27 @@ export default function CourseDetails() {
             setOpenSnackbar(true)
             return
         }
+        let supervisorId = null
+
+        if (session?.role === 'supervisor') {
+            if (isUserSupervisor === 'yes') {
+                // Assuming session object contains user ID or you can fetch it
+                const response = await fetch('/api/supervisors/me')
+                if (response.ok) {
+                    const supervisorData = await response.json()
+                    supervisorId = supervisorData.id
+                } else {
+                    // Handle error when fetching supervisor ID
+                    console.error('Failed to get supervisor ID')
+                    setSnackbarMessage('Failed to add course. Could not retrieve supervisor information.')
+                    setSnackbarSeverity('error')
+                    setOpenSnackbar(true)
+                    return
+                }
+            }
+        } else if (session?.role === 'coordinator' && selectedSupervisor) {
+            supervisorId = selectedSupervisor.id
+        }
 
         const finalCourseCode = `COMPSCI ${courseCode}`
 
@@ -171,7 +200,7 @@ export default function CourseDetails() {
             markersNeeded: markersNeeded.slider,
             semester: `${selectedYear}${selectedSemester}`,
             markerResponsibilities: description,
-            supervisorId: selectedSupervisor ? selectedSupervisor.id : null,
+            supervisorId: supervisorId,
         }
         //Test to check submission data
         //console.log('Submitting form with data:', formData)
@@ -418,6 +447,25 @@ export default function CourseDetails() {
                             </Grid>
                         </Grid>
                     </Grid>
+
+                    {session?.role === 'supervisor' && (
+                        <Grid item xs={12}>
+                            <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
+                                <Grid item>
+                                    <Typography gutterBottom>Are you the supervisor for this course?</Typography>
+                                </Grid>
+                                <Grid item>
+                                    <RadioGroup
+                                        value={isUserSupervisor}
+                                        onChange={(event) => setIsUserSupervisor(event.target.value)}
+                                    >
+                                        <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                                        <FormControlLabel value="no" control={<Radio />} label="No" />
+                                    </RadioGroup>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    )}
 
                     {session?.role === 'coordinator' && (
                         <Grid item xs={12}>
