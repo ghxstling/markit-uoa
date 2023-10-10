@@ -8,23 +8,22 @@ type Application = Exclude<Prisma.PromiseReturnType<typeof ApplicationRepo.getAp
 export default class CourseService {
     static async getCourseWithMarkerData() {
         const courses = await CourseRepo.getAllCourses()
-        const coursesWithMarkerData = await Promise.all(
-            courses.map(async (course) => {
-                const assignedMarkers = await this._getAssignedMarkers(course.application)
-                const allocatedHours = await this._getAllocatedHours(course.application)
-                const { application, ...courseWithoutApplication } = course
-                return { ...courseWithoutApplication, assignedMarkers, allocatedHours }
-            })
-        )
+        const coursesWithMarkerData = courses.map((course) => {
+            const assignedMarkers = this._getAssignedMarkers(course.application)
+            const allocatedHours = this._getAllocatedHours(course.application)
+            const { application, ...courseWithoutApplication } = course
+            return { ...courseWithoutApplication, assignedMarkers, allocatedHours }
+        })
+
         return coursesWithMarkerData
     }
 
-    static async _getAssignedMarkers(applications: Application[]) {
+    static _getAssignedMarkers(applications: Application[]) {
         const markers = applications.filter((app) => app.applicationStatus === ApplicationStatus.Approved)
         return markers
     }
 
-    static async _getAllocatedHours(applications: Application[]) {
+    static _getAllocatedHours(applications: Application[]) {
         const hours = applications.reduce((total, app) => {
             if (app.applicationStatus === ApplicationStatus.Approved) {
                 return total + app.allocatedHours
