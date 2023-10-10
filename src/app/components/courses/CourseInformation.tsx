@@ -14,13 +14,14 @@ import {
     Checkbox,
     Chip,
     TableContainer,
+    Drawer,
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { Card } from '@mui/material'
 import EditCourseDetails from './EditCourseDetails'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { CourseApplicationType } from '@/types/CourseApplicationType'
-import Link from 'next/link'
+import ViewStudentInformation from '../StudentInformation'
 
 type CourseInformationProps = {
     courseId: string // Assuming courseId is a string
@@ -40,6 +41,14 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         userId: number
     }
 
+    type Application = {
+        id: number
+        hasMarkedCourse: boolean
+        previouslyAchievedGrade: string
+        studentId: number
+        
+    }
+
     interface ApplicantsData {
         id: number
         hasMarkedCourse: boolean
@@ -48,6 +57,8 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         courseId: number
         isQualified: boolean
         applicationStatus: string
+        student: Student
+        allocatedHours: number
     }
 
     interface Course {
@@ -71,9 +82,11 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     const [markerHoursNeeded, setMarkerHoursNeeded] = useState(0)
     const [checkedStudents, setCheckedStudents] = useState<number[]>([])
     const [selected, setSelected] = useState(new Array(applications.length).fill(false))
-    const [approvedStudents, setApprovedStudents] = useState<ApplicantsData[]>([])
-    const [courseData, setCourseData] = useState<CourseData>()
-    const [course, setCourse] = useState<Course>()
+    const [approvedStudents, setApprovedStudents] = useState<ApplicantsData[]>([]);
+    const [courseData, setCourseData] = useState<CourseData>();
+    const [course, setCourse] = useState<Course>();
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    
 
     const emptyRows = page >= 0 ? Math.max(0, (1 + page) * rowsPerPage - studentData.length) : 0
 
@@ -206,6 +219,13 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         setPage(0)
     }
 
+    const handleDrawerOpen = () => {
+        setIsDrawerOpen(true);
+    };
+
+    const handleDrawerClose = () => {
+        setIsDrawerOpen(false);
+    };
     const getApplicationIndex = (application: any) => {
         return applications.indexOf(application)
     }
@@ -301,6 +321,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         }
     }
 
+    
     return (
         <>
             <Card sx={{ p: '20px' }}>
@@ -322,9 +343,9 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                             <TableHead>
                                 <TableRow>
                                     <TableCell>Markers Needed: {course?.markersNeeded}</TableCell>
-                                    <TableCell>Markers Assigned: {courseData?.markers.length}</TableCell>
-                                    <TableCell>Hours Needed: {course?.markerHours}</TableCell>
-                                    <TableCell>Hours Assigned: {courseData?.hours}</TableCell>
+                                    <TableCell>Markers Assigned: {courseData?.markers ? courseData?.markers.length : 0}</TableCell>
+                                    <TableCell>Hours Needed: {course?.markerHours|| 0}</TableCell>
+                                    <TableCell>Hours Assigned: {courseData?.hours || 0}</TableCell>
                                 </TableRow>
                             </TableHead>
                         </Table>
@@ -428,29 +449,30 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                         />
                                     </TableCell>
                                     <TableCell style={{ textAlign: 'center' }}>
-                                        <Link
-                                            href="src/app/dashboard/students/[studentId]/page.tsx"
-                                            as={`/dashboard/students/${application.studentId}`}
-                                            passHref
-                                        >
-                                            <Button>
-                                                {
-                                                    users.find(
-                                                        (user) =>
-                                                            user.id ===
-                                                            studentData.find(
-                                                                (student) => student.id === application.studentId
-                                                            )?.userId
-                                                    )?.name
-                                                }{' '}
-                                                (
-                                                {
-                                                    studentData.find((student) => student.id === application.studentId)
-                                                        ?.upi
-                                                }
-                                                )
-                                            </Button>
-                                        </Link>
+                                    <Button onClick={handleDrawerOpen}>
+                                        {
+                                            users.find(
+                                                (user) =>
+                                                    user.id ===
+                                                    studentData.find(
+                                                        (student) => student.id === application.studentId
+                                                    )?.userId
+                                            )?.name
+                                        }{' '}
+                                        ({studentData.find((student) => student.id === application.studentId)?.upi})
+                                    </Button>
+                                    <Drawer anchor="right" open={isDrawerOpen} onClose={handleDrawerClose} 
+                                    ModalProps={{
+                                        slotProps: {
+                                            backdrop: {
+                                                style: {
+                                                    backgroundColor: 'rgba(0, 0, 0, 0.25)',
+                                                },
+                                            },
+                                        },
+                                    }}>
+                                        <ViewStudentInformation studentUpi= {studentData.find((student) => student.id === application.studentId)?.upi}/>
+                                    </Drawer>
                                     </TableCell>
                                     <TableCell style={{ textAlign: 'center' }}>
                                         {application.previouslyAchievedGrade}
@@ -466,7 +488,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     </TableCell>
                                     <TableCell style={{ textAlign: 'center' }}>
                                         {' '}
-                                        25{/*applicant total allocated hours */}
+                                        {application.allocatedHours}
                                     </TableCell>
                                     <TableCell style={{ textAlign: 'center' }}>
                                         {
