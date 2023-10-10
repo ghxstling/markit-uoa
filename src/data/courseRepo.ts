@@ -46,19 +46,18 @@ export default class CourseRepo {
             data,
         })
     }
+
+    static async updateCourses(id: number, data: Prisma.CourseUpdateInput) {
+        return await prisma.course.update({
+            where: { id },
+            data,
+        })
+    }
+
     static async deleteCourse(id: number) {
         // TODO: implement cascade delete when users are implemented
         return await prisma.course.delete({
             where: { id },
         })
     }
-
-
-    static async importCourses(courses: Prisma.CourseCreateInput[]) {
-        return await prisma.course.createMany({
-            data: courses,
-            skipDuplicates: true 
-        });
-    }
-    
 }
