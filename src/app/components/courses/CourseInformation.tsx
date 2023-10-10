@@ -461,7 +461,16 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                         }{' '}
                                         ({studentData.find((student) => student.id === application.studentId)?.upi})
                                     </Button>
-                                    <Drawer anchor="right" open={isDrawerOpen} onClose={handleDrawerClose}>
+                                    <Drawer anchor="right" open={isDrawerOpen} onClose={handleDrawerClose} 
+                                    ModalProps={{
+                                        slotProps: {
+                                            backdrop: {
+                                                style: {
+                                                    backgroundColor: 'rgba(0, 0, 0, 0.25)',
+                                                },
+                                            },
+                                        },
+                                    }}>
                                         <ViewStudentInformation studentUpi= {studentData.find((student) => student.id === application.studentId)?.upi}/>
                                     </Drawer>
                                     </TableCell>
