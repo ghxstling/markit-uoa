@@ -195,6 +195,26 @@ describe('StudentRepo', () => {
         expect(student).toMatchObject(data)
         expect(student?.userId).toBe(user.id)
     })
+    it("can get a student by their ID", async () => {
+        const email = 'example@gmail.com'
+        const userInput = { email }
+        const user = await UserRepo.createUser(userInput)
+        const upi = 'abc123'
+        const auid = 123456789
+        const degreeType = DegreeType.Bachelor
+        const degreeYear = 1
+        const studentInput = {
+            preferredEmail: email,
+            upi,
+            auid: auid,
+            degreeType,
+            degreeYear,
+        }
+        const data = await StudentRepo.createStudentFromEmail(email, studentInput)
+        const student = await StudentRepo.getStudentById(data.id)
+        expect(student).toMatchObject(data)
+        expect(student?.id).toBe(data.id)
+    })
     it("can set a student's CV filename", async () => {
         const email = 'example@gmail.com'
         const userInput = { email }
