@@ -155,7 +155,13 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         let sortedData = [...applications]
         switch (sortField) {
             case 'selected':
-                //const sortedData = [...data]
+                sortedData = sortedData.sort((a, b) => {
+                    const studentAChecked = checkedStudents.includes(a.studentId) ? 1 : 0
+                    const studentBChecked = checkedStudents.includes(b.studentId) ? 1 : 0
+                    if (studentAChecked < studentBChecked) return sortDirection === 'asc' ? -1 : 1
+                    if (studentAChecked > studentBChecked) return sortDirection === 'asc' ? 1 : -1
+                    return 0
+                })
                 break
             case 'student':
                 sortedData = sortedData.sort((a, b) => {
@@ -277,7 +283,6 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     const handleQualifiedChange = async (index: number) => {
         //get application that is being changed
         const changedApplication = applications[index]
-        console.log(changedApplication)
         const studentUpi = studentData.find((student) => student.id === changedApplication.studentId)?.upi
         //patch changed application
         try {
@@ -620,7 +625,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                         <Checkbox
                                             checked={checkedStudents.includes(application.studentId) || false}
                                             onChange={() => handleCheckedStudents(application.studentId)}
-                                            disabled={application.applicationStatus === 'approved'}
+                                            disabled={application.applicationStatus === 'denied'}
                                         />
                                     </TableCell>
                                     <TableCell style={{ textAlign: 'center' }}>
