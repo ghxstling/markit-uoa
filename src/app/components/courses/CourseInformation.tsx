@@ -106,8 +106,11 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
             })
             const jsonData = await response.json()
             setApplications(jsonData)
-            setSelected(new Array(jsonData.length).fill(false))
-            //setQualified()
+            setSelected((prevSelected) => {
+                let newSelected = new Array(jsonData.length).fill(false)
+                setQualified(jsonData, newSelected)
+                return newSelected
+            })
             jsonData.sort((a: { applicationStatus: string }, b: { applicationStatus: string }) => {
                 if (a.applicationStatus === 'approved' && b.applicationStatus !== 'approved') {
                     return -1 // "approved" comes first
@@ -127,27 +130,29 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         }
     }
 
-    const setQualified = () => {
-        let newSelected = [...selected]
+    const setQualified = (applications: any[], newSelected: any[]) => {
         for (let i = 0; i < newSelected.length; i++) {
             newSelected[i] = applications[i].isQualified
         }
         setSelected(newSelected)
     }
 
-    const handleQualifiedChange = (index: number) => {
+    const handleQualifiedChange = async (index: number) => {
         //get application that is being changed
         const changedApplication = applications[index]
-        const courseId = changedApplication.courseId
-
+        const studentUpi = studentData.find((student) => student.id === changedApplication.studentId)?.upi
         //patch changed application
-        const response = fetch(`/api/courses/${courseId}/markers/[markerId]`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(changedApplication),
-        })
+        try {
+            const response = await fetch(`/api/students/${studentUpi}/applications/${changedApplication.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(changedApplication),
+            })
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
     }
 
     //fetch all students
@@ -201,6 +206,10 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         setPage(0)
     }
 
+    const getApplicationIndex = (application: any) => {
+        return applications.indexOf(application)
+    }
+
     const handleCheckedStudents = (studentId: number) => {
         // Check if the studentId is already in the checkedStudents array
         if (checkedStudents.includes(studentId)) {
@@ -212,7 +221,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                 prevApprovedStudents.filter((application) => application.studentId !== studentId)
             )
         } else {
-            // Add the studentId to the checkedStudents array
+            // Add the studentId to the checkedStudents array`
             setCheckedStudents([...checkedStudents, studentId])
 
             // Find the Application for the selected studentId
@@ -399,7 +408,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                             {(rowsPerPage > 0
                                 ? applications.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 : applications
-                            ).map((application, index) => (
+                            ).map((application) => (
                                 <TableRow
                                     key={application.id}
                                     style={{
@@ -468,16 +477,18 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     <TableCell style={{ textAlign: 'center' }}>
                                         <Chip
                                             onClick={() => {
+                                                const index = getApplicationIndex(application)
                                                 let newSelected = [...selected]
                                                 newSelected[index] = !newSelected[index]
-                                                //applications[index].isQualified = newSelected[index]
-                                                //handleQualifiedChange(index)
+                                                applications[index].isQualified = newSelected[index]
+                                                handleQualifiedChange(index)
                                                 setSelected(newSelected)
-                                                console.log(newSelected)
                                                 return newSelected
                                             }}
-                                            color={selected[index] ? 'primary' : 'secondary'}
-                                            label={selected[index] ? 'Qualified' : 'Unqualified'}
+                                            color={selected[getApplicationIndex(application)] ? 'primary' : 'secondary'}
+                                            label={
+                                                selected[getApplicationIndex(application)] ? 'Qualified' : 'Unqualified'
+                                            }
                                         />
                                     </TableCell>
                                 </TableRow>

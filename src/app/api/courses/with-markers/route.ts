@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest) {
     const courses = await CourseRepo.getAllCourses()
-    const newCourses = await CourseService.createCourseObjecs(courses)
+    const newCourses = await CourseService.createCourseObjects(courses)
 
     return NextResponse.json(newCourses, {
         status: 200,

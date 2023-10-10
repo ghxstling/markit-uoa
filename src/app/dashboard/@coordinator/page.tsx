@@ -46,7 +46,7 @@ export default function CoordinatorDashboard() {
                     <Typography sx={{ mt: '28px', mb: '53px' }} variant="h4" fontWeight="bold">
                         Welcome, {firstName}
                     </Typography>
-                    <Link href="/dashboard/viewAllCoursespage" passHref>
+                    <Link href="/dashboard/viewAllCourses" passHref>
                         <Button
                             variant="contained"
                             sx={{
