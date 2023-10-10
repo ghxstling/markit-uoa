@@ -62,6 +62,8 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
     const [supervisorId, setSupervisorId] = useState<number | null>(null)
     const { data: session } = useSession()
+    const [supervisors, setSupervisors] = useState<any[]>([])
+    const [selectedSupervisor, setSelectedSupervisor] = useState<Supervisor | null>(null)
 
     const originalCourseDataRef = React.useRef<OriginalCourseData | null>(null)
 
@@ -195,6 +197,29 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
         fetchCourseDetails()
     }, [courseId])
 
+    useEffect(() => {
+        if (session?.role !== 'coordinator') {
+            return // Exit early if not a coordinator
+        }
+
+        async function fetchData() {
+            try {
+                const response = await fetch('/api/supervisors/')
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`)
+                }
+
+                const data = await response.json()
+                setSupervisors(data)
+            } catch (error) {
+                console.error('Fetching supervisors failed:', error)
+            }
+        }
+
+        fetchData()
+    }, [session?.role]) // session.role is added to dependency array
+
     const handleManualInputChange = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
         setState: React.Dispatch<React.SetStateAction<{ slider: number; manual: string }>>,
@@ -282,6 +307,8 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
             setOpenSnackbar(true)
             return
         }
+        console.log(selectedSupervisor.id)
+        const supervisorId = selectedSupervisor.id
 
         const finalCourseCode = `COMPSCI ${courseCode}`
 
@@ -295,6 +322,7 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
             markersNeeded: markersNeeded.slider,
             semester: `${selectedYear}${selectedSemester}`,
             markerResponsibilities: description,
+            supervisorId: selectedSupervisor.id,
         }
         //Test to check submission
         //console.log('Submitting form with updated data:', formData)
@@ -564,6 +592,34 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
                                     <Typography gutterBottom>
                                         Course Supervisor: {originalCourseDataRef.current?.supervisor.name}
                                     </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Autocomplete
+                                        options={supervisors}
+                                        getOptionLabel={(option) => (option && option.user ? option.user.name : 'N/A')}
+                                        value={selectedSupervisor}
+                                        style={{ width: '350px' }}
+                                        onChange={(event, newValue) => {
+                                            setSelectedSupervisor(newValue)
+                                        }}
+                                        renderOption={(props, option) => (
+                                            <li {...props} key={option.id}>
+                                                {' '}
+                                                {option.user ? option.user.name : 'N/A'}
+                                            </li>
+                                        )}
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                label="Select Supervisor"
+                                                variant="outlined"
+                                                fullWidth
+                                            />
+                                        )}
+                                    />
+                                    <FormHelperText>
+                                        If no supervisor, leave the field blank. To retain supervisor, select again.
+                                    </FormHelperText>
                                 </Grid>
                             </Grid>
                         </Grid>

@@ -60,6 +60,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
             { status: 403, headers: { 'content-type': 'application/json' } }
         )
     }
+    
     // Store params.courseId into courseId for readability
     const courseId = parseInt(params.courseId)
 
@@ -88,6 +89,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         needMarkers,
         markersNeeded,
         semester,
+        supervisorId  // Extracting the supervisor ID
     } = await req.json()
 
     // If some information is missing, return code 400 BAD REQUEST
@@ -110,7 +112,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         })
     }
 
-    // Update the course information
+    // Update the course information, including supervisor ID
     const updatedCourse = await CourseRepo.updateCourse(courseId, {
         courseCode,
         courseDescription,
@@ -121,6 +123,11 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         needMarkers,
         markersNeeded,
         semester,
+        supervisor: { 
+            connect: { 
+                id: supervisorId 
+            } 
+        } // Use nested write to connect the supervisor
     })
 
     // Return the updated course with status code 200 OK
