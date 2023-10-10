@@ -15,6 +15,7 @@ import {
     Chip,
     TableContainer,
     Drawer,
+    TableSortLabel,
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { Card } from '@mui/material'
@@ -22,6 +23,7 @@ import EditCourseDetails from './EditCourseDetails'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { CourseApplicationType } from '@/types/CourseApplicationType'
 import ViewStudentInformation from '../StudentInformation'
+import { string } from 'zod'
 
 type CourseInformationProps = {
     courseId: string // Assuming courseId is a string
@@ -80,7 +82,6 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     const [markersNeeded, setMarkersNeeded] = useState(0)
     const [markerHoursNeeded, setMarkerHoursNeeded] = useState(0)
     const [checkedStudents, setCheckedStudents] = useState<number[]>([])
-    const [selected, setSelected] = useState(new Array(applications.length).fill(false))
     const [approvedStudents, setApprovedStudents] = useState<ApplicantsData[]>([])
     const [courseData, setCourseData] = useState<CourseData>()
     const [course, setCourse] = useState<Course>()
@@ -98,8 +99,38 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         | null
     >(null)
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
+    const [studentNameLookup, setStudentNameLookup] = useState<{ [key: number]: string }>({})
 
     const emptyRows = page >= 0 ? Math.max(0, (1 + page) * rowsPerPage - studentData.length) : 0
+
+    const gradeRanks: { [key: string]: number } = {
+        'A+': 1,
+        A: 2,
+        'A-': 3,
+        'B+': 4,
+        B: 5,
+        'B-': 6,
+        'C+': 7,
+        C: 8,
+        'C-': 9,
+        'D+': 10,
+        D: 11,
+        'D-': 12,
+        'Not Taken Previously': 13,
+    }
+
+    useEffect(() => {
+        if (users.length > 0 && studentData.length > 0) {
+            let newLookup: { [key: number]: string } = {}
+            users.forEach((user) => {
+                const student = studentData.find((student) => student.userId === user.id)
+                if (student) {
+                    newLookup[student.id] = user.name
+                }
+            })
+            setStudentNameLookup(newLookup) // update the state
+        }
+    }, [users, studentData])
 
     const handleSort = (
         field:
@@ -121,35 +152,78 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     }
 
     useEffect(() => {
-        let sortedData: any[] = []
+        let sortedData = [...applications]
         switch (sortField) {
             case 'selected':
                 //const sortedData = [...data]
                 break
             case 'student':
-                sortedData = [...studentData]
+                sortedData = sortedData.sort((a, b) => {
+                    const studentAName = studentNameLookup[a.studentId]
+                    const studentBName = studentNameLookup[b.studentId]
+                    if (studentAName < studentBName) return sortDirection === 'asc' ? -1 : 1
+                    if (studentAName > studentBName) return sortDirection === 'asc' ? 1 : -1
+                    return 0
+                })
                 break
             case 'grade':
+                sortedData = sortedData.sort((a, b) => {
+                    const gradeARank = gradeRanks[a.previouslyAchievedGrade]
+                    const gradeBRank = gradeRanks[b.previouslyAchievedGrade]
+                    if (gradeARank < gradeBRank) return sortDirection === 'asc' ? -1 : 1
+                    if (gradeARank > gradeBRank) return sortDirection === 'asc' ? 1 : -1
+                    return 0
+                })
                 break
             case 'markedBefore':
+                sortedData = sortedData.sort((a, b) => {
+                    const studentAMarked = Number(a.hasMarkedCourse)
+                    const studentBMarked = Number(b.hasMarkedCourse)
+                    if (studentAMarked < studentBMarked) return sortDirection === 'asc' ? -1 : 1
+                    if (studentAMarked > studentBMarked) return sortDirection === 'asc' ? 1 : -1
+                    return 0
+                })
                 break
             case 'overseas':
+                sortedData = sortedData.sort((a, b) => {
+                    const studentAOverseas = Number(studentData.find((student) => student.id === a.studentId)?.overseas)
+                    const studentBOverseas = Number(studentData.find((student) => student.id === b.studentId)?.overseas)
+                    if (studentAOverseas !== undefined && studentBOverseas !== undefined) {
+                        if (studentAOverseas < studentBOverseas) return sortDirection === 'asc' ? -1 : 1
+                        if (studentAOverseas > studentBOverseas) return sortDirection === 'asc' ? 1 : -1
+                    }
+                    return 0
+                })
                 break
             case 'totalAllocatedHours':
+                sortedData = sortedData.sort((a, b) => {
+                    if (a.allocatedHours < b.allocatedHours) return sortDirection === 'asc' ? -1 : 1
+                    if (a.allocatedHours > b.allocatedHours) return sortDirection === 'asc' ? 1 : -1
+                    return 0
+                })
                 break
             case 'maxHoursPerWeek':
+                sortedData = sortedData.sort((a, b) => {
+                    const studentAMaxHours = studentData.find((student) => student.id === a.studentId)?.maxWorkHours
+                    const studentBMaxHours = studentData.find((student) => student.id === b.studentId)?.maxWorkHours
+                    if (studentAMaxHours !== undefined && studentBMaxHours !== undefined) {
+                        if (studentAMaxHours < studentBMaxHours) return sortDirection === 'asc' ? -1 : 1
+                        if (studentAMaxHours > studentBMaxHours) return sortDirection === 'asc' ? 1 : -1
+                    }
+                    return 0
+                })
                 break
             case 'qualification':
+                sortedData = sortedData.sort((a, b) => {
+                    const studentAQualified = Number(a.isQualified)
+                    const studentBQualified = Number(b.isQualified)
+                    if (studentAQualified < studentBQualified) return sortDirection === 'asc' ? -1 : 1
+                    if (studentAQualified > studentBQualified) return sortDirection === 'asc' ? 1 : -1
+                    return 0
+                })
                 break
         }
-        if (sortField) {
-            sortedData.sort((a, b) => {
-                if (a[sortField] < b[sortField]) return sortDirection === 'asc' ? -1 : 1
-                if (a[sortField] > b[sortField]) return sortDirection === 'asc' ? 1 : -1
-                return 0
-            })
-        }
-        //setData(sortedData)
+        setApplications(sortedData)
     }, [sortField, sortDirection])
 
     //fetch the course name
@@ -181,11 +255,6 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
             })
             const jsonData = await response.json()
             setApplications(jsonData)
-            setSelected((prevSelected) => {
-                let newSelected = new Array(jsonData.length).fill(false)
-                setQualified(jsonData, newSelected)
-                return newSelected
-            })
             jsonData.sort((a: { applicationStatus: string }, b: { applicationStatus: string }) => {
                 if (a.applicationStatus === 'approved' && b.applicationStatus !== 'approved') {
                     return -1 // "approved" comes first
@@ -205,16 +274,10 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         }
     }
 
-    const setQualified = (applications: any[], newSelected: any[]) => {
-        for (let i = 0; i < newSelected.length; i++) {
-            newSelected[i] = applications[i].isQualified
-        }
-        setSelected(newSelected)
-    }
-
     const handleQualifiedChange = async (index: number) => {
         //get application that is being changed
         const changedApplication = applications[index]
+        console.log(changedApplication)
         const studentUpi = studentData.find((student) => student.id === changedApplication.studentId)?.upi
         //patch changed application
         try {
@@ -414,17 +477,6 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                         </Table>
                     </TableContainer>
                 </Box>
-
-                {/*<TableCell style={{ textAlign: 'center' }} onClick={() => handleSort('needMarkers')}>
-                            <TableSortLabel
-                                style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
-                                active={sortField === 'needMarkers'}
-                                direction={sortField === 'needMarkers' ? sortDirection : 'asc'}
-                            >
-                                Status
-                            </TableSortLabel>
-                        </TableCell> 
-                    */}
                 <TableContainer>
                     <Table sx={{ mt: 4 }}>
                         <TableHead>
@@ -433,84 +485,118 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                     style={{ textAlign: 'center', width: '150px' }}
                                     onClick={() => handleSort('selected')}
                                 >
-                                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                    <TableSortLabel
+                                        style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                                        active={sortField === 'selected'}
+                                        direction={sortField === 'selected' ? sortDirection : 'asc'}
+                                    >
                                         Select
                                         <Tooltip title="Click on checkboxes to assign markers">
                                             <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
                                         </Tooltip>
-                                    </div>
+                                    </TableSortLabel>
                                 </TableCell>
                                 <TableCell
                                     style={{ textAlign: 'center', width: '200px' }}
                                     onClick={() => handleSort('student')}
                                 >
-                                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                    <TableSortLabel
+                                        style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                                        active={sortField === 'student'}
+                                        direction={sortField === 'student' ? sortDirection : 'asc'}
+                                    >
                                         Applicant
                                         <Tooltip title="Click on student name to view student information">
                                             <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
                                         </Tooltip>
-                                    </div>
+                                    </TableSortLabel>
                                 </TableCell>
                                 <TableCell
                                     style={{ textAlign: 'center', width: '50px' }}
                                     onClick={() => handleSort('grade')}
                                 >
-                                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>Grade</div>
+                                    <TableSortLabel
+                                        style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                                        active={sortField === 'grade'}
+                                        direction={sortField === 'grade' ? sortDirection : 'asc'}
+                                    >
+                                        Grade
+                                    </TableSortLabel>
                                 </TableCell>
                                 <TableCell
                                     style={{ textAlign: 'center', width: '250px' }}
                                     onClick={() => handleSort('markedBefore')}
                                 >
-                                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                    <TableSortLabel
+                                        style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                                        active={sortField === 'markedBefore'}
+                                        direction={sortField === 'markedBefore' ? sortDirection : 'asc'}
+                                    >
                                         Marked Before
                                         <Tooltip title="Has the student marked the course before">
                                             <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
                                         </Tooltip>
-                                    </div>
+                                    </TableSortLabel>
                                 </TableCell>
                                 <TableCell
                                     style={{ textAlign: 'center', width: '150px' }}
                                     onClick={() => handleSort('overseas')}
                                 >
-                                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                    <TableSortLabel
+                                        style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                                        active={sortField === 'overseas'}
+                                        direction={sortField === 'overseas' ? sortDirection : 'asc'}
+                                    >
                                         Overseas
                                         <Tooltip title="Is the student overseas">
                                             <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
                                         </Tooltip>
-                                    </div>
+                                    </TableSortLabel>
                                 </TableCell>
                                 <TableCell
                                     style={{ textAlign: 'center', width: '200px' }}
                                     onClick={() => handleSort('totalAllocatedHours')}
                                 >
-                                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                    <TableSortLabel
+                                        style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                                        active={sortField === 'totalAllocatedHours'}
+                                        direction={sortField === 'totalAllocatedHours' ? sortDirection : 'asc'}
+                                    >
                                         Total Allocated Hours
                                         <Tooltip title="Total hours allocated to student across all courses">
                                             <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
                                         </Tooltip>
-                                    </div>
+                                    </TableSortLabel>
                                 </TableCell>
                                 <TableCell
                                     style={{ textAlign: 'center', width: '200px' }}
                                     onClick={() => handleSort('maxHoursPerWeek')}
                                 >
-                                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                    <TableSortLabel
+                                        style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                                        active={sortField === 'maxHoursPerWeek'}
+                                        direction={sortField === 'maxHoursPerWeek' ? sortDirection : 'asc'}
+                                    >
                                         Maximum Hours Per Week
                                         <Tooltip title="Maximum hours student willing to work per week">
                                             <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
                                         </Tooltip>
-                                    </div>
+                                    </TableSortLabel>
                                 </TableCell>
                                 <TableCell
                                     style={{ textAlign: 'center', width: '150px' }}
                                     onClick={() => handleSort('qualification')}
                                 >
-                                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                    <TableSortLabel
+                                        style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                                        active={sortField === 'qualification'}
+                                        direction={sortField === 'qualification' ? sortDirection : 'asc'}
+                                    >
                                         Qualification
                                         <Tooltip title="Is the student qualified to mark the course">
                                             <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
                                         </Tooltip>
-                                    </div>
+                                    </TableSortLabel>
                                 </TableCell>
                             </TableRow>
                         </TableHead>
@@ -595,17 +681,14 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                         <Chip
                                             onClick={() => {
                                                 const index = getApplicationIndex(application)
-                                                let newSelected = [...selected]
-                                                newSelected[index] = !newSelected[index]
-                                                applications[index].isQualified = newSelected[index]
+                                                const updatedApplications = [...applications]
+                                                updatedApplications[index].isQualified =
+                                                    !updatedApplications[index].isQualified
+                                                setApplications(updatedApplications)
                                                 handleQualifiedChange(index)
-                                                setSelected(newSelected)
-                                                return newSelected
                                             }}
-                                            color={selected[getApplicationIndex(application)] ? 'primary' : 'secondary'}
-                                            label={
-                                                selected[getApplicationIndex(application)] ? 'Qualified' : 'Unqualified'
-                                            }
+                                            color={application.isQualified ? 'primary' : 'secondary'}
+                                            label={application.isQualified ? 'Qualified' : 'Unqualified'}
                                         />
                                     </TableCell>
                                 </TableRow>
