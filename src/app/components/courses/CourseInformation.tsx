@@ -106,8 +106,11 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
             })
             const jsonData = await response.json()
             setApplications(jsonData)
-            setSelected(new Array(jsonData.length).fill(false))
-            setQualified()
+            setSelected((prevSelected) => {
+                let newSelected = new Array(jsonData.length).fill(false)
+                setQualified(jsonData, newSelected)
+                return newSelected
+            })
             jsonData.sort((a: { applicationStatus: string }, b: { applicationStatus: string }) => {
                 if (a.applicationStatus === 'approved' && b.applicationStatus !== 'approved') {
                     return -1 // "approved" comes first
@@ -127,8 +130,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         }
     }
 
-    const setQualified = () => {
-        let newSelected = [...selected]
+    const setQualified = (applications: any[], newSelected: any[]) => {
         for (let i = 0; i < newSelected.length; i++) {
             newSelected[i] = applications[i].isQualified
         }
@@ -138,10 +140,9 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     const handleQualifiedChange = (index: number) => {
         //get application that is being changed
         const changedApplication = applications[index]
-        const courseId = changedApplication.courseId
-
+        const studentUpi = studentData.find((student) => student.id === changedApplication.studentId)?.upi
         //patch changed application
-        const response = fetch(`/api/courses/${courseId}/markers/[markerId]`, {
+        const response = fetch(`/api/students/${studentUpi}/applications/${changedApplication.id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -218,6 +219,10 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         setPage(0)
     }
 
+    const getApplicationIndex = (application: any) => {
+        return applications.indexOf(application)
+    }
+
     const handleCheckedStudents = (studentId: number) => {
         // Check if the studentId is already in the checkedStudents array
         if (checkedStudents.includes(studentId)) {
@@ -229,7 +234,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                 prevApprovedStudents.filter((application) => application.studentId !== studentId)
             )
         } else {
-            // Add the studentId to the checkedStudents array
+            // Add the studentId to the checkedStudents array`
             setCheckedStudents([...checkedStudents, studentId])
 
             // Find the Application for the selected studentId
@@ -329,7 +334,6 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                         <Table>
                             <TableHead>
                                 <TableRow>
-
                                     <TableCell>Markers Needed: {course?.markersNeeded}</TableCell>
                                     <TableCell>Markers Assigned: {courseData?.markers.length}</TableCell>
                                     <TableCell>Hours Needed: {course?.markerHours}</TableCell>
@@ -417,7 +421,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                             {(rowsPerPage > 0
                                 ? applications.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 : applications
-                            ).map((application, index) => (
+                            ).map((application) => (
                                 <TableRow
                                     key={application.id}
                                     style={{
@@ -484,37 +488,31 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                         }
                                     </TableCell>
                                     <TableCell style={{ textAlign: 'center' }}>
-                                        {/*<Chip
-                                        onClick={() => setSelected((selected) => {
-                                            selected[index] = !selected[index]
-                                        })}
-                                        color={selected[index] ? 'primary' : 'secondary'}
-                                        label={selected[index] ? 'Qualified' : 'Unqualified'}
-                                        /> */}
                                         <Chip
-                                            onClick={() =>
-                                                setSelected((selected) => {
-                                                    let newSelected = [...selected]
-                                                    newSelected[index] = !newSelected[index]
-                                                    //applications[index].isQualified = newSelected[index]
-                                                    //handleQualifiedChange(index)
-                                                    setSelected(newSelected)
-                                                    return newSelected
-                                                })
+                                            onClick={() => {
+                                                const index = getApplicationIndex(application)
+                                                let newSelected = [...selected]
+                                                newSelected[index] = !newSelected[index]
+                                                applications[index].isQualified = newSelected[index]
+                                                handleQualifiedChange(index)
+                                                setSelected(newSelected)
+                                                return newSelected
+                                            }}
+                                            color={selected[getApplicationIndex(application)] ? 'primary' : 'secondary'}
+                                            label={
+                                                selected[getApplicationIndex(application)] ? 'Qualified' : 'Unqualified'
                                             }
-                                            color={selected[index] ? 'primary' : 'secondary'}
-                                            label={selected[index] ? 'Qualified' : 'Unqualified'}
                                         />
                                     </TableCell>
                                 </TableRow>
                             ))}
-                        {emptyRows > 0 && (
-                            <TableRow style={{ height: 69.5 * emptyRows }}>
-                                <TableCell colSpan={8} />
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
+                            {emptyRows > 0 && (
+                                <TableRow style={{ height: 69.5 * emptyRows }}>
+                                    <TableCell colSpan={8} />
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
                     <TableFooter>
                         <TableRow>
                             <TableCell sx={{ width: '600px' }} colSpan={4}>
