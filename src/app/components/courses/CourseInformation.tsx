@@ -189,23 +189,6 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         }
     }
 
-    //fetch checked students
-    /*
-    useEffect(() => {
-        fetchCheckedStudents()
-    }, [])
-
-    const fetchCheckedStudents = async () => {
-        try {
-            const response = await fetch('url to fetch checked students', { method: 'GET' })
-            const jsonData = await response.json()
-            setChecked(jsonData)
-        } catch (error) {
-            console.error('Error fetching data:', error)
-        }
-    }
-    */
-
     const openEdit = () => {
         setOpen(true)
     }
