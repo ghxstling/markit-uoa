@@ -20,6 +20,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close'
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 interface Supervisor {
     id: number
@@ -48,6 +49,7 @@ export default function CourseDetails() {
     const router = useRouter()
     const [supervisors, setSupervisors] = useState<any[]>([])
     const [selectedSupervisor, setSelectedSupervisor] = useState<Supervisor | null>(null)
+    const { data: session } = useSession()
 
     const handleManualInputChange = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -157,13 +159,6 @@ export default function CourseDetails() {
             return
         }
 
-        if (!selectedSupervisor) {
-            setSnackbarMessage('Please select a supervisor.')
-            setSnackbarSeverity('error')
-            setOpenSnackbar(true)
-            return
-        }
-
         const finalCourseCode = `COMPSCI ${courseCode}`
 
         const formData = {
@@ -176,7 +171,7 @@ export default function CourseDetails() {
             markersNeeded: markersNeeded.slider,
             semester: `${selectedYear}${selectedSemester}`,
             markerResponsibilities: description,
-            supervisorId: selectedSupervisor.id, // Include supervisor's ID
+            supervisorId: selectedSupervisor ? selectedSupervisor.id : null,
         }
         //Test to check submission data
         //console.log('Submitting form with data:', formData)
@@ -216,6 +211,7 @@ export default function CourseDetails() {
             setEnrolledStudents({ slider: 0, manual: '0' })
             setMarkerHours({ slider: 0, manual: '0' })
             setMarkersNeeded({ slider: 0, manual: '0' })
+            setSelectedSupervisor(null)
 
             setDescription('')
             setWordCount(0)
@@ -423,26 +419,41 @@ export default function CourseDetails() {
                         </Grid>
                     </Grid>
 
-                    <Grid item xs={12}>
-                        <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
-                            <Grid item>
-                                <Typography gutterBottom>Course Supervisor:</Typography>
-                            </Grid>
-                            <Grid item>
-                                <Autocomplete
-                                    options={supervisors}
-                                    getOptionLabel={(option) => (option && option.user ? option.user.name : 'N/A')}
-                                    value={selectedSupervisor}
-                                    onChange={(event, newValue) => {
-                                        setSelectedSupervisor(newValue)
-                                    }}
-                                    renderInput={(params) => (
-                                        <TextField {...params} label="Select Supervisor" variant="outlined" fullWidth />
-                                    )}
-                                />
+                    {session?.role === 'coordinator' && (
+                        <Grid item xs={12}>
+                            <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
+                                <Grid item>
+                                    <Typography gutterBottom>Course Supervisor:</Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Autocomplete
+                                        options={supervisors}
+                                        getOptionLabel={(option) => (option && option.user ? option.user.name : 'N/A')}
+                                        value={selectedSupervisor}
+                                        style={{ width: '350px' }}
+                                        onChange={(event, newValue) => {
+                                            setSelectedSupervisor(newValue)
+                                        }}
+                                        renderOption={(props, option) => (
+                                            <li {...props} key={option.id}>
+                                                {' '}
+                                                {option.user ? option.user.name : 'N/A'}
+                                            </li>
+                                        )}
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                label="Select Supervisor"
+                                                variant="outlined"
+                                                fullWidth
+                                            />
+                                        )}
+                                    />
+                                    <FormHelperText>If no supervisor, leave the field blank.</FormHelperText>
+                                </Grid>
                             </Grid>
                         </Grid>
-                    </Grid>
+                    )}
 
                     <Grid container item alignItems="center" spacing={1} style={{ marginTop: '1em' }}>
                         <Grid item>
