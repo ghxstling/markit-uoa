@@ -118,6 +118,37 @@ describe('CourseRepo', () => {
             courseDescription: 'Intro to computer science 2',
         })
     })
+    it('can update multiple courses', async () => {
+        const courseName1 = 'Compsci101'
+        const courseDescription1 = 'Intro to computer science'
+        const courseName2 = 'Compsci120'
+        const courseDescription2 = 'Learn some maths'
+
+        const courseInput1 = courseInputHelper(courseName1, courseDescription1)
+        const courseInput2 = courseInputHelper(courseName2, courseDescription2)
+
+        const course1 = await CourseRepo.addCourse(courseInput1)
+        const course2 = await CourseRepo.addCourse(courseInput2)
+
+        const updatedCourse1 = await CourseRepo.updateCourse(course1.id, {
+            courseCode: 'Compsci102',
+            courseDescription: 'Intro to computer science 2',
+        })
+        const updatedCourse2 = await CourseRepo.updateCourse(course2.id, {
+            semester: '2030SS',
+            needMarkers: true,
+        })
+        expect(updatedCourse1).toMatchObject({
+            ...courseInput1,
+            courseCode: 'Compsci102',
+            courseDescription: 'Intro to computer science 2',
+        })
+        expect(updatedCourse2).toMatchObject({
+            ...courseInput2,
+            semester: '2030SS',
+            needMarkers: true,
+        })
+    })
     it('can delete a course', async () => {
         const courseName = 'Compsci101'
         const courseDescription = 'Intro to computer science'
