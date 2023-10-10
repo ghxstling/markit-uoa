@@ -46,6 +46,21 @@ export default class CourseRepo {
             data,
         })
     }
+
+    static async updateCourseSemesters(semester: string, data: Prisma.CourseUpdateManyMutationInput) {
+        await prisma.application.deleteMany({
+            where: {
+                course: {
+                    semester
+                }
+            }
+        })
+        return await prisma.course.updateMany({
+            where: { semester },
+            data,
+        })
+    }
+
     static async deleteCourse(id: number) {
         // TODO: implement cascade delete when users are implemented
         return await prisma.course.delete({

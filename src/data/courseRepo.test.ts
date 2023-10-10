@@ -118,6 +118,41 @@ describe('CourseRepo', () => {
             courseDescription: 'Intro to computer science 2',
         })
     })
+    it('can update multiple courses', async () => {
+        const courseName1 = 'Compsci101'
+        const courseDescription1 = 'Intro to computer science'
+        const courseName2 = 'Compsci120'
+        const courseDescription2 = 'Learn some maths'
+        const courseName3 = 'Compsci130'
+        const courseDescription3 = 'Harder Python'
+
+        const courseInput1 = courseInputHelper(courseName1, courseDescription1)
+        const courseInput2 = courseInputHelper(courseName2, courseDescription2)
+        const courseInput3 = courseInputHelper(courseName3, courseDescription3)
+        
+        const course1 = await CourseRepo.addCourse(courseInput1)
+        const course2 = await CourseRepo.addCourse(courseInput2)
+        const course3 = await CourseRepo.addCourse(courseInput3)
+        expect(course1.semester).toBe('2022S1')
+        expect(course2.semester).toBe('2022S1')
+        expect(course3.semester).toBe('2022S1')
+        
+        const updatedCourse3 = await CourseRepo.updateCourse(course3.id, { semester: '2022S2' })
+        expect(updatedCourse3.semester).toBe('2022S2')
+        
+        const data = {
+            semester: '2030SS',
+            needMarkers: true,
+        }
+        const batchPayload = await CourseRepo.updateCourseSemesters('2022S1', data)
+        expect(batchPayload.count).toBe(2)
+
+        const updatedCourse1 = await CourseRepo.getCourseById(course1.id)
+        const updatedCourse2 = await CourseRepo.getCourseById(course2.id)
+        expect(updatedCourse1!.semester).toBe('2030SS')
+        expect(updatedCourse2!.semester).toBe('2030SS')
+        expect(updatedCourse3.semester).toBe('2022S2')
+    })
     it('can delete a course', async () => {
         const courseName = 'Compsci101'
         const courseDescription = 'Intro to computer science'

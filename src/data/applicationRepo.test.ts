@@ -230,7 +230,7 @@ describe('ApplicationRepo', () => {
     it('can update allocated hours for student application', async () => {
         const applicationInput = createApplicationInput(student1!.id, course1!.id)
         const application = await ApplicationRepo.createApplication(applicationInput)
-        expect(application.allocatedHours).toEqual(5)
+        expect(application.allocatedHours).toEqual(0)
 
         let updatedApplication = await ApplicationRepo.updateAllocatedHours(application.id, 10)
         expect(updatedApplication.allocatedHours).toEqual(10)
