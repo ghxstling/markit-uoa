@@ -12,8 +12,10 @@ const DebugPage = () => {
 
     const makeApiCall = async () => {
         try {
-
-            const res = await fetch('/api/supervisors/4102/courses', {
+           const data = { 
+                preferenceId: 2,
+            }
+            const res = await fetch('/api/students/infinit/applications', {
                 method: 'GET',
 
                 headers: {
