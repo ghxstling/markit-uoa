@@ -48,7 +48,10 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
     const fetchData = async () => {
         try {
             const response = await fetch('/api/courses', { method: 'GET' })
-            const jsonData = await response.json()
+            let jsonData = await response.json()
+            jsonData = jsonData.sort(
+                (a: any, b: any) => parseInt(a.courseCode.split(' ')[1]) - parseInt(b.courseCode.split(' ')[1])
+            )
             setCourseData(jsonData)
         } catch (error) {
             console.error('Error fetching data:', error)

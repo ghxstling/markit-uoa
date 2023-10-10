@@ -90,6 +90,17 @@ const getCourseNameById = async (courseId: number) => {
     }
 }
 
+interface ApplicantsData {
+    id: number
+    hasMarkedCourse: boolean
+    previouslyAchievedGrade: string
+    studentId: number
+    courseId: number
+    isQualified: boolean
+    applicationStatus: string
+    allocatedHours: number
+}
+
 const Application = () => {
     //initialise use states
     const { data: session } = useSession()
@@ -112,6 +123,7 @@ const Application = () => {
     const [openSnackBar, setOpenSnackBar] = useState(false)
     const [openSnackBarSuccess, setOpenSnackBarSuccess] = useState(false)
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('Student submitted successfully!')
+    const [currentAppliations, setCurrentApplications] = useState<ApplicantsData[]>([])
 
     //fetch existing student and application details, get relevant values and update formValues
 
@@ -125,6 +137,7 @@ const Application = () => {
             const response2 = await fetch(`/api/students/me`, { method: 'GET' })
             if (response1.ok && response2.ok) {
                 let jsonData1 = await response1.json()
+                setCurrentApplications(jsonData1)
                 jsonData1 = jsonData1.sort((a: any, b: any) => a.preferenceId - b.preferenceId)
                 const jsonData2 = await response2.json()
                 let currentCoursePreferences = jsonData1.map((application: any) => {
@@ -153,6 +166,7 @@ const Application = () => {
                 })
             } else if (response1.ok && !response2.ok) {
                 let jsonData1 = await response1.json()
+                setCurrentApplications(jsonData1)
                 jsonData1 = jsonData1.sort((a: any, b: any) => a.preferenceId - b.preferenceId)
                 let currentCoursePreferences = jsonData1.map((application: any) => {
                     return {
@@ -237,6 +251,9 @@ const Application = () => {
         if (activeStep === steps.length - 1) {
             //check all applications
             let uniqueCourses: Set<number> = new Set()
+            if (currentAppliations.length !== 0) {
+                currentAppliations.forEach((application: ApplicantsData) => uniqueCourses.add(application.courseId))
+            }
             for (let coursePreference of formValues.coursePreferences) {
                 if (coursePreference.courseName === '' || coursePreference.course === '') {
                     setSnackbarMessage(
@@ -268,7 +285,7 @@ const Application = () => {
                     setOpenSnackBar(true)
                     return
                 } else if (
-                    (coursePreference.markedPreviously === true || coursePreference.tutoredPreviously === true) &&
+                    (coursePreference.markedPreviously === false || coursePreference.tutoredPreviously === false) &&
                     coursePreference.explainNotPrevious === ''
                 ) {
                     setSnackbarMessage(
