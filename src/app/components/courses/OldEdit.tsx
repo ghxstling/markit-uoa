@@ -20,20 +20,10 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Autocomplete,
-    RadioGroup,
-    FormControlLabel,
-    Radio,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useSession } from 'next-auth/react'
-
-interface Supervisor {
-    id: number
-    // ... other properties ...
-}
 
 type EditCourseDetailsProps = {
     courseId: string // Assuming courseId is a string
@@ -63,11 +53,6 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
     const [isEditing, setIsEditing] = useState(true)
     const [isSaved, setIsSaved] = useState(false)
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
-    const [supervisors, setSupervisors] = useState<any[]>([])
-    const [selectedSupervisor, setSelectedSupervisor] = useState<Supervisor | null>(null)
-    const { data: session } = useSession()
-    const [isUserSupervisor, setIsUserSupervisor] = useState<string>('no')
-    const [supervisorId, setSupervisorId] = useState<number | null>(null)
 
     const originalCourseDataRef = React.useRef<OriginalCourseData | null>(null)
 
@@ -105,7 +90,6 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
         markerHours: number
         markersNeeded: number
         description: string
-        supervisorId: number
     }
 
     type Course = {
@@ -117,7 +101,6 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
         markerHours: number
         markersNeeded: number
         markerResponsibilities: string
-        supervisorId: number
     }
 
     async function populateForm(course: Course) {
@@ -133,7 +116,6 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
                 markerHours: course.markerHours,
                 markersNeeded: course.markersNeeded,
                 description: course.markerResponsibilities,
-                supervisorId: course.supervisorId,
             }
 
             setCourseCode(course.courseCode.substring(8))
@@ -155,13 +137,6 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
             setDescription(course.markerResponsibilities)
             const wordCount = course.markerResponsibilities.split(/\s+/).filter(Boolean).length
             setWordCount(wordCount)
-            setSelectedSupervisor({
-                id: course.supervisorId,
-            })
-            setSupervisorId(course.supervisorId)
-            console.log(course.supervisorId)
-            const foundSupervisor = supervisors.find((sup) => sup.id === course.supervisorId)
-            setSelectedSupervisor(foundSupervisor)
         } catch (error) {
             console.error('Error fetching course data:', error)
             setSnackbarMessage('Failed to fetch course data.')
@@ -557,42 +532,6 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
                             </Grid>
                         </Grid>
                     </Grid>
-
-                    {session?.role === 'coordinator' && (
-                        <Grid item xs={12}>
-                            <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
-                                <Grid item>
-                                    <Typography gutterBottom>Course Supervisor:</Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Autocomplete
-                                        options={supervisors}
-                                        getOptionLabel={(option) => (option && option.user ? option.user.name : 'N/A')}
-                                        value={selectedSupervisor}
-                                        style={{ width: '350px' }}
-                                        onChange={(event, newValue) => {
-                                            setSelectedSupervisor(newValue)
-                                        }}
-                                        renderOption={(props, option) => (
-                                            <li {...props} key={option.id}>
-                                                {' '}
-                                                {option.user ? option.user.name : 'N/A'}
-                                            </li>
-                                        )}
-                                        renderInput={(params) => (
-                                            <TextField
-                                                {...params}
-                                                label="Select Supervisor"
-                                                variant="outlined"
-                                                fullWidth
-                                            />
-                                        )}
-                                    />
-                                    <FormHelperText>If no supervisor, leave the field blank.</FormHelperText>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    )}
 
                     <Grid container item alignItems="center" spacing={1} style={{ marginTop: '1em' }}>
                         {!isEditing ? (
