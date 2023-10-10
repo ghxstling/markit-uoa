@@ -75,18 +75,18 @@ export default function ChangePreferenceOrder() {
 
     const submitPreferences = async () => {
         const currentPreferences = [...applications]
-        currentPreferences.forEach((application: Application) => handlePreferenceUpdate(application))
+        handlePreferenceUpdate(currentPreferences)
         fetchCourseInfo()
     }
 
-    const handlePreferenceUpdate = async (application: Application) => {
+    const handlePreferenceUpdate = async (applications: Application[]) => {
         try {
-            const response = await fetch(`/api/students/me/applications/${application.id}`, {
+            const response = await fetch(`/api/students/me/applications`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(application),
+                body: JSON.stringify(applications),
             })
         } catch (error) {
             console.error('Error updating data:', error)
