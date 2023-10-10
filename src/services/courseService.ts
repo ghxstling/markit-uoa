@@ -4,26 +4,19 @@ import CourseRepo from '@/data/courseRepo'
 import { ApplicationStatus } from '@/models/applicationStatus'
 
 type Application = Exclude<Prisma.PromiseReturnType<typeof ApplicationRepo.getApplicationById>, null>
-type Course = Exclude<Prisma.PromiseReturnType<typeof CourseRepo.getCourseById>, null>
-type CourseWithMarkeData = Course & { totalMarkers: number; totalHours: number }
 
 export default class CourseService {
-    static async createCourseObjects(courses: Course[]) {
-        let coursesArray = new Array<CourseWithMarkeData>()
-        for (const c of courses) {
-            const courseApplications = (await ApplicationRepo.getAllApplications()).filter(
-                (app) => app.courseId === c.id
-            )
-            const totalMarkers = (await this._getAssignedMarkers(courseApplications)).length
-            const totalHours = await this._getAllocatedHours(courseApplications)
-            const modifiedCourses = {
-                ...c,
-                totalMarkers,
-                totalHours,
-            }
-            coursesArray.push(modifiedCourses)
-        }
-        return coursesArray
+    static async getCourseWithMarkerData() {
+        const courses = await CourseRepo.getAllCourses()
+        const coursesWithMarkerData = await Promise.all(
+            courses.map(async (course) => {
+                const assignedMarkers = await this._getAssignedMarkers(course.application)
+                const allocatedHours = await this._getAllocatedHours(course.application)
+                const { application, ...courseWithoutApplication } = course
+                return { ...courseWithoutApplication, assignedMarkers, allocatedHours }
+            })
+        )
+        return coursesWithMarkerData
     }
 
     static async _getAssignedMarkers(applications: Application[]) {
