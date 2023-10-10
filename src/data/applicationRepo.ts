@@ -77,28 +77,10 @@ export default class ApplicationRepo {
             return null
         }
 
-        const updatedApplication = await prisma.application.update({
+        return await prisma.application.update({
             where: { id },
             data: { preferenceId: prefId },
         })
-
-        /*
-        let prefArray = []
-        for (let i=1; i <= studentApplications.length; i++) {
-            if (i !== prefId) {
-                prefArray.push(i)
-            }
-        }
-        studentApplications = studentApplications.filter(app => app.id !== id)
-        for (let i=0; i < prefArray.length; i++) {
-            const app = studentApplications[i]
-            await prisma.application.update({
-                where: { id: app.id },
-                data: { preferenceId: prefArray[i] }
-            })
-        }
-        */
-        return updatedApplication
     }
 
     static async updateAllocatedHours(id: number, allocatedHours: number) {
