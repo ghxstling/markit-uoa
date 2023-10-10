@@ -36,7 +36,6 @@ export default function AllCourseView() {
                         mb: '100px',
                     }}
                 >
-                    <h2>Course View</h2>
                     <CourseTable />
                 </Box>
             </Box>
