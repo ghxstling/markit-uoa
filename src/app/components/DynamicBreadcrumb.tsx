@@ -15,7 +15,9 @@ const DynamicBreadcrumb = () => {
     let pathArray = pathName.split('/')
     pathArray = pathArray.filter((segment) => segment !== '')
 
-    if (session && session.role === 'supervisor') {
+    let lastIndex = pathArray.indexOf('courses')
+    if (lastIndex !== undefined && lastIndex === pathArray.length - 1) {
+        pathArray.splice(lastIndex, 0, 'CreateCourse')
         pathArray = pathArray.filter((segment) => segment !== 'courses')
     }
 
