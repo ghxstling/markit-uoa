@@ -74,25 +74,17 @@ export default function ImportCourses() {
 
     const handleImport = () => {
         setIsLoading(true)
-        // 1. Filter courses from the source semester
-        const coursesToDuplicate = courses.filter((course) => course.semester === sourceSemester)
 
-        // 2. Modify the semester property of each of those courses
-        const duplicatedCourses = coursesToDuplicate.map((course) => {
-            const { id, ...restOfCourse } = course // exclude id
-            return {
-                ...restOfCourse,
-                semester: targetSemester,
-            }
-        })
-
-        // 3. Send the duplicated courses to the server
-        fetch('/api/courses/import', {
-            method: 'POST',
+        // Send the source and target semesters to the server
+        fetch('/api/courses', {
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(duplicatedCourses),
+            body: JSON.stringify({
+                sourceSemester: sourceSemester,
+                targetSemester: targetSemester,
+            }),
         })
             .then((response) => {
                 if (response.status === 403) {
@@ -100,17 +92,16 @@ export default function ImportCourses() {
                         throw new Error(data.message || 'Access denied')
                     })
                 } else if (response.status === 201) {
-                    setSnackbarMessage('Courses successfully imported!')
+                    setSnackbarMessage(response.statusText)
                     setSnackbarSeverity('success')
                     setSnackbarOpen(true)
                     setIsLoading(false)
                 } else {
                     return response.json().then((data) => {
-                        throw new Error(data.error || 'Failed to import courses')
+                        throw new Error(data.statusText || 'Failed to import courses')
                     })
                 }
             })
-
             .catch((error) => {
                 console.error('Error importing courses:', error)
                 setSnackbarMessage(error.message)
