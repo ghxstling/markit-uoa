@@ -1,6 +1,6 @@
 'use client'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import { TableBody } from '@mui/material'
+import { TableBody, TableSortLabel } from '@mui/material'
 import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
@@ -120,19 +120,23 @@ export default function CourseTable() {
                     <TableHead>
                         <TableRow>
                             <TableCell style={{ textAlign: 'center' }} onClick={() => handleSort('courseCode')}>
-                                <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                                <TableSortLabel
+                                    style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                                    active={sortField === 'courseCode'}
+                                    direction={sortField === 'courseCode' ? sortDirection : 'asc'}
+                                >
                                     Course
-                                    {sortField === 'courseCode' &&
-                                        (sortDirection === 'asc' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />)}
-                                </div>
+                                </TableSortLabel>
                             </TableCell>
 
                             <TableCell style={{ textAlign: 'center' }} onClick={() => handleSort('semester')}>
-                                <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                                <TableSortLabel
+                                    style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                                    active={sortField === 'semester'}
+                                    direction={sortField === 'semester' ? sortDirection : 'asc'}
+                                >
                                     Semester
-                                    {sortField === 'semester' &&
-                                        (sortDirection === 'asc' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />)}
-                                </div>
+                                </TableSortLabel>
                             </TableCell>
                             <TableCell style={{ textAlign: 'center' }}>
                                 {isCoordinator ? (
@@ -164,11 +168,13 @@ export default function CourseTable() {
                                 <></>
                             )}
                             <TableCell style={{ textAlign: 'center' }} onClick={() => handleSort('needMarkers')}>
-                                <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                                <TableSortLabel
+                                    style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                                    active={sortField === 'needMarkers'}
+                                    direction={sortField === 'needMarkers' ? sortDirection : 'asc'}
+                                >
                                     Status
-                                    {sortField === 'needMarkers' &&
-                                        (sortDirection === 'asc' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />)}
-                                </div>
+                                </TableSortLabel>
                             </TableCell>
                         </TableRow>
                     </TableHead>
