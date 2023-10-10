@@ -129,7 +129,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                     newLookup[student.id] = user.name
                 }
             })
-            setStudentNameLookup(newLookup) // update the state
+            setStudentNameLookup(newLookup)
         }
     }, [users, studentData])
 
@@ -622,27 +622,33 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                         <TableBody>
                             {(rowsPerPage > 0
                                 ? applications
-                                      .filter(
-                                          (application) =>
-                                              studentNameLookup[application.studentId]
-                                                  .toLowerCase()
-                                                  .includes(searchTerm.toLowerCase()) ||
-                                              studentData
-                                                  .find((student) => student.id === application.studentId)
-                                                  ?.upi.toLowerCase()
-                                                  .includes(searchTerm.toLowerCase())
-                                      )
+                                      .filter((application) => {
+                                          const studentName = studentNameLookup[application.studentId]
+                                          const searchTermLower = searchTerm.toLowerCase()
+
+                                          if (studentName && studentName.toLowerCase().includes(searchTermLower)) {
+                                              return true
+                                          }
+
+                                          const student = studentData.find(
+                                              (student) => student.id === application.studentId
+                                          )
+                                          return student && student.upi.toLowerCase().includes(searchTermLower)
+                                      })
                                       .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                : applications.filter(
-                                      (application) =>
-                                          studentNameLookup[application.studentId]
-                                              .toLowerCase()
-                                              .includes(searchTerm.toLowerCase()) ||
-                                          studentData
-                                              .find((student) => student.id === application.studentId)
-                                              ?.upi.toLowerCase()
-                                              .includes(searchTerm.toLowerCase())
-                                  )
+                                : applications.filter((application) => {
+                                      const studentName = studentNameLookup[application.studentId]
+                                      const searchTermLower = searchTerm.toLowerCase()
+
+                                      if (studentName && studentName.toLowerCase().includes(searchTermLower)) {
+                                          return true
+                                      }
+
+                                      const student = studentData.find(
+                                          (student) => student.id === application.studentId
+                                      )
+                                      return student && student.upi.toLowerCase().includes(searchTermLower)
+                                  })
                             ).map((application) => (
                                 <TableRow
                                     key={application.id}
