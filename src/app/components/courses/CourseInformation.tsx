@@ -425,7 +425,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         }
     }
 
-    const filterApplications = (searchTerm: string) => {
+    const setFilterApplicationsLength = (searchTerm: string) => {
         const filtered = applications.filter((application) => {
             const studentName = studentNameLookup[application.studentId]
             const searchTermLower = searchTerm.toLowerCase()
@@ -512,7 +512,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                         value={searchTerm}
                         onChange={(e) => {
                             setSearchTerm(e.target.value)
-                            filterApplications(e.target.value)
+                            setFilterApplicationsLength(e.target.value)
                         }}
                         sx={{ width: '400px' }}
                     />
