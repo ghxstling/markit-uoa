@@ -4,15 +4,21 @@ import { Breadcrumbs, Link, Stack, Typography } from '@mui/material'
 import { usePathname } from 'next/navigation'
 import NextLink from 'next/link'
 import path from 'path'
+import { useSession } from 'next-auth/react'
 
 const DynamicBreadcrumb = () => {
+    const { data: session } = useSession()
     const pathName = usePathname()
 
     let pathArray = pathName.split('/')
     pathArray = pathArray.filter((segment) => segment !== '')
 
+    if (session && session.role === 'supervisor') {
+        pathArray = pathArray.filter((segment) => segment !== 'courses')
+    }
+
     const breadcrumbs = pathArray.map((path, index) => {
-        if (path === 'courses') {
+        if (path === 'courses' && session && session.role === 'coordinator') {
             const href = '/dashboard/viewAllCourses'
             return {
                 href,
