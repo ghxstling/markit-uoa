@@ -1,7 +1,4 @@
 'use client'
-
-import { Box, Stack } from '@mui/material'
-import Sidebar from '../components/Sidebar'
 import { useSession } from 'next-auth/react'
 
 export default function DashboardLayout(props: {
@@ -11,7 +8,6 @@ export default function DashboardLayout(props: {
     student: React.ReactNode
 }) {
     const { data: session } = useSession()
-
     if (session) {
         switch (session.role) {
             case 'coordinator':
