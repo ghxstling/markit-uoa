@@ -307,8 +307,11 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
             setOpenSnackbar(true)
             return
         }
-        console.log(selectedSupervisor.id)
-        const supervisorId = selectedSupervisor.id
+        let supervisorId = null
+        if (session?.role === 'coordinator' && selectedSupervisor) {
+            console.log(selectedSupervisor.id)
+            supervisorId = selectedSupervisor.id
+        }
 
         const finalCourseCode = `COMPSCI ${courseCode}`
 
