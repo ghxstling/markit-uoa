@@ -12,16 +12,16 @@ const DebugPage = () => {
 
     const makeApiCall = async () => {
         try {
-            const data = {
-                sourceSemester: '2030S1',
-                targetSemester: '2020S1',
-            }
-            const res = await fetch('/api/courses', {
-                method: 'PATCH',
+            // const data = {
+            //     sourceSemester: '2030S1',
+            //     targetSemester: '2020S1',
+            // }
+            const res = await fetch('/api/applications/csv', {
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(data)
+                // body: JSON.stringify(data)
             })
             setApiResponse(await res.json())
             setError(null)
