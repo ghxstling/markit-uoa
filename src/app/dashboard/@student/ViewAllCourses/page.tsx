@@ -1,6 +1,6 @@
 'use client'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import { Box, TableBody } from '@mui/material'
+import { Box, TableBody, TableSortLabel } from '@mui/material'
 import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
@@ -37,10 +37,10 @@ export default function StudentViewAllCourses() {
 
     const [data, setData] = useState<Course[]>([])
     const [searchTerm, setSearchTerm] = useState<string>('')
-    const [sortField, setSortField] = useState<'courseCode' | 'semester' | 'needMarkers' | null>(null)
+    const [sortField, setSortField] = useState<'courseCode' | 'semester' | 'markersNeeded' | null>(null)
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
 
-    const handleSort = (field: 'courseCode' | 'semester' | 'needMarkers') => {
+    const handleSort = (field: 'courseCode' | 'semester' | 'markersNeeded') => {
         if (sortField === field) {
             setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
         } else {
@@ -133,26 +133,39 @@ export default function StudentViewAllCourses() {
                             <TableHead>
                                 <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
                                     <TableCell />
-                                    <TableCell style={{ textAlign: 'center' }}>
-                                        <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                    <TableCell style={{ textAlign: 'center' }} onClick={() => handleSort('courseCode')}>
+                                        <TableSortLabel
+                                            style={{ cursor: 'pointer' }}
+                                            active={sortField === 'courseCode'}
+                                            direction={sortField === 'courseCode' ? sortDirection : 'asc'}
+                                        >
                                             Course
-                                            {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
-                                        </div>
+                                        </TableSortLabel>
                                     </TableCell>
-                                    <TableCell style={{ textAlign: 'center' }}>
-                                        <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                            Semester{' '}
-                                            {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
-                                        </div>
+                                    <TableCell style={{ textAlign: 'center' }} onClick={() => handleSort('semester')}>
+                                        <TableSortLabel
+                                            style={{ cursor: 'pointer' }}
+                                            active={sortField === 'semester'}
+                                            direction={sortField === 'semester' ? sortDirection : 'asc'}
+                                        >
+                                            Semester
+                                        </TableSortLabel>
                                     </TableCell>
-                                    <TableCell style={{ textAlign: 'center' }}>
-                                        <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                            Markers Needed{' '}
-                                            <Tooltip title="Markers">
+                                    <TableCell
+                                        style={{ textAlign: 'center' }}
+                                        onClick={() => handleSort('markersNeeded')}
+                                    >
+                                        <TableSortLabel
+                                            style={{ cursor: 'pointer' }}
+                                            active={sortField === 'markersNeeded'}
+                                            direction={sortField === 'markersNeeded' ? sortDirection : 'asc'}
+                                        >
+                                            Markers Needed
+                                            <Tooltip title="Markers needed for the course">
                                                 <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
-                                            </Tooltip>{' '}
-                                            {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
-                                        </div>
+                                            </Tooltip>
+                                        </TableSortLabel>
+                                        <div style={{ alignItems: 'center', flexWrap: 'wrap' }}></div>
                                     </TableCell>
                                 </TableRow>
                             </TableHead>
