@@ -315,7 +315,21 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
             return
         }
         let supervisorId = null
-        if (session?.role === 'coordinator' && selectedSupervisor) {
+        if (session?.role === 'supervisor') {
+            // Assuming session object contains user ID or you can fetch it
+            const response = await fetch('/api/supervisors/me')
+            if (response.ok) {
+                const supervisorData = await response.json()
+                supervisorId = supervisorData.id
+            } else {
+                // Handle error when fetching supervisor ID
+                console.error('Failed to get supervisor ID')
+                setSnackbarMessage('Failed to add course. Could not retrieve supervisor information.')
+                setSnackbarSeverity('error')
+                setOpenSnackbar(true)
+                return
+            }
+        } else if (session?.role === 'coordinator' && selectedSupervisor) {
             console.log(selectedSupervisor.id)
             supervisorId = selectedSupervisor.id
         }
@@ -613,6 +627,7 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
                                         onChange={(event, newValue) => {
                                             setSelectedSupervisor(newValue)
                                         }}
+                                        disabled={!isEditing}
                                         renderOption={(props, option) => (
                                             <li {...props} key={option.id}>
                                                 {' '}
