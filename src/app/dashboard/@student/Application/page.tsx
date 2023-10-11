@@ -120,7 +120,7 @@ const Application = () => {
         workHours: 5,
         coursePreferences: [],
     })
-    const [cvTranscript, setCvTranscript] = useState<ICvAndTranscript>({
+    const [cvTranscriptName, setCvTranscriptName] = useState<ICvAndTranscript>({
         CvName: '',
         TranscriptName: '',
     })

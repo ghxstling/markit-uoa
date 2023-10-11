@@ -109,7 +109,9 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                 method: 'GET',
             })
             const jsonData = await response.json()
-            setApplications(jsonData)
+            if (jsonData.length !== 0) {
+                setApplications(jsonData)
+            }
             setSelected((prevSelected) => {
                 let newSelected = new Array(jsonData.length).fill(false)
                 setQualified(jsonData, newSelected)
