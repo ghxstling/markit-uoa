@@ -103,6 +103,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
     const [studentNameLookup, setStudentNameLookup] = useState<{ [key: number]: string }>({})
     const [applicationsLength, setApplicationsLength] = useState(0)
+    const [studentUpi, setStudentUpi] = useState<string>('')
 
     const emptyRows = page >= 0 ? Math.max(0, (1 + page) * rowsPerPage - studentData.length) : 0
 
@@ -264,6 +265,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
             })
             const jsonData = await response.json()
             if (response.ok) {
+                setApplicationsLength(jsonData.length)
                 setApplications(jsonData)
                 setSelected((prevSelected) => {
                     let newSelected = new Array(jsonData.length).fill(false)
@@ -359,7 +361,8 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
         setPage(0)
     }
 
-    const handleDrawerOpen = () => {
+    const handleDrawerOpen = (studentUpi: string) => {
+        setStudentUpi(studentUpi)
         setIsDrawerOpen(true)
     }
 
@@ -695,7 +698,9 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                         />
                                     </TableCell>
                                     <TableCell style={{ textAlign: 'center' }}>
-                                        <Button onClick={handleDrawerOpen}>
+                                        <Button onClick={() => handleDrawerOpen(
+                                                studentData.find((student) => student.id === application.studentId)?.upi!
+                                            )}>
                                             {
                                                 users.find(
                                                     (user) =>
@@ -707,27 +712,6 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                             }{' '}
                                             ({studentData.find((student) => student.id === application.studentId)?.upi})
                                         </Button>
-                                        <Drawer
-                                            anchor="right"
-                                            open={isDrawerOpen}
-                                            onClose={handleDrawerClose}
-                                            ModalProps={{
-                                                slotProps: {
-                                                    backdrop: {
-                                                        style: {
-                                                            backgroundColor: 'rgba(0, 0, 0, 0.25)',
-                                                        },
-                                                    },
-                                                },
-                                            }}
-                                        >
-                                            <ViewStudentInformation
-                                                studentUpi={
-                                                    studentData.find((student) => student.id === application.studentId)
-                                                        ?.upi!
-                                                }
-                                            />
-                                        </Drawer>
                                     </TableCell>
                                     <TableCell style={{ textAlign: 'center' }}>
                                         {application.previouslyAchievedGrade}
@@ -804,6 +788,24 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
             <Dialog open={open} onClose={closeDialog} maxWidth="md" fullWidth>
                 <EditCourseDetails courseId={courseId} />
             </Dialog>
+            <Drawer
+                anchor="right"
+                open={isDrawerOpen}
+                onClose={handleDrawerClose}
+                ModalProps={{
+                    slotProps: {
+                        backdrop: {
+                            style: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.25)',
+                            },
+                        },
+                    },
+                }}
+            >
+                <ViewStudentInformation
+                    studentUpi={studentUpi}
+                />
+            </Drawer>
         </>
     )
 }

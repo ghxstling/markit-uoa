@@ -15,10 +15,20 @@ import {
     Input,
     TextField,
     IconButton,
+    Autocomplete,
+    RadioGroup,
+    FormControlLabel,
+    Radio,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+
+interface Supervisor {
+    id: number
+    // ... other properties ...
+}
 
 export default function CourseDetails() {
     const [courseCode, setCourseCode] = useState('')
@@ -40,6 +50,10 @@ export default function CourseDetails() {
     const [snackbarMessage, setSnackbarMessage] = React.useState('')
     const [snackbarSeverity, setSnackbarSeverity] = React.useState<'success' | 'error'>('success')
     const router = useRouter()
+    const [supervisors, setSupervisors] = useState<any[]>([])
+    const [selectedSupervisor, setSelectedSupervisor] = useState<Supervisor | null>(null)
+    const { data: session } = useSession()
+    const [isUserSupervisor, setIsUserSupervisor] = useState<string>('no')
 
     const handleManualInputChange = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -72,6 +86,29 @@ export default function CourseDetails() {
         setDescription(newDescription)
         setWordCount(newWordCount)
     }
+
+    useEffect(() => {
+        if (session?.role !== 'coordinator') {
+            return // Exit early if not a coordinator
+        }
+
+        async function fetchData() {
+            try {
+                const response = await fetch('/api/supervisors/')
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`)
+                }
+
+                const data = await response.json()
+                setSupervisors(data)
+            } catch (error) {
+                console.error('Fetching supervisors failed:', error)
+            }
+        }
+
+        fetchData()
+    }, [session?.role]) // session.role is added to dependency array
 
     async function handleSubmit() {
         // Validation checks
@@ -129,6 +166,27 @@ export default function CourseDetails() {
             setOpenSnackbar(true)
             return
         }
+        let supervisorId = null
+
+        if (session?.role === 'supervisor') {
+            if (isUserSupervisor === 'yes') {
+                // Assuming session object contains user ID or you can fetch it
+                const response = await fetch('/api/supervisors/me')
+                if (response.ok) {
+                    const supervisorData = await response.json()
+                    supervisorId = supervisorData.id
+                } else {
+                    // Handle error when fetching supervisor ID
+                    console.error('Failed to get supervisor ID')
+                    setSnackbarMessage('Failed to add course. Could not retrieve supervisor information.')
+                    setSnackbarSeverity('error')
+                    setOpenSnackbar(true)
+                    return
+                }
+            }
+        } else if (session?.role === 'coordinator' && selectedSupervisor) {
+            supervisorId = selectedSupervisor.id
+        }
 
         const finalCourseCode = `COMPSCI ${courseCode}`
 
@@ -142,6 +200,7 @@ export default function CourseDetails() {
             markersNeeded: markersNeeded.slider,
             semester: `${selectedYear}${selectedSemester}`,
             markerResponsibilities: description,
+            supervisorId: supervisorId,
         }
 
         try {
@@ -180,6 +239,7 @@ export default function CourseDetails() {
             setEnrolledStudents({ slider: 0, manual: '0' })
             setMarkerHours({ slider: 0, manual: '0' })
             setMarkersNeeded({ slider: 0, manual: '0' })
+            setSelectedSupervisor(null)
 
             setDescription('')
             setWordCount(0)
@@ -233,7 +293,6 @@ export default function CourseDetails() {
                             </Grid>
                         </Grid>
                     </Grid>
-
                     <Grid item>
                         <TextField
                             label="Course Description"
@@ -302,7 +361,6 @@ export default function CourseDetails() {
                             </Grid>
                         </Grid>
                     </Grid>
-
                     <Grid item xs={12}>
                         <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
                             <Grid item>
@@ -326,7 +384,6 @@ export default function CourseDetails() {
                             </Grid>
                         </Grid>
                     </Grid>
-
                     <Grid item xs={12}>
                         <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
                             <Grid item>
@@ -350,7 +407,6 @@ export default function CourseDetails() {
                             </Grid>
                         </Grid>
                     </Grid>
-
                     <Grid item xs={12}>
                         <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
                             <Grid item>
@@ -374,7 +430,6 @@ export default function CourseDetails() {
                             </Grid>
                         </Grid>
                     </Grid>
-
                     <Grid item xs={12}>
                         <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
                             <Grid item>
@@ -391,6 +446,61 @@ export default function CourseDetails() {
                             </Grid>
                         </Grid>
                     </Grid>
+
+                    {session?.role === 'supervisor' && (
+                        <Grid item xs={12}>
+                            <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
+                                <Grid item>
+                                    <Typography gutterBottom>Are you the supervisor for this course?</Typography>
+                                </Grid>
+                                <Grid item>
+                                    <RadioGroup
+                                        value={isUserSupervisor}
+                                        onChange={(event) => setIsUserSupervisor(event.target.value)}
+                                    >
+                                        <FormControlLabel value="yes" control={<Radio />} label="Yes" />
+                                        <FormControlLabel value="no" control={<Radio />} label="No" />
+                                    </RadioGroup>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    )}
+
+                    {session?.role === 'coordinator' && (
+                        <Grid item xs={12}>
+                            <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
+                                <Grid item>
+                                    <Typography gutterBottom>Course Supervisor:</Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Autocomplete
+                                        options={supervisors}
+                                        getOptionLabel={(option) => (option && option.user ? option.user.name : 'N/A')}
+                                        value={selectedSupervisor}
+                                        style={{ width: '350px' }}
+                                        onChange={(event, newValue) => {
+                                            setSelectedSupervisor(newValue)
+                                        }}
+                                        renderOption={(props, option) => (
+                                            <li {...props} key={option.id}>
+                                                {' '}
+                                                {option.user ? option.user.name : 'N/A'}
+                                            </li>
+                                        )}
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                label="Select Supervisor"
+                                                variant="outlined"
+                                                fullWidth
+                                            />
+                                        )}
+                                    />
+                                    <FormHelperText>If no supervisor, leave the field blank.</FormHelperText>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    )}
 
                     <Grid container item alignItems="center" spacing={1} style={{ marginTop: '1em' }}>
                         <Grid item>

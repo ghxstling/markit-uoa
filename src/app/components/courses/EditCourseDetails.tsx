@@ -20,10 +20,17 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
+    Autocomplete,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+
+interface Supervisor {
+    id: number
+    // ... other properties ...
+}
 
 type EditCourseDetailsProps = {
     courseId: string // Assuming courseId is a string
@@ -53,6 +60,10 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
     const [isEditing, setIsEditing] = useState(true)
     const [isSaved, setIsSaved] = useState(false)
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
+    const [supervisorId, setSupervisorId] = useState<number | null>(null)
+    const { data: session } = useSession()
+    const [supervisors, setSupervisors] = useState<any[]>([])
+    const [selectedSupervisor, setSelectedSupervisor] = useState<Supervisor | null>(null)
 
     const originalCourseDataRef = React.useRef<OriginalCourseData | null>(null)
 
@@ -90,6 +101,10 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
         markerHours: number
         markersNeeded: number
         description: string
+        supervisor: {
+            name: string
+            id: number
+        }
     }
 
     type Course = {
@@ -101,6 +116,10 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
         markerHours: number
         markersNeeded: number
         markerResponsibilities: string
+        supervisor: {
+            name: string
+            id: number
+        }
     }
 
     async function populateForm(course: Course) {
@@ -116,6 +135,10 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
                 markerHours: course.markerHours,
                 markersNeeded: course.markersNeeded,
                 description: course.markerResponsibilities,
+                supervisor: {
+                    name: course.supervisor.name,
+                    id: course.supervisor.id,
+                },
             }
 
             setCourseCode(course.courseCode.substring(8))
@@ -137,6 +160,9 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
             setDescription(course.markerResponsibilities)
             const wordCount = course.markerResponsibilities.split(/\s+/).filter(Boolean).length
             setWordCount(wordCount)
+            setSupervisorId(course.supervisor?.id)
+            console.log(course.supervisor?.id)
+            console.log(course.supervisor?.name)
         } catch (error) {
             console.error('Error fetching course data:', error)
             setSnackbarMessage('Failed to fetch course data.')
@@ -171,6 +197,29 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
         fetchCourseDetails()
     }, [courseId])
 
+    useEffect(() => {
+        if (session?.role !== 'coordinator') {
+            return // Exit early if not a coordinator
+        }
+
+        async function fetchData() {
+            try {
+                const response = await fetch('/api/supervisors/')
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`)
+                }
+
+                const data = await response.json()
+                setSupervisors(data)
+            } catch (error) {
+                console.error('Fetching supervisors failed:', error)
+            }
+        }
+
+        fetchData()
+    }, [session?.role]) // session.role is added to dependency array
+
     const handleManualInputChange = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
         setState: React.Dispatch<React.SetStateAction<{ slider: number; manual: string }>>,
@@ -201,6 +250,13 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
 
         setDescription(newDescription)
         setWordCount(newWordCount)
+    }
+
+    const getSupervisorId = (supervisor: Supervisor | null) => {
+        if (supervisor === null) {
+            return null
+        }
+        return supervisor.id
     }
 
     async function handleSubmit() {
@@ -258,6 +314,25 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
             setOpenSnackbar(true)
             return
         }
+        let supervisorId = null
+        if (session?.role === 'supervisor') {
+            // Assuming session object contains user ID or you can fetch it
+            const response = await fetch('/api/supervisors/me')
+            if (response.ok) {
+                const supervisorData = await response.json()
+                supervisorId = supervisorData.id
+            } else {
+                // Handle error when fetching supervisor ID
+                console.error('Failed to get supervisor ID')
+                setSnackbarMessage('Failed to add course. Could not retrieve supervisor information.')
+                setSnackbarSeverity('error')
+                setOpenSnackbar(true)
+                return
+            }
+        } else if (session?.role === 'coordinator' && selectedSupervisor) {
+            console.log(selectedSupervisor.id)
+            supervisorId = selectedSupervisor.id
+        }
 
         const finalCourseCode = `COMPSCI ${courseCode}`
 
@@ -271,6 +346,7 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
             markersNeeded: markersNeeded.slider,
             semester: `${selectedYear}${selectedSemester}`,
             markerResponsibilities: description,
+            supervisorId: getSupervisorId(selectedSupervisor),
         }
         try {
             const response = await fetch(`/api/courses/${courseId}`, {
@@ -320,12 +396,23 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
         setOpenDeleteDialog(false)
     }
 
-    const handleDeleteCourse = () => {
-        // For now, just logging the delete action
-        console.log('Course deleted!')
+    async function handleDeleteCourse() {
+        try {
+            const response = await fetch(`/api/courses/${courseId}`, {
+                method: 'DELETE',
+            })
 
-        // Close the delete confirmation dialog
+            if (response.ok) {
+                console.log('Course deleted successfully!')
+            } else {
+                console.error('Failed to delete the course. Server responded with:', response.status)
+            }
+        } catch (error) {
+            console.error('Error occurred while trying to delete the course:', error)
+        }
+
         handleCloseDeleteDialog()
+        router.push('/dashboard/viewAllCourses')
     }
 
     return (
@@ -531,6 +618,53 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
                         </Grid>
                     </Grid>
 
+                    {session?.role === 'coordinator' && (
+                        <Grid item xs={12}>
+                            <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
+                                <Grid item>
+                                    <Typography gutterBottom>
+                                        Course Supervisor: {originalCourseDataRef.current?.supervisor.name || 'None'}
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Autocomplete
+                                        options={supervisors}
+                                        getOptionLabel={(option) => (option && option.user ? option.user.name : 'N/A')}
+                                        value={selectedSupervisor}
+                                        style={{ width: '350px' }}
+                                        onChange={(event, newValue) => {
+                                            setSelectedSupervisor(newValue)
+                                        }}
+                                        disabled={!isEditing}
+                                        renderOption={(props, option) => (
+                                            <li {...props} key={option.id}>
+                                                {' '}
+                                                {option.user ? option.user.name : 'N/A'}
+                                            </li>
+                                        )}
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                label="Select Supervisor"
+                                                variant="outlined"
+                                                fullWidth
+                                            />
+                                        )}
+                                    />
+                                    <FormHelperText>
+                                        <Typography
+                                            component="span"
+                                            variant="body2"
+                                            style={{ fontWeight: 'bold', fontSize: '0.95em' }}
+                                        >
+                                            To retain supervisor, select from list again.
+                                        </Typography>
+                                    </FormHelperText>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    )}
+
                     <Grid container item alignItems="center" spacing={1} style={{ marginTop: '1em' }}>
                         {!isEditing ? (
                             // Not in editing mode
@@ -565,11 +699,13 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
                                 </Grid>
                             </>
                         )}
-                        <Grid item>
-                            <Button variant="contained" color="error" onClick={handleOpenDeleteDialog}>
-                                DELETE COURSE
-                            </Button>
-                        </Grid>
+                        {session?.role === 'coordinator' && (
+                            <Grid item>
+                                <Button variant="contained" color="error" onClick={handleOpenDeleteDialog}>
+                                    DELETE COURSE
+                                </Button>
+                            </Grid>
+                        )}
                     </Grid>
                 </Grid>
             </Paper>

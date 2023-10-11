@@ -60,13 +60,14 @@ model Course {
         {
             courseCode: string,
             courseDescription: string,
+            supervisorId: number | null,
             numOfEstimatedStudents: number,
             numOfEnrolledStudents: number,
             markerHours: number,
             markerResponsibilities: string,
             needMarkers: boolean,
             markersNeeded: number,
-            semester: string
+            semester: string,
         }
         ```
     - Returns:
@@ -92,18 +93,24 @@ model Course {
         {
             courseCode: string,
             courseDescription: string,
+            supervisorId: number | null,
             numOfEstimatedStudents: number,
             numOfEnrolledStudents: number,
             markerHours: number,
             markerResponsibilities: string,
             needMarkers: boolean,
             markersNeeded: number,
-            semester: string
+            semester: string,
         }
         ```
     - Returns:
       
         - The updated `Course`.
+- `DELETE /api/courses/[courseId]`
+    - Deletes a `Course` in the database with the given `courseId`.
+    - You must be a `Coordinator` to access this endpoint.
+    - Returns:
+        - The deleted `Course` with the given `courseId`.
 
 ### Students
 
@@ -565,3 +572,6 @@ model User {
         - Added `PATCH /api/students/me/applications` endpoint
     - Updated `Courses` section:
         - Added `GET /api/courses/with-markers` endpoint
+- v1.1.4
+    - Updated `Courses` section:
+        - Added `DELETE /api/courses/[courseId]` endpoint

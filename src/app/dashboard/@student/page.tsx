@@ -174,8 +174,10 @@ const StudentHomepage = () => {
                             <Table sx={{ minWidth: '887px' }} stickyHeader>
                                 <TableHead>
                                     <TableRow>
-                                        {columns.map((column) => (
-                                            <TableCell style={{ textAlign: 'center' }}>{column.name}</TableCell>
+                                        {columns.map((column, index) => (
+                                            <TableCell key={index} style={{ textAlign: 'center' }}>
+                                                {column.name}
+                                            </TableCell>
                                         ))}
                                     </TableRow>
                                 </TableHead>
@@ -185,7 +187,7 @@ const StudentHomepage = () => {
                                         ? applications.slice(page * rowPerPage, page * rowPerPage + rowPerPage)
                                         : applications
                                     ).map((application, index) => (
-                                        <TableRow>
+                                        <TableRow key={index}>
                                             <TableCell style={{ textAlign: 'center' }}>
                                                 {
                                                     courses.find((course) => course.id === application.courseId)
