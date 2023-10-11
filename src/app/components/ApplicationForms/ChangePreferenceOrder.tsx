@@ -64,6 +64,7 @@ export default function ChangePreferenceOrder() {
             jsonData = jsonData.sort((a: Application, b: Application) => a.preferenceId - b.preferenceId)
             if (response.ok) {
                 setApplications(jsonData)
+                console.log(jsonData)
             }
         } catch (error) {
             console.error('Error fetching data:', error)

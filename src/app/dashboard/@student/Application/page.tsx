@@ -22,7 +22,9 @@ const steps = ['Personal Details', 'Employment Details', 'CV and Academic Transc
 function getStepContent(
     step: number,
     formValues: IFormValues,
-    setFormValues: React.Dispatch<React.SetStateAction<IFormValues>>
+    setFormValues: React.Dispatch<React.SetStateAction<IFormValues>>,
+    cvTranscriptName: ICvAndTranscript,
+    setCvTranscriptName: React.Dispatch<React.SetStateAction<ICvAndTranscript>>
 ) {
     switch (step) {
         case 0:
@@ -30,7 +32,7 @@ function getStepContent(
         case 1:
             return <EmploymentDetails formValues={formValues} setFormValues={setFormValues} />
         case 2:
-            return <CVAndTranscript />
+            return <CVAndTranscript cvTranscriptName={cvTranscriptName} setCvTranscriptName={setCvTranscriptName} />
         case 3:
             return <CoursePreferences formValues={formValues} setFormValues={setFormValues} />
         default:
@@ -253,6 +255,15 @@ const Application = () => {
             }
         }
 
+        if (activeStep === 2) {
+            //check cv and transcript have a name
+            if (cvTranscriptName.CvName === '' || cvTranscriptName.TranscriptName === '') {
+                setSnackbarMessage('Please upload both a CV and a Transcript')
+                setOpenSnackBar(true)
+                return
+            }
+        }
+
         if (activeStep === steps.length - 1) {
             //check all applications
             let uniqueCourses: Set<number> = new Set()
@@ -359,7 +370,13 @@ const Application = () => {
                                 </>
                             ) : (
                                 <>
-                                    {getStepContent(activeStep, formValues, setFormValues)}
+                                    {getStepContent(
+                                        activeStep,
+                                        formValues,
+                                        setFormValues,
+                                        cvTranscriptName,
+                                        setCvTranscriptName
+                                    )}
                                     <Box
                                         sx={{
                                             display: 'flex',
