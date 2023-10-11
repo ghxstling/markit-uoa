@@ -4,7 +4,7 @@ import { Role } from '@/models/role'
 import ApplicationService from '@/services/applicationService'
 
 // GET /api/applications/csv
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
     const token = await getToken({ req })
     if (token!.role != Role.Coordinator) {
         return new NextResponse(
@@ -29,6 +29,8 @@ export async function GET(req: NextRequest, res: NextResponse) {
         fileStream,
         stat,
     } = await ApplicationService.getCsvFile()
+    const outResponse = new NextResponse(fileStream)
+
     res.headers.set('Content-Type', 'text/csv')
     res.headers.set('Content-Length', stat.size.toString())
     res.headers.set('Content-Disposition', 'attachment; filename="applications.csv"');
