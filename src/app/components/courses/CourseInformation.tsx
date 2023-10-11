@@ -111,12 +111,12 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
             const jsonData = await response.json()
             if (jsonData.length !== 0) {
                 setApplications(jsonData)
+                setSelected((prevSelected) => {
+                    let newSelected = new Array(jsonData.length).fill(false)
+                    setQualified(jsonData, newSelected)
+                    return newSelected
+                })
             }
-            setSelected((prevSelected) => {
-                let newSelected = new Array(jsonData.length).fill(false)
-                setQualified(jsonData, newSelected)
-                return newSelected
-            })
             jsonData.sort((a: { applicationStatus: string }, b: { applicationStatus: string }) => {
                 if (a.applicationStatus === 'approved' && b.applicationStatus !== 'approved') {
                     return -1 // "approved" comes first
