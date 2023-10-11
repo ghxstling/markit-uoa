@@ -2,7 +2,7 @@ import ApplicationRepo from '@/data/applicationRepo'
 import CourseRepo from '@/data/courseRepo'
 import UserRepo from '@/data/userRepo'
 import StudentRepo from '@/data/studentRepo'
-import { createObjectCsvWriter } from 'csv-writer'
+import { createObjectCsvStringifier, createObjectCsvWriter } from 'csv-writer'
 import fs from 'fs'
 import path from 'path'
 
@@ -32,11 +32,7 @@ export default class ApplicationService {
 
     static async createCsvFile() {
         console.log('Creating CSV file ...')
-
-        const applications = await ApplicationRepo.getAllApplications()
-        const filePath = path.join(__dirname, '../../../../../cache/applications.csv')
-        const csvWriter = createObjectCsvWriter({
-            path: filePath,
+        const csvStringifier = createObjectCsvStringifier({
             header: [
                 { id: 'id', title: 'ID' },
                 { id: 'course', title: 'COURSE' },
@@ -61,6 +57,7 @@ export default class ApplicationService {
         })
 
         let records: Record[] = []
+        const applications = await ApplicationRepo.getAllApplications()
         for (const app of applications) {
             const course = await CourseRepo.getCourseById(app.courseId)
             const student = await StudentRepo.getStudentById(app.studentId)
@@ -91,20 +88,15 @@ export default class ApplicationService {
         }
 
         try {
-            await csvWriter.writeRecords(records)
-            console.log('File created successfully at ' + path.join(__dirname, '../../../../../cache/applications.csv'))
-            return true
+            const csvHeaders = csvStringifier.getHeaderString()
+            const csvString = csvStringifier.stringifyRecords(records)
+            const csv = csvHeaders!.concat('\n' + csvString)
+            console.log('CSV file created successfully!')
+            return csv
         } catch (err) {
             console.log('Failed to create CSV file')
             console.log(err)
-            return false
+            return null
         }
-    }
-
-    static async getCsvFile() {
-        const filePath = path.join(__dirname, '../../../../../cache/applications.csv')
-        const data = fs.readFileSync(filePath)
-        const stat = fs.statSync(filePath)
-        return { data, stat }
     }
 }
