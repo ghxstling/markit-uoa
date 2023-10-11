@@ -123,7 +123,7 @@ export async function DELETE(req: NextRequest, { params }: Params) {
 
     const deletedCourse = await CourseRepo.deleteCourse(courseId)
     return NextResponse.json(deletedCourse, {
-        status: 200,
+        status: 201,
         statusText: 'Deleted course ID ' + courseId,
     })
 }

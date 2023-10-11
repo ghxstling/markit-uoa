@@ -412,6 +412,7 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
         }
 
         handleCloseDeleteDialog()
+        router.push('/dashboard/viewAllCourses')
     }
 
     return (
