@@ -518,7 +518,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                         name="search"
                         size="medium"
                         value={searchTerm}
-                        onChange={(e) => {
+                        onChange={(e : any) => {
                             setSearchTerm(e.target.value)
                             setFilterApplicationsLength(e.target.value)
                         }}
