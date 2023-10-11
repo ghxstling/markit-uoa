@@ -36,6 +36,9 @@ export default function StudentViewAllCourses() {
     }
 
     const [data, setData] = useState<Course[]>([])
+    const [searchTerm, setSearchTerm] = useState<string>('')
+    const [sortField, setSortField] = useState<'courseCode' | 'semester' | 'needMarkers' | null>(null)
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
 
     useEffect(() => {
         fetchData()
@@ -130,14 +133,6 @@ export default function StudentViewAllCourses() {
                                             {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
                                         </div>
                                     </TableCell>
-                                    <TableCell style={{ textAlign: 'center' }}>
-                                        <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                            PlaceHolder{' '}
-                                            <Tooltip title="status">
-                                                <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
-                                            </Tooltip>
-                                        </div>
-                                    </TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -165,7 +160,6 @@ export default function StudentViewAllCourses() {
                                             <TableCell style={{ textAlign: 'center' }}>
                                                 {course.markersNeeded}
                                             </TableCell>
-                                            <TableCell style={{ textAlign: 'center' }}>PLACEHOLDER</TableCell>
                                         </TableRow>
                                         <TableRow>
                                             <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
