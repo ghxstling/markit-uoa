@@ -219,7 +219,7 @@ const Sidebar = () => {
                     name,
                     email,
                     [
-                        ['View All Courses', '/dashboard/viewAllCourses', 'CalendarViewDayIcon'],
+                        ['View All Courses', '/dashboard/ViewAllCourses', 'CalendarViewDayIcon'],
                         ['Apply Now', '/dashboard/application', 'ArchiveIcon'],
                     ],
                     open,

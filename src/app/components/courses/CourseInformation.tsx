@@ -267,7 +267,6 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                 setApplications(jsonData)
                 setSelected((prevSelected) => {
                     let newSelected = new Array(jsonData.length).fill(false)
-                    setQualified(jsonData, newSelected)
                     return newSelected
                 })
             }
