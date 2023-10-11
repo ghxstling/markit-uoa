@@ -11,6 +11,7 @@ import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
+import TextField from '@mui/material/TextField'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import DynamicBreadcrumb from '@/app/components/DynamicBreadcrumb'
@@ -127,8 +128,21 @@ export default function StudentViewAllCourses() {
                         mb: '100px',
                     }}
                 >
-                    <h2>Course View</h2>
                     <TableContainer component={Paper} style={{ marginTop: 20 }}>
+                        <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ p: 2 }}>
+                            <h2>Course View</h2>
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                id="search"
+                                label="Search by Course or Semester"
+                                name="search"
+                                size="medium"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                style={{ width: '260px' }}
+                            />
+                        </Box>
                         <Table style={{ paddingTop: 40 }}>
                             <TableHead>
                                 <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
@@ -171,8 +185,18 @@ export default function StudentViewAllCourses() {
                             </TableHead>
                             <TableBody>
                                 {(rowsPerPage > 0
-                                    ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    : data
+                                    ? data
+                                          .filter(
+                                              (course) =>
+                                                  course.courseCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                                  course.semester.toLowerCase().includes(searchTerm.toLowerCase())
+                                          )
+                                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                    : data.filter(
+                                          (course) =>
+                                              course.courseCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                              course.semester.toLowerCase().includes(searchTerm.toLowerCase())
+                                      )
                                 ).map((course, index) => (
                                     <>
                                         <TableRow key={index}>
@@ -236,7 +260,13 @@ export default function StudentViewAllCourses() {
                             sx={{ width: '100%' }}
                             rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
                             colSpan={3}
-                            count={data.length}
+                            count={
+                                data.filter(
+                                    (course) =>
+                                        course.courseCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                        course.semester.toLowerCase().includes(searchTerm.toLowerCase())
+                                ).length
+                            }
                             rowsPerPage={rowsPerPage}
                             page={page}
                             onPageChange={handleChangePage}
