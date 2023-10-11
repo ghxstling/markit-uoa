@@ -14,6 +14,7 @@ import type { Prisma } from '@prisma/client'
 import CustomTheme from '@/app/CustomTheme'
 import { ThemeProvider } from '@mui/material/styles'
 import Sidebar from '@/app/components/Sidebar'
+import { ICvAndTranscript } from '@/types/ICvAndTranscript'
 
 const steps = ['Personal Details', 'Employment Details', 'CV and Academic Transcript Upload', 'Course Preferences']
 
@@ -118,6 +119,10 @@ const Application = () => {
         degreeYears: 1,
         workHours: 5,
         coursePreferences: [],
+    })
+    const [cvTranscript, setCvTranscript] = useState<ICvAndTranscript>({
+        CvName: '',
+        TranscriptName: '',
     })
 
     const [snackbarMessage, setSnackbarMessage] = useState('Please enter 9 digits for your student ID')

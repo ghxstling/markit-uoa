@@ -61,7 +61,6 @@ export default function ChangePreferenceOrder() {
         try {
             const response = await fetch('/api/students/me/applications')
             let jsonData = await response.json()
-            console.log(jsonData)
             jsonData = jsonData.sort((a: Application, b: Application) => a.preferenceId - b.preferenceId)
             if (response.ok) {
                 setApplications(jsonData)
