@@ -16,29 +16,33 @@ export async function GET(req: NextRequest) {
         )
     }
 
-    const result = await ApplicationService.createCsvFile()
-    if (result == false) {
+    try {
+        const result = await ApplicationService.createCsvFile()
+        if (result == false) {
+            return NextResponse.json(
+                {
+                    status: 400,
+                    statusText: 'Failed to create CSV file',
+                }, { status: 400 })
+        }
+
+        const { data, stat } = await ApplicationService.getCsvFile()
+        const outResponse = new NextResponse(data, 
+            {
+                status: 201,
+                statusText: 'CSV File created successfully',
+            })
+        outResponse.headers.set('Content-Length', stat.size.toString())
+        outResponse.headers.set('Content-Disposition', 'attachment; filename="applications.csv"')
+        outResponse.headers.set('Content-Type', 'text/csv; charset=utf-8')
+
+        return outResponse
+    } catch (err) {
+        console.log(err)
         return NextResponse.json(
             {
-                status: 400,
-                statusText: 'Failed to create CSV file',
-            }, { status: 400 })
+                status: 500,
+                statusText: 'Internal server error',
+            }, { status: 500 })
     }
-
-    const {
-        fileStream,
-        stat,
-    } = await ApplicationService.getCsvFile()
-    const outResponse = new NextResponse(fileStream)
-
-    res.headers.set('Content-Type', 'text/csv')
-    res.headers.set('Content-Length', stat.size.toString())
-    res.headers.set('Content-Disposition', 'attachment; filename="applications.csv"');
-    console.log(fileStream)
-    return NextResponse.json({res, fileStream}, 
-        {
-            status: 200,
-            statusText: 'Applications retrieved successfully',
-        }
-    )
 }
