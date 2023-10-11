@@ -84,8 +84,8 @@ export default class ApplicationService {
                 hasMarked: app.hasMarkedCourse ? 'Yes' : 'No',
                 equivalentQualificaton: app.equivalentQualification ? app.equivalentQualification : 'null',
                 qualified: app.isQualified ? 'Yes' : 'No',
-                cv: `/api/students/${student!.upi}/cv`,
-                transcript: `/api/students/${student!.upi}/transcript`,
+                cv: `markituoa.xyz/api/students/${student!.upi}/cv`,
+                transcript: `markituoa.xyz/api/students/${student!.upi}/transcript`,
             }
             records.push(record)
         }
@@ -103,11 +103,8 @@ export default class ApplicationService {
 
     static async getCsvFile() {
         const filePath = path.join(__dirname, '../../../../../cache/applications.csv')
-        const fileStream = fs.createReadStream(filePath)
+        const data = fs.readFileSync(filePath)
         const stat = fs.statSync(filePath)
-        return {
-            fileStream,
-            stat,
-        }
+        return { data, stat }
     }
 }
