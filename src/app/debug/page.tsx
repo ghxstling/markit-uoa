@@ -6,7 +6,7 @@ import { UserStatus } from '../components/UserStatus'
 import { DegreeType } from '@/models/degreeType'
 
 const DebugPage = () => {
-    const [apiResponse, setApiResponse] = useState(null)
+    const [apiResponse, setApiResponse] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [file, setFile] = useState<File>()
 
@@ -54,6 +54,9 @@ const DebugPage = () => {
             <h1>Debug Page - API Calls</h1>
             <UserStatus />
             <button onClick={makeApiCall}>Make API Call</button>
+            <a href='/api/applications/csv' download='/api/applications/csv'>
+                <button>Generate CSV File!</button>
+            </a>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {apiResponse && (
                 <pre>
