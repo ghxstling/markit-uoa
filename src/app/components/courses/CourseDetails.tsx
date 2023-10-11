@@ -202,8 +202,7 @@ export default function CourseDetails() {
             markerResponsibilities: description,
             supervisorId: supervisorId,
         }
-        //Test to check submission data
-        //console.log('Submitting form with data:', formData)
+
         try {
             const response = await fetch('/api/courses', {
                 method: 'POST',

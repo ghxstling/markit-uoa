@@ -1,6 +1,6 @@
 'use client'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import { Box, TableBody } from '@mui/material'
+import { Box, TableBody, TableSortLabel } from '@mui/material'
 import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
@@ -11,6 +11,7 @@ import TablePagination from '@mui/material/TablePagination'
 import TableRow from '@mui/material/TableRow'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
+import TextField from '@mui/material/TextField'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import DynamicBreadcrumb from '@/app/components/DynamicBreadcrumb'
@@ -36,6 +37,30 @@ export default function StudentViewAllCourses() {
     }
 
     const [data, setData] = useState<Course[]>([])
+    const [searchTerm, setSearchTerm] = useState<string>('')
+    const [sortField, setSortField] = useState<'courseCode' | 'semester' | 'markersNeeded' | null>(null)
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
+
+    const handleSort = (field: 'courseCode' | 'semester' | 'markersNeeded') => {
+        if (sortField === field) {
+            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+        } else {
+            setSortField(field)
+            setSortDirection('asc')
+        }
+    }
+
+    useEffect(() => {
+        const sortedData = [...data]
+        if (sortField) {
+            sortedData.sort((a, b) => {
+                if (a[sortField] < b[sortField]) return sortDirection === 'asc' ? -1 : 1
+                if (a[sortField] > b[sortField]) return sortDirection === 'asc' ? 1 : -1
+                return 0
+            })
+        }
+        setData(sortedData)
+    }, [sortField, sortDirection])
 
     useEffect(() => {
         fetchData()
@@ -63,7 +88,6 @@ export default function StudentViewAllCourses() {
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10))
         setPage(0)
-        data.map((course, index) => console.log(course.needMarkers))
     }
     const [openRows, setOpenRows] = useState(Array(data.length).fill(false))
 
@@ -103,47 +127,75 @@ export default function StudentViewAllCourses() {
                         mb: '100px',
                     }}
                 >
-                    <h2>Course View</h2>
                     <TableContainer component={Paper} style={{ marginTop: 20 }}>
+                        <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ p: 2 }}>
+                            <h2>Course View</h2>
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                id="search"
+                                label="Search by Course or Semester"
+                                name="search"
+                                size="medium"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                style={{ width: '260px' }}
+                            />
+                        </Box>
                         <Table style={{ paddingTop: 40 }}>
                             <TableHead>
                                 <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
                                     <TableCell />
-                                    <TableCell style={{ textAlign: 'center' }}>
-                                        <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                    <TableCell style={{ textAlign: 'center' }} onClick={() => handleSort('courseCode')}>
+                                        <TableSortLabel
+                                            style={{ cursor: 'pointer' }}
+                                            active={sortField === 'courseCode'}
+                                            direction={sortField === 'courseCode' ? sortDirection : 'asc'}
+                                        >
                                             Course
-                                            {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
-                                        </div>
+                                        </TableSortLabel>
                                     </TableCell>
-                                    <TableCell style={{ textAlign: 'center' }}>
-                                        <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                            Semester{' '}
-                                            {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
-                                        </div>
+                                    <TableCell style={{ textAlign: 'center' }} onClick={() => handleSort('semester')}>
+                                        <TableSortLabel
+                                            style={{ cursor: 'pointer' }}
+                                            active={sortField === 'semester'}
+                                            direction={sortField === 'semester' ? sortDirection : 'asc'}
+                                        >
+                                            Semester
+                                        </TableSortLabel>
                                     </TableCell>
-                                    <TableCell style={{ textAlign: 'center' }}>
-                                        <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                            Markers Needed{' '}
-                                            <Tooltip title="Markers">
-                                                <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
-                                            </Tooltip>{' '}
-                                            {/*TODO Sort feature<ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/>*/}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell style={{ textAlign: 'center' }}>
-                                        <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                            PlaceHolder{' '}
-                                            <Tooltip title="status">
+                                    <TableCell
+                                        style={{ textAlign: 'center' }}
+                                        onClick={() => handleSort('markersNeeded')}
+                                    >
+                                        <TableSortLabel
+                                            style={{ cursor: 'pointer' }}
+                                            active={sortField === 'markersNeeded'}
+                                            direction={sortField === 'markersNeeded' ? sortDirection : 'asc'}
+                                        >
+                                            Markers Needed
+                                            <Tooltip title="Markers needed for the course">
                                                 <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
                                             </Tooltip>
-                                        </div>
+                                        </TableSortLabel>
+                                        <div style={{ alignItems: 'center', flexWrap: 'wrap' }}></div>
                                     </TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {(rowsPerPage > 0
-                                    ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    : data
+                                    ? data
+                                          .filter(
+                                              (course) =>
+                                                  course.courseCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                                  course.semester.toLowerCase().includes(searchTerm.toLowerCase())
+                                          )
+                                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                    : data.filter(
+                                          (course) =>
+                                              course.courseCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                              course.semester.toLowerCase().includes(searchTerm.toLowerCase())
+                                      )
                                 ).map((course, index) => (
                                     <>
                                         <TableRow key={index}>
@@ -165,7 +217,6 @@ export default function StudentViewAllCourses() {
                                             <TableCell style={{ textAlign: 'center' }}>
                                                 {course.markersNeeded}
                                             </TableCell>
-                                            <TableCell style={{ textAlign: 'center' }}>PLACEHOLDER</TableCell>
                                         </TableRow>
                                         <TableRow>
                                             <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -208,7 +259,13 @@ export default function StudentViewAllCourses() {
                             sx={{ width: '100%' }}
                             rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
                             colSpan={3}
-                            count={data.length}
+                            count={
+                                data.filter(
+                                    (course) =>
+                                        course.courseCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                        course.semester.toLowerCase().includes(searchTerm.toLowerCase())
+                                ).length
+                            }
                             rowsPerPage={rowsPerPage}
                             page={page}
                             onPageChange={handleChangePage}

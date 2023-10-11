@@ -28,6 +28,9 @@ yarn-error.log*
 .env
 .env*.local
 
+# csv folder
+/temp/
+
 # vercel
 .vercel
 

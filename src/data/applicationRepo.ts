@@ -30,7 +30,7 @@ export default class ApplicationRepo {
     static async getApplicationsByCourse(courseId: number) {
         return await prisma.application.findMany({
             where: {
-                courseId: courseId 
+                courseId: courseId,
             },
             include: { course: true },
         })
@@ -39,9 +39,9 @@ export default class ApplicationRepo {
     static async doesApplicationExist(studentId: number, courseId: number) {
         const app = await prisma.application.findUnique({
             where: {
-                studentId_courseId: { studentId, courseId }
+                studentId_courseId: { studentId, courseId },
             },
-            include: { student: true, course: true }
+            include: { student: true, course: true },
         })
         return app != null
     }
@@ -55,7 +55,7 @@ export default class ApplicationRepo {
     static async updateApplication(id: number, data: Prisma.ApplicationUncheckedUpdateInput) {
         return await prisma.application.update({
             where: { id },
-            data
+            data,
         })
     }
 
@@ -77,26 +77,10 @@ export default class ApplicationRepo {
             return null
         }
 
-        const updatedApplication = await prisma.application.update({
+        return await prisma.application.update({
             where: { id },
             data: { preferenceId: prefId },
         })
-
-        let prefArray = []
-        for (let i=1; i <= studentApplications.length; i++) {
-            if (i !== prefId) {
-                prefArray.push(i)
-            }
-        }
-        studentApplications = studentApplications.filter(app => app.id !== id)
-        for (let i=0; i < prefArray.length; i++) {
-            const app = studentApplications[i]
-            await prisma.application.update({
-                where: { id: app.id },
-                data: { preferenceId: prefArray[i] }
-            })
-        }
-        return updatedApplication
     }
 
     static async updateAllocatedHours(id: number, allocatedHours: number) {

@@ -348,9 +348,6 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
             markerResponsibilities: description,
             supervisorId: getSupervisorId(selectedSupervisor),
         }
-        //Test to check submission
-        //console.log('Submitting form with updated data:', formData)
-        console.log(formData)
         try {
             const response = await fetch(`/api/courses/${courseId}`, {
                 method: 'PATCH',

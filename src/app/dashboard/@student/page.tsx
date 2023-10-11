@@ -224,7 +224,7 @@ const StudentHomepage = () => {
                         <TablePagination
                             component="div"
                             rowsPerPage={rowPerPage}
-                            count={rows.length}
+                            count={applications.length}
                             rowsPerPageOptions={[5, 10, 25]}
                             page={page}
                             onPageChange={handPageChange}

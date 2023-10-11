@@ -4,26 +4,47 @@ import { Breadcrumbs, Link, Stack, Typography } from '@mui/material'
 import { usePathname } from 'next/navigation'
 import NextLink from 'next/link'
 import path from 'path'
+import { useSession } from 'next-auth/react'
+import { useState } from 'react'
 
 const DynamicBreadcrumb = () => {
+    const { data: session } = useSession()
     const pathName = usePathname()
+    const [courseCode, setCourseCode] = useState('')
 
     let pathArray = pathName.split('/')
     pathArray = pathArray.filter((segment) => segment !== '')
-    let index = pathArray.indexOf('courses')
-    if (index !== undefined && index === pathArray.length - 1) {
-        pathArray.splice(index, 0, 'CreateCourse')
+
+    let lastIndex = pathArray.indexOf('courses')
+    if (lastIndex !== undefined && lastIndex === pathArray.length - 1) {
+        pathArray.splice(lastIndex, 0, 'CreateCourse')
+        pathArray = pathArray.filter((segment) => segment !== 'courses')
     }
 
-    pathArray = pathArray.filter((segment) => segment !== 'courses')
-
     const breadcrumbs = pathArray.map((path, index) => {
-        console.log(path)
-        if (path === 'CreateCourse') {
-            const href = '/' + pathArray.slice(0, index).join('/') + '/courses'
+        if (path === 'courses' && session && session.role === 'coordinator') {
+            const href = '/dashboard/viewAllCourses'
             return {
                 href,
-                label: 'CreateCourse',
+                label: 'ViewAllCourses',
+            }
+        } else if (isNaN(parseInt(path)) === false) {
+            const href = '/dashboard/courses/' + path
+            const fetchData = async () => {
+                try {
+                    const response = await fetch('/api/courses/' + path, { method: 'GET' })
+                    const jsonData = await response.json()
+                    return jsonData
+                } catch (error) {
+                    console.error('Error fetching data:', error)
+                }
+            }
+            fetchData().then((data) => {
+                setCourseCode(data.courseCode)
+            })
+            return {
+                href,
+                label: courseCode,
             }
         } else {
             const href = '/' + pathArray.slice(0, index + 1).join('/')
