@@ -272,8 +272,6 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
             semester: `${selectedYear}${selectedSemester}`,
             markerResponsibilities: description,
         }
-        //Test to check submission
-        //console.log('Submitting form with updated data:', formData)
         try {
             const response = await fetch(`/api/courses/${courseId}`, {
                 method: 'PATCH',

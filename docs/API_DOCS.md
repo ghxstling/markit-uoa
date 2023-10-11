@@ -291,6 +291,11 @@ model Application {
     - Returns:
       
         - An array of newly created `Application`s.
+- `GET /api/applications/csv`
+    - Creates and returns a CSV file of all `Student` `Application`s.
+    - You must be a `Supervisor` or `Coordinator` to access this endpoint.
+    - Returns:
+        - A CSV file of all `Application`s.
 - `GET /api/courses/[courseId]/applications`
     - Retrieves `Student` `Application`s for a given `Course`.
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
@@ -555,6 +560,7 @@ model User {
         - Added `PATCH /api/students/me/applications/[applicationId]` endpoint
 - v1.1.3
     - Updated `Applications` section:
+        - Added `GET /api/applications/csv` endpoint
         - Removed `PATCH /api/students/me/applications/[applicationId]` endpoint
         - Added `PATCH /api/students/me/applications` endpoint
     - Updated `Courses` section:

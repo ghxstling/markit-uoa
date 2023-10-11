@@ -143,8 +143,7 @@ export default function CourseDetails() {
             semester: `${selectedYear}${selectedSemester}`,
             markerResponsibilities: description,
         }
-        //Test to check submission data
-        //console.log('Submitting form with data:', formData)
+
         try {
             const response = await fetch('/api/courses', {
                 method: 'POST',

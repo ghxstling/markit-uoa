@@ -385,7 +385,6 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
 
             // Find the Application for the selected studentId
             const selectedApplication = applications.find((application) => application.studentId === studentId)
-            console.log(selectedApplication)
 
             // Add the selected Application to the approvedStudents array
             if (selectedApplication) {
@@ -456,7 +455,6 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
             const response = await fetch('/api/courses/' + courseId + '/markers', { method: 'GET' })
             const jsonData = await response.json()
             setCourseData(jsonData)
-            console.log(courseData?.hours)
         } catch (error) {
             console.error('Error fetching data:', error)
         }

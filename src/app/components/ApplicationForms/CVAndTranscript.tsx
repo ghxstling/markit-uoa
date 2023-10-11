@@ -119,7 +119,6 @@ const CVAndTranscript: React.FC<CvAndTranscriptProps> = ({ cvTranscriptName, set
             setFailureSnackbarMessage('Failed to upload transcript, please try again')
             setFailureOpenSnackBar(true)
         }
-        console.log(res)
         return
     }
 
