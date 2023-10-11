@@ -18,7 +18,6 @@ const DynamicBreadcrumb = () => {
     pathArray = pathArray.filter((segment) => segment !== 'courses')
 
     const breadcrumbs = pathArray.map((path, index) => {
-        console.log(path)
         if (path === 'CreateCourse') {
             const href = '/' + pathArray.slice(0, index).join('/') + '/courses'
             return {

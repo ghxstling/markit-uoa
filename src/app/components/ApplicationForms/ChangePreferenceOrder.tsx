@@ -74,7 +74,6 @@ export default function ChangePreferenceOrder() {
 
     const submitPreferences = () => {
         const currentPreferences = [...preferences]
-        console.log(currentPreferences)
     }
 
     return (

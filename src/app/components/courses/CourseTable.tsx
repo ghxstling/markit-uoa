@@ -56,7 +56,6 @@ export default function CourseTable() {
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10))
         setPage(0)
-        data.map((course, index) => console.log(course.needMarkers))
     }
 
     const { data: session } = useSession()

@@ -63,7 +63,6 @@ export default function StudentViewAllCourses() {
     const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setRowsPerPage(parseInt(event.target.value, 10))
         setPage(0)
-        data.map((course, index) => console.log(course.needMarkers))
     }
     const [openRows, setOpenRows] = useState(Array(data.length).fill(false))
 

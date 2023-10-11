@@ -55,7 +55,6 @@ const CVAndTranscript = () => {
             method: 'POST',
             body: data,
         })
-        console.log(res)
         if (res.ok) {
             setSucessSnackbarMessage('CV successfully uploaded')
             setSuccessOpenSnackBar(true)
@@ -98,7 +97,6 @@ const CVAndTranscript = () => {
             setFailureSnackbarMessage('Failed to upload transcript, please try again')
             setFailureOpenSnackBar(true)
         }
-        console.log(res)
         return
     }
 
