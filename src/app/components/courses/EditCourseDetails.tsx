@@ -612,7 +612,7 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
                             <Grid container direction="column" spacing={2} justifyContent="center" alignItems="center">
                                 <Grid item>
                                     <Typography gutterBottom>
-                                        Course Supervisor: {originalCourseDataRef.current?.supervisor.name}
+                                        Course Supervisor: {originalCourseDataRef.current?.supervisor.name || 'None'}
                                     </Typography>
                                 </Grid>
                                 <Grid item>
@@ -641,7 +641,13 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
                                         )}
                                     />
                                     <FormHelperText>
-                                        If no supervisor, leave the field blank. To retain supervisor, select again.
+                                        <Typography
+                                            component="span"
+                                            variant="body2"
+                                            style={{ fontWeight: 'bold', fontSize: '0.95em' }}
+                                        >
+                                            To retain supervisor, select from list again.
+                                        </Typography>
                                     </FormHelperText>
                                 </Grid>
                             </Grid>
