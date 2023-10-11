@@ -40,6 +40,15 @@ export default function StudentViewAllCourses() {
     const [sortField, setSortField] = useState<'courseCode' | 'semester' | 'needMarkers' | null>(null)
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
 
+    const handleSort = (field: 'courseCode' | 'semester' | 'needMarkers') => {
+        if (sortField === field) {
+            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+        } else {
+            setSortField(field)
+            setSortDirection('asc')
+        }
+    }
+
     useEffect(() => {
         fetchData()
     }, [])
