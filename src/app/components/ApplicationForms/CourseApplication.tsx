@@ -1,4 +1,15 @@
-import { Box, Button, FormControlLabel, Grid, MenuItem, Radio, RadioGroup, TextField, Typography } from '@mui/material'
+import {
+    Box,
+    Button,
+    Chip,
+    FormControlLabel,
+    Grid,
+    MenuItem,
+    Radio,
+    RadioGroup,
+    TextField,
+    Typography,
+} from '@mui/material'
 import React, { useState, useEffect } from 'react'
 
 interface Course {
@@ -116,8 +127,12 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
         <>
             <Box component="form" noValidate sx={{ mt: 3 }}>
                 <Grid container spacing={3} justifyContent="center" direction="column">
-                    <Grid item>
-                        <Typography variant="h4">Preference {coursePrefId}</Typography>
+                    <Grid container spacing={3} justifyContent="center" alignItems="center" direction="column">
+                        <Grid item xs={12}>
+                            <Typography variant="h4" fontSize="34px">
+                                Preference {coursePrefId}
+                            </Typography>
+                        </Grid>
                     </Grid>
                     <Grid item xs={12}>
                         <TextField
