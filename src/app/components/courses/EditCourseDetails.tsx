@@ -252,6 +252,13 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
         setWordCount(newWordCount)
     }
 
+    const getSupervisorId = (supervisor: Supervisor) => {
+        if (supervisor === null) {
+            return null
+        }
+        return supervisor.id
+    }
+
     async function handleSubmit() {
         if (!courseCode.trim()) {
             setSnackbarMessage('Course Code cannot be empty.')
@@ -325,10 +332,11 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
             markersNeeded: markersNeeded.slider,
             semester: `${selectedYear}${selectedSemester}`,
             markerResponsibilities: description,
-            supervisorId: selectedSupervisor.id,
+            supervisorId: getSupervisorId(selectedSupervisor),
         }
         //Test to check submission
         //console.log('Submitting form with updated data:', formData)
+        console.log(formData)
         try {
             const response = await fetch(`/api/courses/${courseId}`, {
                 method: 'PATCH',
