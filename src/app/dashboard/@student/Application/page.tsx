@@ -124,7 +124,6 @@ const Application = () => {
     const [openSnackBar, setOpenSnackBar] = useState(false)
     const [openSnackBarSuccess, setOpenSnackBarSuccess] = useState(false)
     const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('Student submitted successfully!')
-    const [currentApplicationIds, setCurrentApplicationIds] = useState<number[]>([])
 
     //fetch existing student and application details, get relevant values and update formValues
 
@@ -138,9 +137,6 @@ const Application = () => {
             const response2 = await fetch(`/api/students/me`, { method: 'GET' })
             if (response1.ok && response2.ok) {
                 let jsonData1 = await response1.json()
-                const currentIds: number[] = []
-                jsonData1.forEach((application: ApplicantsData) => currentIds.push(application.courseId))
-                setCurrentApplicationIds(currentIds)
                 jsonData1 = jsonData1.sort((a: any, b: any) => a.preferenceId - b.preferenceId)
                 const jsonData2 = await response2.json()
                 let currentCoursePreferences = jsonData1.map((application: any) => {
@@ -264,32 +260,14 @@ const Application = () => {
                     setOpenSnackBar(true)
                     return
                 } else {
-                    if (currentApplicationIds.length !== 0) {
-                        //if the course id exists in current applications, add it to unique id's and continue
-                        if (currentApplicationIds.includes(coursePreference.course)) {
-                            uniqueCourses.add(coursePreference.course)
-                        }
-                        //if it is not in current applications and is not in the unique course list yet, add it and continue
-                        else if (!uniqueCourses.has(coursePreference.course)) {
-                            uniqueCourses.add(coursePreference.course)
-                        } else {
-                            setSnackbarMessage(
-                                'You have more than one application for a course, please select a unique course for all applications'
-                            )
-                            setOpenSnackBar(true)
-                            return
-                        }
+                    if (!uniqueCourses.has(coursePreference.course)) {
+                        uniqueCourses.add(coursePreference.course)
                     } else {
-                        //if it is not in current applications and is not in the unique course list yet, add it and continue
-                        if (!uniqueCourses.has(coursePreference.course)) {
-                            uniqueCourses.add(coursePreference.course)
-                        } else {
-                            setSnackbarMessage(
-                                'You have more than one application for a course, please select a unique course for all applications'
-                            )
-                            setOpenSnackBar(true)
-                            return
-                        }
+                        setSnackbarMessage(
+                            'You have more than one application for a course, please select a unique course for all applications'
+                        )
+                        setOpenSnackBar(true)
+                        return
                     }
                 }
                 if (coursePreference.grade === '') {

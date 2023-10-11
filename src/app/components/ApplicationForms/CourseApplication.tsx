@@ -19,6 +19,8 @@ import { number } from 'zod'
 
 interface CourseApplicationProps {
     application: CourseApplicationType
+    disableRemove: boolean
+    disableCourseName: boolean
     updateCoursePreference: (updatedApplication: CourseApplicationType) => void
     removeCoursePreference: (id: number) => void
 }
@@ -27,6 +29,8 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
     application,
     updateCoursePreference,
     removeCoursePreference,
+    disableRemove,
+    disableCourseName,
 }) => {
     let data = {
         course: application.course,
@@ -126,6 +130,7 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
                             value={formData.course}
                             onChange={handleChange}
                             onBlur={handleApplicationUpdate}
+                            disabled={disableCourseName}
                         >
                             {courseData.map((course) => (
                                 <MenuItem key={course.id} value={course.id}>
@@ -256,7 +261,9 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
                 </Grid>
             </Box>
 
-            <Button onClick={() => removeCoursePreference(thisApplicationId)}>Remove Application</Button>
+            <Button onClick={() => removeCoursePreference(thisApplicationId)} disabled={disableRemove}>
+                Remove Application
+            </Button>
         </>
     )
 }
