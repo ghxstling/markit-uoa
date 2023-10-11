@@ -46,6 +46,12 @@ const DynamicBreadcrumb = () => {
                 href,
                 label: courseCode,
             }
+        } else if (path === 'CreateCourse') {
+            const href = '/dashboard/courses'
+            return {
+                href,
+                label: path,
+            }
         } else {
             const href = '/' + pathArray.slice(0, index + 1).join('/')
             return {
