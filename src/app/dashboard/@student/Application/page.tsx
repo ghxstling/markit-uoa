@@ -71,7 +71,6 @@ const postStudentDetails = async (formValues: IFormValues) => {
 }
 
 const postCourseApplications = async (formValues: IFormValues) => {
-    console.log(formValues.coursePreferences)
     const courseApplications = formValues.coursePreferences
     const res = await fetch('/api/applications', {
         method: 'POST',
@@ -170,6 +169,12 @@ const Application = () => {
                     workHours: jsonData2.maxWorkHours,
                     coursePreferences: currentCoursePreferences,
                 })
+                setCvTranscriptName(
+                    {
+                        CvName: jsonData2.CV,
+                        TranscriptName: jsonData2.academicTranscript,
+                    }
+                )
             } else if (response1.ok && !response2.ok) {
                 let jsonData1 = await response1.json()
                 const currentIds: number[] = []
