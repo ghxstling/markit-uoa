@@ -109,7 +109,8 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                 method: 'GET',
             })
             const jsonData = await response.json()
-            if (jsonData.length !== 0) {
+            console.log(jsonData)
+            if (response.ok) {
                 setApplications(jsonData)
                 setSelected((prevSelected) => {
                     let newSelected = new Array(jsonData.length).fill(false)
@@ -472,7 +473,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                             <ViewStudentInformation
                                                 studentUpi={
                                                     studentData.find((student) => student.id === application.studentId)
-                                                        ?.upi
+                                                        ?.upi!
                                                 }
                                             />
                                         </Drawer>
