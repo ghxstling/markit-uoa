@@ -71,7 +71,6 @@ const postStudentDetails = async (formValues: IFormValues) => {
 }
 
 const postCourseApplications = async (formValues: IFormValues) => {
-    console.log(formValues.coursePreferences)
     const courseApplications = formValues.coursePreferences
     const res = await fetch('/api/applications', {
         method: 'POST',
