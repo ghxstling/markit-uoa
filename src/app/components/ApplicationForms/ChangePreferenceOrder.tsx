@@ -12,6 +12,8 @@ import {
     Typography,
     Box,
     Button,
+    Snackbar,
+    Alert,
 } from '@mui/material'
 
 export default function ChangePreferenceOrder() {
@@ -29,9 +31,29 @@ export default function ChangePreferenceOrder() {
 
     const [applications, setApplications] = useState<Application[]>([])
     const [courseInfo, setCourseInfo] = useState<Courses[]>([])
+    const [snackbarFailureMessage, setSnackbarFailureMessage] = useState(
+        'Failure submitting new preferences, please try again later.'
+    )
+    const [openSnackBarFailure, setOpenSnackBarFailure] = useState(false)
+    const [openSnackBarSuccess, setOpenSnackBarSuccess] = useState(false)
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('New preferences submitted successfully!')
+
+    const handleCloseFailure = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return
+        }
+
+        setOpenSnackBarFailure(false)
+    }
+
+    const handleCloseSuccess = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return
+        }
+        setOpenSnackBarSuccess(false)
+    }
 
     useEffect(() => {
-        console.log('fetching applications')
         fetchApplications()
     }, [])
 
@@ -90,6 +112,11 @@ export default function ChangePreferenceOrder() {
                 },
                 body: JSON.stringify(applications),
             })
+            if (response.ok) {
+                setOpenSnackBarSuccess(true)
+            } else {
+                setOpenSnackBarFailure(true)
+            }
         } catch (error) {
             console.error('Error updating data:', error)
         }
@@ -162,6 +189,32 @@ export default function ChangePreferenceOrder() {
                     Submit New Preferences
                 </Button>
             </Box>
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                }}
+                open={openSnackBarFailure}
+                autoHideDuration={6000}
+                onClose={handleCloseFailure}
+            >
+                <Alert onClose={handleCloseFailure} severity="error" sx={{ width: '100%' }}>
+                    {snackbarFailureMessage}
+                </Alert>
+            </Snackbar>
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                }}
+                open={openSnackBarSuccess}
+                autoHideDuration={6000}
+                onClose={handleCloseSuccess}
+            >
+                <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
+                    {snackbarSuccessMessage}
+                </Alert>
+            </Snackbar>
         </Container>
     )
 }

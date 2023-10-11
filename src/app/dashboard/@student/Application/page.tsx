@@ -167,7 +167,6 @@ const Application = () => {
                 let jsonData1 = await response1.json()
                 const currentIds: number[] = []
                 jsonData1.forEach((application: ApplicantsData) => currentIds.push(application.courseId))
-                setCurrentApplicationIds(currentIds)
                 jsonData1 = jsonData1.sort((a: any, b: any) => a.preferenceId - b.preferenceId)
                 let currentCoursePreferences = jsonData1.map((application: any) => {
                     return {
