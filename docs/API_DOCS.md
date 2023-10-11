@@ -60,13 +60,14 @@ model Course {
         {
             courseCode: string,
             courseDescription: string,
+            supervisorId: number | null,
             numOfEstimatedStudents: number,
             numOfEnrolledStudents: number,
             markerHours: number,
             markerResponsibilities: string,
             needMarkers: boolean,
             markersNeeded: number,
-            semester: string
+            semester: string,
         }
         ```
     - Returns:
@@ -92,13 +93,14 @@ model Course {
         {
             courseCode: string,
             courseDescription: string,
+            supervisorId: number | null,
             numOfEstimatedStudents: number,
             numOfEnrolledStudents: number,
             markerHours: number,
             markerResponsibilities: string,
             needMarkers: boolean,
             markersNeeded: number,
-            semester: string
+            semester: string,
         }
         ```
     - Returns:

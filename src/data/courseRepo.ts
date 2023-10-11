@@ -13,8 +13,16 @@ export default class CourseRepo {
     static async getCourseById(id: number) {
         return await prisma.course.findUnique({
             where: { id },
+            include: {
+                supervisor: {
+                    include: {
+                        user: true
+                    }
+                }
+            }
         })
     }
+    
 
     static async getSupervisorCourses(email: string) {
         const user = await prisma.user.findUnique({
@@ -40,7 +48,7 @@ export default class CourseRepo {
         })
     }
 
-    static async updateCourse(id: number, data: Prisma.CourseUpdateInput) {
+    static async updateCourse(id: number, data: Prisma.CourseUncheckedUpdateInput) {
         return await prisma.course.update({
             where: { id },
             data,
