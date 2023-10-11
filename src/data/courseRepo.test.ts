@@ -79,11 +79,7 @@ describe('CourseRepo', () => {
         const supervisor = await SupervisorRepo.createSupervisorFromEmail(email, supervisorInput)
 
         const courseUpdateInput = {
-            supervisor: {
-                connect: {
-                    id: supervisor.id,
-                }
-            }
+            supervisorId: supervisor.id
         }
         course1 = await CourseRepo.updateCourse(course1.id, courseUpdateInput)
         course2 = await CourseRepo.updateCourse(course2.id, courseUpdateInput)

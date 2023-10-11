@@ -95,3 +95,35 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         statusText: 'Updated course information',
     })
 }
+
+// DELETE /api/courses/{courseId}
+export async function DELETE(req: NextRequest, { params }: Params) {
+    const token = await getToken({ req })
+    if (token!.role != Role.Coordinator) {
+        return new NextResponse(
+            JSON.stringify({
+                success: false,
+                message: 'Only coordinators can access this endpoint',
+            }),
+            { status: 403, headers: { 'content-type': 'application/json' } }
+        )
+    }
+    
+    const courseId = parseInt(params.courseId)
+    const course = await CourseRepo.getCourseById(courseId)
+    if (course == null) {
+        return NextResponse.json(
+            {
+                status: 404,
+                statusText: 'Course not found',
+            },
+            { status: 404 }
+        )
+    }
+
+    const deletedCourse = await CourseRepo.deleteCourse(courseId)
+    return NextResponse.json(deletedCourse, {
+        status: 201,
+        statusText: 'Deleted course ID ' + courseId,
+    })
+}
