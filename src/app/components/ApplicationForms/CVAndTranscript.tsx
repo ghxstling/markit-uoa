@@ -17,8 +17,12 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props,
 })
 
 const CVAndTranscript: React.FC<CvAndTranscriptProps> = ({ cvTranscriptName, setCvTranscriptName }) => {
-    const [cvFileName, setCvFileName] = useState<string>('No file uploaded...')
-    const [transcriptFileName, setTranscriptFileName] = useState<string>('No file uploaded...')
+    const [cvFileName, setCvFileName] = useState<string>(
+        cvTranscriptName.CvName ? cvTranscriptName.CvName : 'No file uploaded...',
+    )
+    const [transcriptFileName, setTranscriptFileName] = useState<string>(
+        cvTranscriptName.TranscriptName ? cvTranscriptName.TranscriptName : 'No file uploaded...',
+    )
 
     const [failureOpenSnackBar, setFailureOpenSnackBar] = useState(false)
     const [successOpenSnackBar, setSuccessOpenSnackBar] = useState(false)

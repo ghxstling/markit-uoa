@@ -170,6 +170,12 @@ const Application = () => {
                     workHours: jsonData2.maxWorkHours,
                     coursePreferences: currentCoursePreferences,
                 })
+                setCvTranscriptName(
+                    {
+                        CvName: jsonData2.CV,
+                        TranscriptName: jsonData2.academicTranscript,
+                    }
+                )
             } else if (response1.ok && !response2.ok) {
                 let jsonData1 = await response1.json()
                 const currentIds: number[] = []
