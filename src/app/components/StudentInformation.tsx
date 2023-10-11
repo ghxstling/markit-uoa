@@ -72,29 +72,29 @@ export default function ViewStudentInformation({ studentUpi }: ViewStudentInform
         if (studentUpi) {
           fetchData(studentUpi as string);
         }
-      }, [studentUpi]);
+      }, []);
 
-      const fetchData = async (studentId: string | undefined) => {
-        try {
-          const response = await fetch(`/api/students/${studentUpi}`, { method: 'GET' });
-          if (response.ok) {
-            const jsonData = await response.json();
-            setData(jsonData);
-          } else {
-            console.error('Error fetching data:', response.status);
-          }
-        } catch (error) {
-          console.error('Error fetching data:', error);
+    const fetchData = async (studentId: string | undefined) => {
+      try {
+        const response = await fetch(`/api/students/${studentUpi}`, { method: 'GET' });
+        if (response.ok) {
+          const jsonData = await response.json();
+          setData(jsonData);
+        } else {
+          console.error('Error fetching data:', response.status);
         }
-      };
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
-      const [openRows, setOpenRows] = useState(Array((data?.applications?.length ?? 0)).fill(false));
-  
-      const toggleRow = (index : number) => {
-          const newOpenRows = [...openRows];
-          newOpenRows[index] = !newOpenRows[index];
-          setOpenRows(newOpenRows);
-      };    
+    const [openRows, setOpenRows] = useState(Array((data?.applications?.length ?? 0)).fill(false));
+
+    const toggleRow = (index : number) => {
+        const newOpenRows = [...openRows];
+        newOpenRows[index] = !newOpenRows[index];
+        setOpenRows(newOpenRows);
+    };    
 
     return(
         <>
