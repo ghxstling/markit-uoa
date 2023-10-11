@@ -396,11 +396,21 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
         setOpenDeleteDialog(false)
     }
 
-    const handleDeleteCourse = () => {
-        // For now, just logging the delete action
-        console.log('Course deleted!')
+    async function handleDeleteCourse() {
+        try {
+            const response = await fetch(`/api/courses/${courseId}`, {
+                method: 'DELETE',
+            })
 
-        // Close the delete confirmation dialog
+            if (response.ok) {
+                console.log('Course deleted successfully!')
+            } else {
+                console.error('Failed to delete the course. Server responded with:', response.status)
+            }
+        } catch (error) {
+            console.error('Error occurred while trying to delete the course:', error)
+        }
+
         handleCloseDeleteDialog()
     }
 
@@ -688,11 +698,13 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
                                 </Grid>
                             </>
                         )}
-                        <Grid item>
-                            <Button variant="contained" color="error" onClick={handleOpenDeleteDialog}>
-                                DELETE COURSE
-                            </Button>
-                        </Grid>
+                        {session?.role === 'coordinator' && (
+                            <Grid item>
+                                <Button variant="contained" color="error" onClick={handleOpenDeleteDialog}>
+                                    DELETE COURSE
+                                </Button>
+                            </Grid>
+                        )}
                     </Grid>
                 </Grid>
             </Paper>
