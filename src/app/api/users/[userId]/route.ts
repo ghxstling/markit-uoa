@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import UserRepo from '@/data/userRepo';
+import SupervisorRepo from '@/data/supervisorRepo';
 import { Role } from '@/models/role';
 import { getToken } from 'next-auth/jwt';
 
@@ -76,9 +77,15 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         );
     }
 
+    if (role === Role.Supervisor) {
+        // Ensure the user has an entry in the supervisor table
+        await SupervisorRepo.createSupervisorFromEmail(user.email, {});
+    }
+
     const updatedUser = await UserRepo.updateUserRole(userId, role);
     return NextResponse.json(updatedUser, {
         status: 200,
         statusText: 'Updated user role for ID ' + userId,
     });
+
 }
