@@ -4,7 +4,7 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import { useSession } from 'next-auth/react'
-import CourseTable from '@/app/components/courses/CourseTable'
+import SupervisorCourseTable from '@/app/components/courses/SupervisorCourseTable'
 import React from 'react'
 import CustomTheme from '@/app/CustomTheme'
 import { ThemeProvider } from '@mui/material/styles'
@@ -49,7 +49,7 @@ export default function CSHomepage() {
                     >
                         CREATE NEW COURSE
                     </Button>
-                    <CourseTable />
+                    <SupervisorCourseTable />
                 </Box>
             </Box>
         </ThemeProvider>

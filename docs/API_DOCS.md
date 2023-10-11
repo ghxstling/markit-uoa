@@ -56,6 +56,7 @@ model Course {
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
     - Data required:
         ```typescript
+        // Course
         {
             courseCode: string,
             courseDescription: string,
@@ -69,13 +70,13 @@ model Course {
         }
         ```
     - Returns:
-        
+      
         - The newly created `Course`.
     
 - `GET /api/courses/with-markers`
-
+    - Retrieves all `Course`s from the database with assigned `Marker`s.
     - Returns:
-        - An array of `Course`s with `totalMarkers` and `totalHours` included.
+        - An array of `Course`s with `allocatedHours` and `assignedMarkers` included.
 
 - `GET /api/courses/[courseId]`
     - Retrieves a `Course` from the database with the given `courseId`.
@@ -87,6 +88,7 @@ model Course {
     - Updates an existing `Course` in the database with the given `courseId`.
     - Data required:
         ```typescript
+        // Course
         {
             courseCode: string,
             courseDescription: string,
@@ -100,7 +102,7 @@ model Course {
         }
         ```
     - Returns:
-        
+      
         - The updated `Course`.
 
 ### Students
@@ -143,6 +145,7 @@ model Student {
     - You must be a `Student` to access this endpoint.
     - Data required:
         ```typescript
+        // Student
         {
             preferredEmail: string,
             upi: string,
@@ -159,7 +162,7 @@ model Student {
         }
         ```
     - Returns:
-        
+      
         - The newly created `Student`.
 - `GET /api/students/[studentUpi]`
     - Retrieves a `Student` from the database with the given `studentId`.
@@ -191,6 +194,7 @@ model Student {
     - You must be a `Student` to access this endpoint.
     - Data Required:
         ```typescript
+        // File
         {
             FormData: {
                 file: File
@@ -210,6 +214,7 @@ model Student {
     - You must be a `Student` to access this endpoint.
     - Data Required:
         ```typescript
+        // File
         {
             FormData: {
                 file: File
@@ -265,11 +270,12 @@ model Application {
     - Returns:
         - An array of `Application`s.
 - `POST /api/applications`
-    
+  
     - Creates one or more `Student` `Application`s in the database.
     - You must be a `Student` to access this endpoint.
     - Data Required:
         ```typescript
+        // An array of Applications
         {
             preferenceId: number,
             studentId: number,
@@ -283,7 +289,7 @@ model Application {
         }[]
         ```
     - Returns:
-        
+      
         - An array of newly created `Application`s.
 - `GET /api/applications/csv`
     - Creates and returns a CSV file of all `Student` `Application`s.
@@ -321,22 +327,31 @@ model Application {
     - You must be a `Student` to access this endpoint.
     - Returns:
         - An array of the `Student`'s own `Application`s.
+- `PATCH /api/students/me/applications`
+    - Updates the `preferenceId`s of a `Student`'s own `Application`s.
+    - You must be a `Student` to access this endpoint.
+    - Data Required:
+        ```typescript
+        // An array of Applications
+        {
+            preferenceId: number,
+            studentId: number,
+            courseId: number,
+            hasCompletedCourse: boolean,
+            previouslyAchievedGrade: string,
+            hasTutoredCourse: boolean,
+            hasMarkedCourse: boolean,
+            notTakenExplanation: string,
+            equivalentQualification: string
+        }[]
+        ```
+    - Returns:
+        - The updated `Student`'s `Application`
 - `GET /api/students/me/applications/[applicationId]`
     - Retrieves a `Student`'s own particular `Application` using its `applicationId`.
     - You must be a `Student` to access this endpoint.
     - Returns:
         - The specified `Application` that belongs to the `Student`.
-- `PATCH /api/students/me/applications/[applicationId]`
-    - Updates the `preferenceId` of a `Student`'s own `Application`, and reorders the `preferenceId`s of all `Application`s.
-    - You must be a `Student` to access this endpoint.
-    - Data Required:
-    ```typescript
-    {
-        isQualified: boolean,
-    }
-    ```
-    - Returns:
-        - The updated `Student`'s `Application`
 
 **Additional Notes:**
 
@@ -383,6 +398,7 @@ model Application {
     - You must be a `Coordinator` to access this endpoint.
     - Data Required:
         ```typescript
+        // An Array of Markers (Applications)
         {
             preferenceId: number,
             studentId: number,
@@ -409,7 +425,7 @@ model Application {
         }
         ```
     - Returns:
-        
+      
         - The updated `Marker` for a given `Course`.
 - `DELETE /api/courses/[courseId]/markers/[markerId]`
     - Removes a `Marker` from a given `Course`.
@@ -507,7 +523,7 @@ model User {
         }
         ```
     - Returns:
-        
+      
         - The updated `User` for a given `userId`.
 
 ### Changelog
@@ -545,3 +561,7 @@ model User {
 - v1.1.3
     - Updated `Applications` section:
         - Added `GET /api/applications/csv` endpoint
+        - Removed `PATCH /api/students/me/applications/[applicationId]` endpoint
+        - Added `PATCH /api/students/me/applications` endpoint
+    - Updated `Courses` section:
+        - Added `GET /api/courses/with-markers` endpoint

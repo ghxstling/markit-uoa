@@ -220,7 +220,7 @@ const Sidebar = () => {
                     email,
                     [
                         ['View All Courses', '/dashboard/ViewAllCourses', 'CalendarViewDayIcon'],
-                        ['Apply Now', '/dashboard/Application', 'ArchiveIcon'],
+                        ['Apply Now', '/dashboard/application', 'ArchiveIcon'],
                     ],
                     open,
                     handleClickOpen,

@@ -9,8 +9,20 @@ interface CoursePreferenceProps {
     setFormValues: React.Dispatch<React.SetStateAction<IFormValues>>
 }
 
+interface ApplicantsData {
+    id: number
+    hasMarkedCourse: boolean
+    previouslyAchievedGrade: string
+    studentId: number
+    courseId: number
+    isQualified: boolean
+    applicationStatus: string
+    allocatedHours: number
+}
+
 const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFormValues }) => {
     const [coursePreferenceID, setCoursePreferenceID] = useState(1)
+    const [currentApplicationIds, setCurrentApplicationIds] = useState<number[]>([])
 
     useEffect(() => {
         fetchApplications()
@@ -29,6 +41,9 @@ const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFor
                     formValues.coursePreferences.forEach((pref) => (maxId = Math.max(maxId, pref.prefId)))
                 }
                 setCoursePreferenceID(maxId + 1)
+                let currentIds: number[] = []
+                jsonData.forEach((application: ApplicantsData) => currentIds.push(application.id))
+                setCurrentApplicationIds(currentIds)
             } else {
                 return
             }
@@ -98,6 +113,10 @@ const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFor
                                     application={coursePreference}
                                     updateCoursePreference={updateCoursePreference}
                                     removeCoursePreference={removeCoursePreference}
+                                    disableRemove={currentApplicationIds.includes(coursePreference.id) ? true : false}
+                                    disableCourseName={
+                                        currentApplicationIds.includes(coursePreference.id) ? true : false
+                                    }
                                 />
                             </Grid>
                         ))}
