@@ -17,8 +17,8 @@ export async function GET(req: NextRequest) {
     }
 
     try {
-        const result = await ApplicationService.createCsvFile()
-        if (result == false) {
+        const csv = await ApplicationService.createCsvFile()
+        if (csv == null) {
             return NextResponse.json(
                 {
                     status: 400,
@@ -26,16 +26,15 @@ export async function GET(req: NextRequest) {
                 }, { status: 400 })
         }
 
-        const { data, stat } = await ApplicationService.getCsvFile()
+        const data = Buffer.from(csv, 'utf-8')
         const outResponse = new NextResponse(data, 
             {
                 status: 201,
                 statusText: 'CSV File created successfully',
             })
-        outResponse.headers.set('Content-Length', stat.size.toString())
+        outResponse.headers.set('Content-Length', data.length.toString())
         outResponse.headers.set('Content-Disposition', 'attachment; filename="applications.csv"')
         outResponse.headers.set('Content-Type', 'text/csv; charset=utf-8')
-
         return outResponse
     } catch (err) {
         console.log(err)
