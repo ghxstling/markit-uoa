@@ -10,15 +10,24 @@ type Params = {
     }
 }
 
+type Course = {
+    courseCode: string,
+    courseDescription: string,
+    supervisorId: number | null,
+    numOfEstimatedStudents: number,
+    numOfEnrolledStudents: number,
+    markerHours: number,
+    markerResponsibilities: string,
+    needMarkers: boolean,
+    markersNeeded: number,
+    semester: string,
+}
+
 // GET /api/courses/{courseId}
 export async function GET(req: NextRequest, { params }: Params) {
-    // Store params.courseId into courseId for readability
+
     const courseId = parseInt(params.courseId)
-
-    // Get the course from the database by ID
     const course = await CourseRepo.getCourseById(courseId)
-
-    // If it doesn't exist, return status code 404 NOT FOUND
     if (course == null) {
         return NextResponse.json(
             {
@@ -29,7 +38,6 @@ export async function GET(req: NextRequest, { params }: Params) {
         )
     }
 
-    // Extract the supervisor's name and ID
     const supervisorName = course?.supervisor?.user?.name;
     const supervisorId = course?.supervisorId;
 
@@ -46,7 +54,6 @@ export async function GET(req: NextRequest, { params }: Params) {
     })
 }
 
-
 // PATCH /api/courses/{courseId}
 export async function PATCH(req: NextRequest, { params }: Params) {
     const token = await getToken({ req })
@@ -61,13 +68,8 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         )
     }
     
-    // Store params.courseId into courseId for readability
     const courseId = parseInt(params.courseId)
-
-    // Get the course from the database by ID
     const course = await CourseRepo.getCourseById(courseId)
-
-    // If it doesn't exist, return status code 404 NOT FOUND
     if (course == null) {
         return NextResponse.json(
             {
@@ -78,33 +80,8 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         )
     }
 
-    // Get updated course information from supervisor/coordinator
-    const {
-        courseCode,
-        courseDescription,
-        numOfEstimatedStudents,
-        numOfEnrolledStudents,
-        markerHours,
-        markerResponsibilities,
-        needMarkers,
-        markersNeeded,
-        semester,
-        supervisorId  // Extracting the supervisor ID
-    } = await req.json()
-
-    // If some information is missing, return code 400 BAD REQUEST
-    const result = courseSchema.safeParse({
-        courseCode,
-        courseDescription,
-        numOfEstimatedStudents,
-        numOfEnrolledStudents,
-        markerHours,
-        markerResponsibilities,
-        needMarkers,
-        markersNeeded,
-        semester,
-    })
-
+    const courseData: Course = await req.json()
+    const result = courseSchema.safeParse(courseData)
     if (!result.success) {
         return NextResponse.json(result.error, {
             status: 400,
@@ -112,25 +89,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         })
     }
 
-    // Update the course information, including supervisor ID
-    const updatedCourse = await CourseRepo.updateCourse(courseId, {
-        courseCode,
-        courseDescription,
-        numOfEstimatedStudents,
-        numOfEnrolledStudents,
-        markerHours,
-        markerResponsibilities,
-        needMarkers,
-        markersNeeded,
-        semester,
-        supervisor: { 
-            connect: { 
-                id: supervisorId 
-            } 
-        } // Use nested write to connect the supervisor
-    })
-
-    // Return the updated course with status code 200 OK
+    const updatedCourse = await CourseRepo.updateCourse(courseId, courseData)
     return NextResponse.json(updatedCourse, {
         status: 200,
         statusText: 'Updated course information',
