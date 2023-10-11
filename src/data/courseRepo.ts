@@ -48,7 +48,7 @@ export default class CourseRepo {
         })
     }
 
-    static async updateCourse(id: number, data: Prisma.CourseUpdateInput) {
+    static async updateCourse(id: number, data: Prisma.CourseUncheckedUpdateInput) {
         return await prisma.course.update({
             where: { id },
             data,
