@@ -14,7 +14,6 @@ export const applicationSchema = z
         equivalentQualification: z.string().optional(),
     })
     .required()
-    // TODO: add validation for equivalentQualification
     .superRefine((
         {
             hasCompletedCourse,
@@ -26,7 +25,6 @@ export const applicationSchema = z
         }, ctx) => {
             if (hasMarkedCourse == false && hasTutoredCourse == false &&
                 (equivalentQualification == undefined || equivalentQualification == null || equivalentQualification == '')) {
-                console.log(true)
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
                     message: 'Your equivalent qualification is required if you have not marked/tutored the course before'
@@ -59,6 +57,7 @@ export const courseSchema = z
     .object({
         courseCode: z.string().toUpperCase().nonempty({ message: 'Please provide the Course Code' }),
         courseDescription: z.string().nonempty({ message: 'Please provide the Course Description' }),
+        supervisorId: z.number().int().nullable(),
         numOfEstimatedStudents: z.number().int().nonnegative(),
         numOfEnrolledStudents: z.number().int().nonnegative(),
         markerHours: z.number().int().nonnegative(),

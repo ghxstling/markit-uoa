@@ -1,5 +1,5 @@
 import { Button, Grid, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CourseApplication from './CourseApplication'
 import { IFormValues } from '@/types/IFormValues'
 import { CourseApplicationType } from '@/types/CourseApplicationType'
@@ -9,8 +9,48 @@ interface CoursePreferenceProps {
     setFormValues: React.Dispatch<React.SetStateAction<IFormValues>>
 }
 
+interface ApplicantsData {
+    id: number
+    hasMarkedCourse: boolean
+    previouslyAchievedGrade: string
+    studentId: number
+    courseId: number
+    isQualified: boolean
+    applicationStatus: string
+    allocatedHours: number
+}
+
 const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFormValues }) => {
     const [coursePreferenceID, setCoursePreferenceID] = useState(1)
+    const [currentApplicationIds, setCurrentApplicationIds] = useState<number[]>([])
+
+    useEffect(() => {
+        fetchApplications()
+    }, [formValues.coursePreferences.length])
+
+    const fetchApplications = async () => {
+        try {
+            const response = await fetch(`/api/students/me/applications`, { method: 'GET' })
+            if (response.ok) {
+                const jsonData = await response.json()
+                let maxId = 0
+                jsonData.forEach((application: any) => {
+                    maxId = Math.max(application.preferenceId, maxId)
+                })
+                if (formValues.coursePreferences.length !== 0) {
+                    formValues.coursePreferences.forEach((pref) => (maxId = Math.max(maxId, pref.prefId)))
+                }
+                setCoursePreferenceID(maxId + 1)
+                let currentIds: number[] = []
+                jsonData.forEach((application: ApplicantsData) => currentIds.push(application.id))
+                setCurrentApplicationIds(currentIds)
+            } else {
+                return
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
+    }
 
     const addCourseApplication = () => {
         let newApplications: CourseApplicationType[] = [
@@ -46,7 +86,7 @@ const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFor
             (coursePreference) => coursePreference.id !== id
         )
         updatedApplications.forEach((coursePreference, index) => {
-            coursePreference.prefId = index + 1
+            coursePreference.prefId = index + coursePreferenceID - formValues.coursePreferences.length
             prefIdCounter++
         })
         setFormValues({ ...formValues, coursePreferences: updatedApplications })
@@ -73,6 +113,10 @@ const CoursePreferences: React.FC<CoursePreferenceProps> = ({ formValues, setFor
                                     application={coursePreference}
                                     updateCoursePreference={updateCoursePreference}
                                     removeCoursePreference={removeCoursePreference}
+                                    disableRemove={currentApplicationIds.includes(coursePreference.id) ? true : false}
+                                    disableCourseName={
+                                        currentApplicationIds.includes(coursePreference.id) ? true : false
+                                    }
                                 />
                             </Grid>
                         ))}

@@ -30,7 +30,7 @@ export default class ApplicationRepo {
     static async getApplicationsByCourse(courseId: number) {
         return await prisma.application.findMany({
             where: {
-                courseId: courseId 
+                courseId: courseId,
             },
             include: { course: true },
         })
@@ -39,9 +39,9 @@ export default class ApplicationRepo {
     static async doesApplicationExist(studentId: number, courseId: number) {
         const app = await prisma.application.findUnique({
             where: {
-                studentId_courseId: { studentId, courseId }
+                studentId_courseId: { studentId, courseId },
             },
-            include: { student: true, course: true }
+            include: { student: true, course: true },
         })
         return app != null
     }
@@ -55,7 +55,7 @@ export default class ApplicationRepo {
     static async updateApplication(id: number, data: Prisma.ApplicationUncheckedUpdateInput) {
         return await prisma.application.update({
             where: { id },
-            data
+            data,
         })
     }
 
@@ -67,6 +67,16 @@ export default class ApplicationRepo {
     }
 
     static async updateCoursePreference(id: number, prefId: number) {
+        const application = await prisma.application.findUnique({
+            where: { id },
+        })
+        let studentApplications = await prisma.application.findMany({
+            where: { studentId: application!.studentId },
+        })
+        if (prefId > studentApplications.length) {
+            return null
+        }
+
         return await prisma.application.update({
             where: { id },
             data: { preferenceId: prefId },

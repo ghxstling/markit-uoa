@@ -18,7 +18,7 @@ Made by Dylan Choy (the One Man Army)
     - `/api/courses/[courseId]/markers`
 5. Supervisors
     - `/api/supervisors`
-5. Users (will be refactored)
+5. Users
     - `/api/users`
 6. Changelog
 
@@ -56,26 +56,28 @@ model Course {
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
     - Data required:
         ```typescript
+        // Course
         {
             courseCode: string,
             courseDescription: string,
+            supervisorId: number | null,
             numOfEstimatedStudents: number,
             numOfEnrolledStudents: number,
             markerHours: number,
             markerResponsibilities: string,
             needMarkers: boolean,
             markersNeeded: number,
-            semester: string
+            semester: string,
         }
         ```
     - Returns:
-        
+      
         - The newly created `Course`.
     
 - `GET /api/courses/with-markers`
-
+    - Retrieves all `Course`s from the database with assigned `Marker`s.
     - Returns:
-        - An array of `Course`s with `totalMarkers` and `totalHours` included.
+        - An array of `Course`s with `allocatedHours` and `assignedMarkers` included.
 
 - `GET /api/courses/[courseId]`
     - Retrieves a `Course` from the database with the given `courseId`.
@@ -87,21 +89,28 @@ model Course {
     - Updates an existing `Course` in the database with the given `courseId`.
     - Data required:
         ```typescript
+        // Course
         {
             courseCode: string,
             courseDescription: string,
+            supervisorId: number | null,
             numOfEstimatedStudents: number,
             numOfEnrolledStudents: number,
             markerHours: number,
             markerResponsibilities: string,
             needMarkers: boolean,
             markersNeeded: number,
-            semester: string
+            semester: string,
         }
         ```
     - Returns:
-        
+      
         - The updated `Course`.
+- `DELETE /api/courses/[courseId]`
+    - Deletes a `Course` in the database with the given `courseId`.
+    - You must be a `Coordinator` to access this endpoint.
+    - Returns:
+        - The deleted `Course` with the given `courseId`.
 
 ### Students
 
@@ -143,6 +152,7 @@ model Student {
     - You must be a `Student` to access this endpoint.
     - Data required:
         ```typescript
+        // Student
         {
             preferredEmail: string,
             upi: string,
@@ -159,7 +169,7 @@ model Student {
         }
         ```
     - Returns:
-        
+      
         - The newly created `Student`.
 - `GET /api/students/[studentUpi]`
     - Retrieves a `Student` from the database with the given `studentId`.
@@ -191,6 +201,7 @@ model Student {
     - You must be a `Student` to access this endpoint.
     - Data Required:
         ```typescript
+        // File
         {
             FormData: {
                 file: File
@@ -210,6 +221,7 @@ model Student {
     - You must be a `Student` to access this endpoint.
     - Data Required:
         ```typescript
+        // File
         {
             FormData: {
                 file: File
@@ -236,7 +248,7 @@ The rationale behind this is that a `Student` should not be allowed access to ot
 model Application {
   id                      Int     @id @default(autoincrement())
   applicationStatus       String  @default("pending")
-  allocatedHours          Int     @default(5)
+  allocatedHours          Int     @default(0)
   preferenceId            Int
   // many to one with Student
   student                 Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
@@ -265,11 +277,12 @@ model Application {
     - Returns:
         - An array of `Application`s.
 - `POST /api/applications`
-    
+  
     - Creates one or more `Student` `Application`s in the database.
     - You must be a `Student` to access this endpoint.
     - Data Required:
         ```typescript
+        // An array of Applications
         {
             preferenceId: number,
             studentId: number,
@@ -283,8 +296,13 @@ model Application {
         }[]
         ```
     - Returns:
-        
+      
         - An array of newly created `Application`s.
+- `GET /api/applications/csv`
+    - Creates and returns a CSV file of all `Student` `Application`s.
+    - You must be a `Supervisor` or `Coordinator` to access this endpoint.
+    - Returns:
+        - A CSV file of all `Application`s.
 - `GET /api/courses/[courseId]/applications`
     - Retrieves `Student` `Application`s for a given `Course`.
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
@@ -300,11 +318,42 @@ model Application {
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
     - Returns:
         - The specified `Application` for a given `Student`.
+- `PATCH /api/students/[studentUpi]/applications/[applicationId]`
+    - Updates the qualification status of a `Student` `Application` for a given `Course`.
+    - You must be a `Supevisor` or `Coordinator` to access this endpoint.
+    - Data Required:
+    ```typescript
+    {
+        isQualified: boolean,
+    }
+    ```
+    - Returns:
+        - The updated `Student`'s `Application`
 - `GET /api/students/me/applications`
     - Retrieves a `Student`'s own `Application`s.
     - You must be a `Student` to access this endpoint.
     - Returns:
         - An array of the `Student`'s own `Application`s.
+- `PATCH /api/students/me/applications`
+    - Updates the `preferenceId`s of a `Student`'s own `Application`s.
+    - You must be a `Student` to access this endpoint.
+    - Data Required:
+        ```typescript
+        // An array of Applications
+        {
+            preferenceId: number,
+            studentId: number,
+            courseId: number,
+            hasCompletedCourse: boolean,
+            previouslyAchievedGrade: string,
+            hasTutoredCourse: boolean,
+            hasMarkedCourse: boolean,
+            notTakenExplanation: string,
+            equivalentQualification: string
+        }[]
+        ```
+    - Returns:
+        - The updated `Student`'s `Application`
 - `GET /api/students/me/applications/[applicationId]`
     - Retrieves a `Student`'s own particular `Application` using its `applicationId`.
     - You must be a `Student` to access this endpoint.
@@ -322,7 +371,7 @@ Refer to the **Additonal Notes** under the **Students** section for `/api/studen
 model Application {
   id                      Int     @id @default(autoincrement())
   applicationStatus       String  // applicationStatus must be "approved" to be a marker
-  allocatedHours          Int     @default(5)
+  allocatedHours          Int     @default(0)
   preferenceId            Int
   // many to one with Student
   student                 Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
@@ -356,6 +405,7 @@ model Application {
     - You must be a `Coordinator` to access this endpoint.
     - Data Required:
         ```typescript
+        // An Array of Markers (Applications)
         {
             preferenceId: number,
             studentId: number,
@@ -382,7 +432,7 @@ model Application {
         }
         ```
     - Returns:
-        
+      
         - The updated `Marker` for a given `Course`.
 - `DELETE /api/courses/[courseId]/markers/[markerId]`
     - Removes a `Marker` from a given `Course`.
@@ -394,7 +444,7 @@ model Application {
 
 There is no schema defined for `Marker`, rather `Application` is reused. For the purpose of this API, a `Marker` is represented by an `Application` that has been approved by a `Coordinator`. This is done to eliminate potential data redundancy and to simplify the database schema.
 
-### Supervisor (WIP)
+### Supervisors
 
 **Schema:**
 ```prisma
@@ -480,15 +530,48 @@ model User {
         }
         ```
     - Returns:
-        
+      
         - The updated `User` for a given `userId`.
 
 ### Changelog
 
-- v1.0
+- v1.0.0
     - Initial release
-- v1.1
+        - Added `Courses` section
+        - Added `Students` section
+        - Added `Applications` section
+        - Added `Markers` section
+        - Added `Supervisors` section (WIP)
+        - Added `Users` section (WIP)
+- v1.1.0
     - Added `Changelog` section
-    - Added `supervisor` and `supervisorId` fields to `Course` schema
-    - Updated `Supervisor` section
-    - Added `User` section
+    - Updated `Course` schema:
+        - Added `supervisor` and `supervisorId` fields
+    - Updated `Supervisors` section
+        - Added `GET /api/supervisors` endpoint
+        - Added `GET /api/supervisors/me` endpoint
+        - Added `GET /api/supervisors/me/courses` endpoint
+        - Added `GET /api/supervisors/[supervisorId]` endpoint
+        - Added `GET /api/supervisors/[supervisorId]/courses` endpoint
+    - Updated `Users` section
+        - Added `GET /api/users` endpoint
+        - Added `GET /api/users/[userId]` endpoint
+        - Added `PATCH /api/users/[userId]` endpoint
+- v1.1.1
+    - Updated `Applications` section:
+        - Added `PATCH /api/students/[studentUpi]/applications/[applicationId]` endpoint
+- v1.1.2
+    - Updated `Applications` section:
+        - Updated `PATCH /api/students/[studentUpi]/applications/[applicationId]` endpoint
+            - Changed `Data Required` to `isQualified: boolean` only
+        - Added `PATCH /api/students/me/applications/[applicationId]` endpoint
+- v1.1.3
+    - Updated `Applications` section:
+        - Added `GET /api/applications/csv` endpoint
+        - Removed `PATCH /api/students/me/applications/[applicationId]` endpoint
+        - Added `PATCH /api/students/me/applications` endpoint
+    - Updated `Courses` section:
+        - Added `GET /api/courses/with-markers` endpoint
+- v1.1.4
+    - Updated `Courses` section:
+        - Added `DELETE /api/courses/[courseId]` endpoint

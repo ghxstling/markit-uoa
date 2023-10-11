@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
 import Button from '@mui/material/Button'
@@ -13,9 +13,33 @@ import CustomTheme from '@/app/CustomTheme'
 import { ThemeProvider } from '@mui/material/styles'
 import GradeBarChart from '@/app/components/CoordinatorDashboardData/GradeBarChart'
 import ChartsContainer from '@/app/components/CoordinatorDashboardData/ChartsContainer'
+import { LoadingButton } from '@mui/lab'
+import SaveIcon from '@mui/icons-material/Save'
 
 export default function CoordinatorDashboard() {
     const { data: session } = useSession()
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+
+    const fetchAllApplications = async () => {
+        setIsLoading(true)
+        try {
+            await fetch('/api/applications/csv', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'text/csv; charset=utf-8',
+                },
+            })
+                .then((res) => res.blob())
+                .then((blob) => {
+                    let file = window.URL.createObjectURL(blob)
+                    window.location.assign(file)
+                    setIsLoading(false)
+                })
+        } catch (error) {
+            console.error('Error fetching data:', error)
+            setIsLoading(false)
+        }
+    }
 
     let firstName: string = ''
 
@@ -46,7 +70,7 @@ export default function CoordinatorDashboard() {
                     <Typography sx={{ mt: '28px', mb: '53px' }} variant="h4" fontWeight="bold">
                         Welcome, {firstName}
                     </Typography>
-                    <Link href="/dashboard/viewAllCoursespage" passHref>
+                    <Link href="/dashboard/viewAllCourses" passHref>
                         <Button
                             variant="contained"
                             sx={{
@@ -60,8 +84,20 @@ export default function CoordinatorDashboard() {
                         Statistics
                     </Typography>
                     <Divider variant="fullWidth" sx={{ mb: '20px' }} />
-
                     <ChartsContainer />
+                    <LoadingButton
+                        loading={isLoading}
+                        loadingPosition="start"
+                        startIcon={<SaveIcon />}
+                        fullWidth={true}
+                        variant="contained"
+                        sx={{
+                            backgroundColor: '#00467F',
+                        }}
+                        onClick={fetchAllApplications}
+                    >
+                        Download Applications as CSV
+                    </LoadingButton>
                 </Box>
             </Box>
         </ThemeProvider>

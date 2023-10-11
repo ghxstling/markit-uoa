@@ -1,4 +1,15 @@
-import { Box, Button, FormControlLabel, Grid, MenuItem, Radio, RadioGroup, TextField, Typography } from '@mui/material'
+import {
+    Box,
+    Button,
+    Chip,
+    FormControlLabel,
+    Grid,
+    MenuItem,
+    Radio,
+    RadioGroup,
+    TextField,
+    Typography,
+} from '@mui/material'
 import React, { useState, useEffect } from 'react'
 
 interface Course {
@@ -19,6 +30,8 @@ import { number } from 'zod'
 
 interface CourseApplicationProps {
     application: CourseApplicationType
+    disableRemove: boolean
+    disableCourseName: boolean
     updateCoursePreference: (updatedApplication: CourseApplicationType) => void
     removeCoursePreference: (id: number) => void
 }
@@ -27,6 +40,8 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
     application,
     updateCoursePreference,
     removeCoursePreference,
+    disableRemove,
+    disableCourseName,
 }) => {
     let data = {
         course: application.course,
@@ -48,7 +63,10 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
     const fetchData = async () => {
         try {
             const response = await fetch('/api/courses', { method: 'GET' })
-            const jsonData = await response.json()
+            let jsonData = await response.json()
+            jsonData = jsonData.sort(
+                (a: any, b: any) => parseInt(a.courseCode.split(' ')[1]) - parseInt(b.courseCode.split(' ')[1])
+            )
             setCourseData(jsonData)
         } catch (error) {
             console.error('Error fetching data:', error)
@@ -87,7 +105,6 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
     }
 
     const handleApplicationUpdate = () => {
-        console.log(formData) //remvoe this later
         const updatedApplication: CourseApplicationType = {
             id: thisApplicationId,
             courseName: formData.courseName,
@@ -110,8 +127,12 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
         <>
             <Box component="form" noValidate sx={{ mt: 3 }}>
                 <Grid container spacing={3} justifyContent="center" direction="column">
-                    <Grid item>
-                        <Typography variant="h4">Preference {coursePrefId}</Typography>
+                    <Grid container spacing={3} justifyContent="center" alignItems="center" direction="column">
+                        <Grid item xs={12}>
+                            <Typography variant="h4" fontSize="34px">
+                                Preference {coursePrefId}
+                            </Typography>
+                        </Grid>
                     </Grid>
                     <Grid item xs={12}>
                         <TextField
@@ -124,6 +145,7 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
                             value={formData.course}
                             onChange={handleChange}
                             onBlur={handleApplicationUpdate}
+                            disabled={disableCourseName}
                         >
                             {courseData.map((course) => (
                                 <MenuItem key={course.id} value={course.id}>
@@ -254,7 +276,9 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
                 </Grid>
             </Box>
 
-            <Button onClick={() => removeCoursePreference(thisApplicationId)}>Remove Application</Button>
+            <Button onClick={() => removeCoursePreference(thisApplicationId)} disabled={disableRemove}>
+                Remove Application
+            </Button>
         </>
     )
 }

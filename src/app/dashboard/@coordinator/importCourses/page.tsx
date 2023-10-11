@@ -2,7 +2,7 @@
 
 import DynamicBreadcrumb from '@/app/components/DynamicBreadcrumb'
 import Sidebar from '@/app/components/Sidebar'
-import CourseTable from '@/app/components/courses/CourseTable'
+import ImportCourses from '@/app/components/courses/ImportCourses'
 import { Box, Stack } from '@mui/material'
 import CustomTheme from '@/app/CustomTheme'
 import { ThemeProvider } from '@mui/material/styles'
@@ -36,8 +36,7 @@ export default function AllCourseView() {
                         mb: '100px',
                     }}
                 >
-                    <h2>Course View</h2>
-                    <CourseTable />
+                    <ImportCourses />
                 </Box>
             </Box>
         </ThemeProvider>

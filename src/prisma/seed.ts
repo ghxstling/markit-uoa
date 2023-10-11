@@ -29,11 +29,8 @@ async function generateData(seedOption?: number) {
                 numOfEnrolledStudents: faker.number.int({ min: 1, max: 2000 }),
                 markerHours: faker.number.int({ min: 5, max: 200 }),
                 markerResponsibilities: faker.lorem.paragraph({ min: 1, max: 4 }),
-                needMarkers: faker.datatype.boolean(0.5),
                 markersNeeded: faker.number.int({ min: 1, max: 20 }),
-                 semester:
-                    faker.number.int({ min: 2023, max: 2024 }).toString() +
-                    faker.helpers.arrayElement(['SS', 'S1', 'S2']),
+                semester: '2023S2',
             },
         })
     }
@@ -101,7 +98,6 @@ async function generateData(seedOption?: number) {
                         upi: upi,
                         auid: auid,
                         overseas: faker.datatype.boolean(0.2),
-                        // overseasStatus not genereated
                         residencyStatus: residencyStatus,
                         validWorkVisa: validWorkVisa,
                         degreeType: faker.helpers.arrayElement([
@@ -114,10 +110,6 @@ async function generateData(seedOption?: number) {
                         ]),
                         degreeYear: faker.number.int({ min: 1, max: 10 }),
                         maxWorkHours: faker.number.int({ min: 5, max: 25 }),
-                        // otherContracts not generated
-                        // otherContractsDetails not generated
-                        CV: 'CV.pdf',
-                        academicTranscript: 'Academic Transcript.pdf',
                     },
                 },
             },
@@ -152,12 +144,14 @@ async function generateData(seedOption?: number) {
 
         let supervisorCourses = []
         let coursesLeft = await prisma.course.findMany({
-            where: { supervisorId: null }
+            where: { supervisorId: null },
         })
 
         if (coursesLeft.length !== 0) {
             for (let i = 0; i < faker.number.int({ min: 0, max: 3 }); i++) {
-                supervisorCourses.push({ id: coursesLeft[faker.number.int({ min: 0, max: coursesLeft.length-1})].id })
+                supervisorCourses.push({
+                    id: coursesLeft[faker.number.int({ min: 0, max: coursesLeft.length - 1 })].id,
+                })
             }
         }
 
@@ -169,10 +163,10 @@ async function generateData(seedOption?: number) {
                 supervisor: {
                     create: {
                         courses: {
-                            connect: supervisorCourses
-                        }
-                    }
-                }
+                            connect: supervisorCourses,
+                        },
+                    },
+                },
             },
         })
     }
@@ -235,7 +229,7 @@ async function generateData(seedOption?: number) {
 
             let isQualified = faker.datatype.boolean(0.5)
             let applicationStatus = faker.helpers.arrayElement(['pending', 'approved', 'denied'])
-            let allocatedHours = applicationStatus === 'approved' ? faker.number.int({ min: 10, max: 10}) : 5
+            let allocatedHours = applicationStatus === 'approved' ? 10 : 0
 
             await prisma.application.create({
                 data: {

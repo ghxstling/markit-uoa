@@ -13,18 +13,37 @@ import {
     TableBody,
     Typography,
     TablePagination,
+    Chip,
+    Dialog,
 } from '@mui/material'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Sidebar from '@/app/components/Sidebar'
 import CustomTheme from '@/app/CustomTheme'
 import { ThemeProvider } from '@mui/material/styles'
+import ChangePreferenceOrder from '@/app/components/ApplicationForms/ChangePreferenceOrder'
 
 const StudentHomepage = () => {
+    interface Courses {
+        id: number
+        courseCode: string
+        semester: string
+    }
+
+    interface ApplicantsData {
+        id: number
+        applicationStatus: string
+        courseId: number
+        allocatedHours: number
+    }
+
     //initialise use states
     const [rows, rowChange] = useState([])
+    const [applications, setApplications] = useState<ApplicantsData[]>([])
+    const [courses, setCourses] = useState<Courses[]>([])
     const [page, setPage] = useState(0)
     const [rowPerPage, setRowPerPage] = useState(5)
+    const [preferenceDialogOpen, setPreferenceDialogOpen] = useState(false)
 
     //handle pagination
     const handPageChange = (event: unknown, newpage: any) => {
@@ -36,26 +55,53 @@ const StudentHomepage = () => {
         setPage(0)
     }
 
+    const openPreferenceDialog = () => {
+        setPreferenceDialogOpen(true)
+    }
+
+    const closePreferenceDialog = () => {
+        setPreferenceDialogOpen(false)
+    }
+
     //fetch data
     useEffect(() => {
-        fetch('https://jsonplaceholder.typicode.com/users')
-            .then((response) => response.json())
-            .then((json) => {
-                console.log(json)
-                rowChange(json)
-            })
-            .catch((e) => {
-                console.log(e.message)
-            })
+        fetchApplications()
     }, [])
+
+    const fetchApplications = async () => {
+        try {
+            const response = await fetch('/api/students/me/applications')
+            const jsonData = await response.json()
+            if (response.ok) {
+                setApplications(jsonData)
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
+    }
+
+    useEffect(() => {
+        fetchCourseInfo()
+    }, [])
+
+    const fetchCourseInfo = async () => {
+        try {
+            const response = await fetch('/api/courses', { method: 'GET' })
+            const jsonData = await response.json()
+            if (response.ok) {
+                setCourses(jsonData)
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
+    }
 
     //initialise columns
     const columns = [
         { id: 'name', name: 'Course' },
         { id: 'email', name: 'Semester' },
-        { id: 'username', name: 'Status' },
         { id: 'website', name: 'Hours Assigned' },
-        { id: 'phone', name: 'Final/Estimate' },
+        { id: 'applicationStatus', name: 'Status' },
     ]
 
     //get first name of user
@@ -66,6 +112,8 @@ const StudentHomepage = () => {
     if (session && session.user && session.user.name && session.user.email) {
         firstName = session.user.name.slice(0, session.user.name.lastIndexOf(' ') + 1)
     }
+
+    const emptyRows = page >= 0 ? Math.max(0, (1 + page) * rowPerPage - applications.length) : 0
 
     return (
         <ThemeProvider theme={CustomTheme}>
@@ -104,35 +152,73 @@ const StudentHomepage = () => {
                     </Link>
                     {/* create table */}
                     <Card sx={{ p: '20px' }}>
-                        <Typography variant="h5" fontWeight="bold">
-                            Current Applications
-                        </Typography>
+                        <Box display="flex">
+                            <Typography variant="h5" fontWeight="bold">
+                                Current Applications
+                            </Typography>
+                            <Button
+                                variant="contained"
+                                size="small"
+                                onClick={openPreferenceDialog}
+                                sx={{
+                                    backgroundColor: 'white',
+                                    color: '#00467F',
+                                    border: '1px solid #00467F',
+                                    ml: 3,
+                                }}
+                            >
+                                Edit Order of Preference
+                            </Button>
+                        </Box>
                         <TableContainer>
                             <Table sx={{ minWidth: '887px' }} stickyHeader>
                                 <TableHead>
                                     <TableRow>
-                                        {columns.map((column) => (
-                                            <TableCell key={column.id}>{column.name}</TableCell>
+                                        {columns.map((column, index) => (
+                                            <TableCell key={index} style={{ textAlign: 'center' }}>
+                                                {column.name}
+                                            </TableCell>
                                         ))}
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {/* map each row to a table row and slice the number of rows based on rows per page */}
-                                    {rows &&
-                                        rows
-                                            .slice(page * rowPerPage, page * rowPerPage + rowPerPage)
-                                            .map((row, index) => {
-                                                return (
-                                                    <TableRow key={index}>
-                                                        {/* map each column value of a row to its own cell */}
-                                                        {columns &&
-                                                            columns.map((column) => {
-                                                                let value = row[column.id]
-                                                                return <TableCell key={value}>{value}</TableCell>
-                                                            })}
-                                                    </TableRow>
-                                                )
-                                            })}
+                                    {(rowPerPage > 0
+                                        ? applications.slice(page * rowPerPage, page * rowPerPage + rowPerPage)
+                                        : applications
+                                    ).map((application, index) => (
+                                        <TableRow key={index}>
+                                            <TableCell style={{ textAlign: 'center' }}>
+                                                {
+                                                    courses.find((course) => course.id === application.courseId)
+                                                        ?.courseCode
+                                                }
+                                            </TableCell>
+                                            <TableCell style={{ textAlign: 'center' }}>
+                                                {courses.find((course) => course.id === application.courseId)?.semester}
+                                            </TableCell>
+                                            <TableCell style={{ textAlign: 'center' }}>
+                                                {application.applicationStatus === 'pending'
+                                                    ? 'N/A'
+                                                    : application.allocatedHours}
+                                            </TableCell>
+                                            <TableCell style={{ textAlign: 'center' }}>
+                                                <Chip
+                                                    color={
+                                                        application.applicationStatus === 'pending'
+                                                            ? 'secondary'
+                                                            : 'primary'
+                                                    }
+                                                    label={application.applicationStatus}
+                                                />
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                    {emptyRows > 0 && (
+                                        <TableRow style={{ height: 69.5 * emptyRows }}>
+                                            <TableCell colSpan={8} />
+                                        </TableRow>
+                                    )}
                                 </TableBody>
                             </Table>
                         </TableContainer>
@@ -140,12 +226,20 @@ const StudentHomepage = () => {
                         <TablePagination
                             component="div"
                             rowsPerPage={rowPerPage}
-                            count={rows.length}
+                            count={applications.length}
                             rowsPerPageOptions={[5, 10, 25]}
                             page={page}
                             onPageChange={handPageChange}
                             onRowsPerPageChange={handleRowsPerPage}
                         ></TablePagination>
+                        <Dialog open={preferenceDialogOpen} onClose={closePreferenceDialog} maxWidth="md" fullWidth>
+                            <ChangePreferenceOrder />
+                            <Box p={3} display="flex" justifyContent="flex-start">
+                                <Button variant="outlined" color="primary" onClick={closePreferenceDialog}>
+                                    Close
+                                </Button>
+                            </Box>
+                        </Dialog>
                     </Card>
                 </Box>
             </Box>

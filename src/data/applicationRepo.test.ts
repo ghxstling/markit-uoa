@@ -201,23 +201,26 @@ describe('ApplicationRepo', () => {
         const application1 = await ApplicationRepo.createApplication(applicationInput1)
         const application2 = await ApplicationRepo.createApplication(applicationInput2)
         const application3 = await ApplicationRepo.createApplication(applicationInput3)
-
+        
         expect(application1!.preferenceId).toEqual(1)
         expect(application2!.preferenceId).toEqual(2)
         expect(application3!.preferenceId).toEqual(3)
         
-        const updatedApplication1 = await ApplicationRepo.updateCoursePreference(application1!.id, 4)
-        const updatedApplication2 = await ApplicationRepo.updateCoursePreference(application2!.id, 3)
-        const updatedApplication3 = await ApplicationRepo.updateCoursePreference(application3!.id, 2)
+        let updatedApplication1 = await ApplicationRepo.updateCoursePreference(application1!.id, 3)
+        let updatedApplication2 = await ApplicationRepo.updateCoursePreference(application2!.id, 1)
+        let updatedApplication3 = await ApplicationRepo.updateCoursePreference(application3!.id, 2)
+        
+        expect(updatedApplication1!.preferenceId).toEqual(3)
+        expect(updatedApplication2!.preferenceId).toEqual(1)
+        expect(updatedApplication3!.preferenceId).toEqual(2)
 
-        expect(updatedApplication1.preferenceId).toEqual(4)
-        expect(updatedApplication2.preferenceId).toEqual(3)
-        expect(updatedApplication3.preferenceId).toEqual(2)
+        const nonExistentApplication = await ApplicationRepo.updateCoursePreference(application1!.id, 999)
+        expect(nonExistentApplication).toEqual(null)
     })
     it('can update allocated hours for student application', async () => {
         const applicationInput = createApplicationInput(student1!.id, course1!.id)
         const application = await ApplicationRepo.createApplication(applicationInput)
-        expect(application.allocatedHours).toEqual(5)
+        expect(application.allocatedHours).toEqual(0)
 
         let updatedApplication = await ApplicationRepo.updateAllocatedHours(application.id, 10)
         expect(updatedApplication.allocatedHours).toEqual(10)
