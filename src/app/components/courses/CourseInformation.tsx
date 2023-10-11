@@ -472,7 +472,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                             <ViewStudentInformation
                                                 studentUpi={
                                                     studentData.find((student) => student.id === application.studentId)
-                                                        ?.upi
+                                                        ?.upi!
                                                 }
                                             />
                                         </Drawer>
