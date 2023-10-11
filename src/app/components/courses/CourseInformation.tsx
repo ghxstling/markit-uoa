@@ -286,6 +286,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                     return a.applicationStatus.localeCompare(b.applicationStatus)
                 }
             })
+            setApplicationsLength(jsonData.length)
         } catch (error) {
             console.error('Error fetching data:', error)
         }
@@ -693,7 +694,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                         <Checkbox
                                             checked={checkedStudents.includes(application.studentId) || false}
                                             onChange={() => handleCheckedStudents(application.studentId)}
-                                            disabled={application.applicationStatus === 'denied'}
+                                            disabled={application.applicationStatus === 'denied' && application.applicationStatus === 'denied'}
                                         />
                                     </TableCell>
                                     <TableCell style={{ textAlign: 'center' }}>
