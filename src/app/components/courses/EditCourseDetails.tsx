@@ -252,7 +252,7 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
         setWordCount(newWordCount)
     }
 
-    const getSupervisorId = (supervisor: Supervisor) => {
+    const getSupervisorId = (supervisor: Supervisor | null) => {
         if (supervisor === null) {
             return null
         }
