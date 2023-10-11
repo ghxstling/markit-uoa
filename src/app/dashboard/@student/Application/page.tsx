@@ -14,6 +14,7 @@ import type { Prisma } from '@prisma/client'
 import CustomTheme from '@/app/CustomTheme'
 import { ThemeProvider } from '@mui/material/styles'
 import Sidebar from '@/app/components/Sidebar'
+import { ICvAndTranscript } from '@/types/ICvAndTranscript'
 
 const steps = ['Personal Details', 'Employment Details', 'CV and Academic Transcript Upload', 'Course Preferences']
 
@@ -21,7 +22,9 @@ const steps = ['Personal Details', 'Employment Details', 'CV and Academic Transc
 function getStepContent(
     step: number,
     formValues: IFormValues,
-    setFormValues: React.Dispatch<React.SetStateAction<IFormValues>>
+    setFormValues: React.Dispatch<React.SetStateAction<IFormValues>>,
+    cvTranscriptName: ICvAndTranscript,
+    setCvTranscriptName: React.Dispatch<React.SetStateAction<ICvAndTranscript>>
 ) {
     switch (step) {
         case 0:
@@ -29,7 +32,7 @@ function getStepContent(
         case 1:
             return <EmploymentDetails formValues={formValues} setFormValues={setFormValues} />
         case 2:
-            return <CVAndTranscript />
+            return <CVAndTranscript cvTranscriptName={cvTranscriptName} setCvTranscriptName={setCvTranscriptName} />
         case 3:
             return <CoursePreferences formValues={formValues} setFormValues={setFormValues} />
         default:
@@ -68,6 +71,7 @@ const postStudentDetails = async (formValues: IFormValues) => {
 }
 
 const postCourseApplications = async (formValues: IFormValues) => {
+    console.log(formValues.coursePreferences)
     const courseApplications = formValues.coursePreferences
     const res = await fetch('/api/applications', {
         method: 'POST',
@@ -90,6 +94,17 @@ const getCourseNameById = async (courseId: number) => {
     }
 }
 
+interface ApplicantsData {
+    id: number
+    hasMarkedCourse: boolean
+    previouslyAchievedGrade: string
+    studentId: number
+    courseId: number
+    isQualified: boolean
+    applicationStatus: string
+    allocatedHours: number
+}
+
 const Application = () => {
     //initialise use states
     const { data: session } = useSession()
@@ -106,6 +121,10 @@ const Application = () => {
         degreeYears: 1,
         workHours: 5,
         coursePreferences: [],
+    })
+    const [cvTranscriptName, setCvTranscriptName] = useState<ICvAndTranscript>({
+        CvName: '',
+        TranscriptName: '',
     })
 
     const [snackbarMessage, setSnackbarMessage] = useState('Please enter 9 digits for your student ID')
@@ -153,6 +172,8 @@ const Application = () => {
                 })
             } else if (response1.ok && !response2.ok) {
                 let jsonData1 = await response1.json()
+                const currentIds: number[] = []
+                jsonData1.forEach((application: ApplicantsData) => currentIds.push(application.courseId))
                 jsonData1 = jsonData1.sort((a: any, b: any) => a.preferenceId - b.preferenceId)
                 let currentCoursePreferences = jsonData1.map((application: any) => {
                     return {
@@ -234,6 +255,15 @@ const Application = () => {
             }
         }
 
+        if (activeStep === 2) {
+            //check cv and transcript have a name
+            if (cvTranscriptName.CvName === '' || cvTranscriptName.TranscriptName === '') {
+                setSnackbarMessage('Please upload both a CV and a Transcript')
+                setOpenSnackBar(true)
+                return
+            }
+        }
+
         if (activeStep === steps.length - 1) {
             //check all applications
             let uniqueCourses: Set<number> = new Set()
@@ -268,7 +298,7 @@ const Application = () => {
                     setOpenSnackBar(true)
                     return
                 } else if (
-                    (coursePreference.markedPreviously === true || coursePreference.tutoredPreviously === true) &&
+                    (coursePreference.markedPreviously === false || coursePreference.tutoredPreviously === false) &&
                     coursePreference.explainNotPrevious === ''
                 ) {
                     setSnackbarMessage(
@@ -340,7 +370,13 @@ const Application = () => {
                                 </>
                             ) : (
                                 <>
-                                    {getStepContent(activeStep, formValues, setFormValues)}
+                                    {getStepContent(
+                                        activeStep,
+                                        formValues,
+                                        setFormValues,
+                                        cvTranscriptName,
+                                        setCvTranscriptName
+                                    )}
                                     <Box
                                         sx={{
                                             display: 'flex',

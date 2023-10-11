@@ -220,12 +220,12 @@ export default function CourseTable() {
                                 )}
                                 <TableCell style={{ textAlign: 'center' }}>
                                     {course.needMarkers ? (
-                                        <Button variant="contained" color="success" style={{ width: '75%' }}>
-                                            Complete
-                                        </Button>
-                                    ) : (
                                         <Button variant="contained" color="error" style={{ width: '75%' }}>
                                             Incomplete
+                                        </Button>
+                                    ) : (
+                                        <Button variant="contained" color="success" style={{ width: '75%' }}>
+                                            Complete
                                         </Button>
                                     )}
                                 </TableCell>

@@ -12,10 +12,12 @@ import {
     Typography,
     Box,
     Button,
+    Snackbar,
+    Alert,
 } from '@mui/material'
 
 export default function ChangePreferenceOrder() {
-    interface CoursePreference {
+    interface Application {
         id: number
         preferenceId: number
         courseId: number
@@ -27,8 +29,29 @@ export default function ChangePreferenceOrder() {
         semester: string
     }
 
-    const [preferences, setPreferences] = useState<CoursePreference[]>([])
+    const [applications, setApplications] = useState<Application[]>([])
     const [courseInfo, setCourseInfo] = useState<Courses[]>([])
+    const [snackbarFailureMessage, setSnackbarFailureMessage] = useState(
+        'Failure submitting new preferences, please try again later.'
+    )
+    const [openSnackBarFailure, setOpenSnackBarFailure] = useState(false)
+    const [openSnackBarSuccess, setOpenSnackBarSuccess] = useState(false)
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('New preferences submitted successfully!')
+
+    const handleCloseFailure = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return
+        }
+
+        setOpenSnackBarFailure(false)
+    }
+
+    const handleCloseSuccess = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return
+        }
+        setOpenSnackBarSuccess(false)
+    }
 
     useEffect(() => {
         fetchApplications()
@@ -37,9 +60,11 @@ export default function ChangePreferenceOrder() {
     const fetchApplications = async () => {
         try {
             const response = await fetch('/api/students/me/applications')
-            const jsonData = await response.json()
+            let jsonData = await response.json()
+            jsonData = jsonData.sort((a: Application, b: Application) => a.preferenceId - b.preferenceId)
             if (response.ok) {
-                setPreferences(jsonData)
+                setApplications(jsonData)
+                console.log(jsonData)
             }
         } catch (error) {
             console.error('Error fetching data:', error)
@@ -53,7 +78,7 @@ export default function ChangePreferenceOrder() {
     const fetchCourseInfo = async () => {
         try {
             const response = await fetch('/api/courses', { method: 'GET' })
-            const jsonData = await response.json()
+            let jsonData = await response.json()
             if (response.ok) {
                 setCourseInfo(jsonData)
             }
@@ -65,16 +90,36 @@ export default function ChangePreferenceOrder() {
     const handleOnDragEnd = (result: any) => {
         if (!result.destination) return
 
-        const items = Array.from(preferences)
+        const items = Array.from(applications)
         const [reorderedItem] = items.splice(result.source.index, 1)
         items.splice(result.destination.index, 0, reorderedItem)
 
-        setPreferences(items.map((item, index) => ({ ...item, preferenceId: index + 1 })))
+        setApplications(items.map((item, index) => ({ ...item, preferenceId: index + 1 })))
     }
 
-    const submitPreferences = () => {
-        const currentPreferences = [...preferences]
-        console.log(currentPreferences)
+    const submitPreferences = async () => {
+        const currentPreferences = [...applications]
+        handlePreferenceUpdate(currentPreferences)
+        fetchApplications()
+    }
+
+    const handlePreferenceUpdate = async (applications: Application[]) => {
+        try {
+            const response = await fetch(`/api/students/me/applications`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(applications),
+            })
+            if (response.ok) {
+                setOpenSnackBarSuccess(true)
+            } else {
+                setOpenSnackBarFailure(true)
+            }
+        } catch (error) {
+            console.error('Error updating data:', error)
+        }
     }
 
     return (
@@ -98,10 +143,10 @@ export default function ChangePreferenceOrder() {
                             <Droppable droppableId="preferences">
                                 {(provided) => (
                                     <TableBody {...provided.droppableProps} ref={provided.innerRef}>
-                                        {preferences.map((preference, index) => (
+                                        {applications.map((application, index) => (
                                             <Draggable
-                                                key={preference.id}
-                                                draggableId={String(preference.id)}
+                                                key={application.id}
+                                                draggableId={String(application.id)}
                                                 index={index}
                                             >
                                                 {(provided) => (
@@ -111,19 +156,19 @@ export default function ChangePreferenceOrder() {
                                                         {...provided.dragHandleProps}
                                                     >
                                                         <TableCell style={{ textAlign: 'center' }}>
-                                                            {preference.preferenceId}
+                                                            {application.preferenceId}
                                                         </TableCell>
                                                         <TableCell style={{ textAlign: 'center' }}>
                                                             {
                                                                 courseInfo.find(
-                                                                    (course) => course.id === preference.courseId
+                                                                    (course) => course.id === application.courseId
                                                                 )?.courseCode
                                                             }
                                                         </TableCell>
                                                         <TableCell style={{ textAlign: 'center' }}>
                                                             {
                                                                 courseInfo.find(
-                                                                    (course) => course.id === preference.courseId
+                                                                    (course) => course.id === application.courseId
                                                                 )?.semester
                                                             }
                                                         </TableCell>
@@ -144,6 +189,32 @@ export default function ChangePreferenceOrder() {
                     Submit New Preferences
                 </Button>
             </Box>
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                }}
+                open={openSnackBarFailure}
+                autoHideDuration={6000}
+                onClose={handleCloseFailure}
+            >
+                <Alert onClose={handleCloseFailure} severity="error" sx={{ width: '100%' }}>
+                    {snackbarFailureMessage}
+                </Alert>
+            </Snackbar>
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                }}
+                open={openSnackBarSuccess}
+                autoHideDuration={6000}
+                onClose={handleCloseSuccess}
+            >
+                <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
+                    {snackbarSuccessMessage}
+                </Alert>
+            </Snackbar>
         </Container>
     )
 }

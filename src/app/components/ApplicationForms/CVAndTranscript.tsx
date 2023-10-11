@@ -5,12 +5,18 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import DescriptionIcon from '@mui/icons-material/Description'
 import { Button, Grid, Typography, Snackbar } from '@mui/material'
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
+import { ICvAndTranscript } from '@/types/ICvAndTranscript'
+
+interface CvAndTranscriptProps {
+    cvTranscriptName: ICvAndTranscript
+    setCvTranscriptName: React.Dispatch<React.SetStateAction<ICvAndTranscript>>
+}
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
 })
 
-const CVAndTranscript = () => {
+const CVAndTranscript: React.FC<CvAndTranscriptProps> = ({ cvTranscriptName, setCvTranscriptName }) => {
     const [cvFileName, setCvFileName] = useState<string>('No file uploaded...')
     const [transcriptFileName, setTranscriptFileName] = useState<string>('No file uploaded...')
 
@@ -36,6 +42,10 @@ const CVAndTranscript = () => {
     const handleCvFileDelete = () => {
         setCvFileName('No file uploaded...')
         ;(document.getElementById('cvFileInput') as HTMLInputElement).value = ''
+        setCvTranscriptName({
+            ...cvTranscriptName,
+            CvName: '',
+        })
     }
 
     const handleCvFileEvent = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,11 +65,14 @@ const CVAndTranscript = () => {
             method: 'POST',
             body: data,
         })
-        console.log(res)
         if (res.ok) {
             setSucessSnackbarMessage('CV successfully uploaded')
             setSuccessOpenSnackBar(true)
             setCvFileName(uploadedFile.name)
+            setCvTranscriptName({
+                ...cvTranscriptName,
+                CvName: uploadedFile.name,
+            })
         } else {
             setFailureSnackbarMessage('Failed to upload CV, please try again')
             setFailureOpenSnackBar(true)
@@ -70,6 +83,10 @@ const CVAndTranscript = () => {
     const handleTranscriptFileDelete = () => {
         setTranscriptFileName('No file uploaded...')
         ;(document.getElementById('transcriptFileInput') as HTMLInputElement).value = ''
+        setCvTranscriptName({
+            ...cvTranscriptName,
+            TranscriptName: '',
+        })
     }
 
     const handleTranscriptFileEvent = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,6 +111,10 @@ const CVAndTranscript = () => {
             setSucessSnackbarMessage('Transcript successfully uploaded')
             setSuccessOpenSnackBar(true)
             setTranscriptFileName(uploadedFile.name)
+            setCvTranscriptName({
+                ...cvTranscriptName,
+                TranscriptName: uploadedFile.name,
+            })
         } else {
             setFailureSnackbarMessage('Failed to upload transcript, please try again')
             setFailureOpenSnackBar(true)

@@ -83,6 +83,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
     const [markersNeeded, setMarkersNeeded] = useState(0)
     const [markerHoursNeeded, setMarkerHoursNeeded] = useState(0)
     const [checkedStudents, setCheckedStudents] = useState<number[]>([])
+    const [selected, setSelected] = useState(new Array(applications.length).fill(false))
     const [approvedStudents, setApprovedStudents] = useState<ApplicantsData[]>([])
     const [courseData, setCourseData] = useState<CourseData>()
     const [course, setCourse] = useState<Course>()
@@ -262,8 +263,14 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                 method: 'GET',
             })
             const jsonData = await response.json()
-            setApplications(jsonData)
-            setApplicationsLength(jsonData.length)
+            if (response.ok) {
+                setApplications(jsonData)
+                setSelected((prevSelected) => {
+                    let newSelected = new Array(jsonData.length).fill(false)
+                    setQualified(jsonData, newSelected)
+                    return newSelected
+                })
+            }
             jsonData.sort((a: { applicationStatus: string }, b: { applicationStatus: string }) => {
                 if (a.applicationStatus === 'approved' && b.applicationStatus !== 'approved') {
                     return -1 // "approved" comes first
@@ -719,7 +726,7 @@ const CourseInformation = ({ courseId }: CourseInformationProps) => {
                                             <ViewStudentInformation
                                                 studentUpi={
                                                     studentData.find((student) => student.id === application.studentId)
-                                                        ?.upi
+                                                        ?.upi!
                                                 }
                                             />
                                         </Drawer>

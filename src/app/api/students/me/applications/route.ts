@@ -38,3 +38,41 @@ export async function GET(req: NextRequest) {
         }
     )
 }
+
+// PATCH /api/students/me/applications
+export async function PATCH(req: NextRequest) {
+    const token = await getToken({ req })
+    if(token!.role != Role.Student) {
+        return new NextResponse(
+            JSON.stringify({
+                success: false,
+                message: 'Only students can access this endpoint'
+            }),
+            { status: 403, headers: { 'content-type': 'application/json' } }
+        )
+    }
+
+    const user = await UserRepo.getUserbyEmail(token!.email!)
+    const student = await StudentRepo.getStudentByUserId(user!.id)
+
+    const applications = await req.json()
+    let updatedApplications = []
+    for (const app of applications) {
+        if (app.studentId != student!.id) {
+            return NextResponse.json({
+                status: 400,
+                statusText: 'Internal Error: studentId of Application ID ' + app.id + ' does not match the studentId of user',
+            }, { status: 400 })
+        }
+        const updated = await ApplicationRepo.updateCoursePreference(app.id, app.preferenceId)
+        updatedApplications.push(updated)
+    }
+
+    
+    return NextResponse.json(updatedApplications, 
+        {
+            status: 200,
+            statusText: 'Preference ID of applications updated successfully',
+        }
+    )
+}
