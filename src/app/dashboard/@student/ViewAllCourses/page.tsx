@@ -50,6 +50,18 @@ export default function StudentViewAllCourses() {
     }
 
     useEffect(() => {
+        const sortedData = [...data]
+        if (sortField) {
+            sortedData.sort((a, b) => {
+                if (a[sortField] < b[sortField]) return sortDirection === 'asc' ? -1 : 1
+                if (a[sortField] > b[sortField]) return sortDirection === 'asc' ? 1 : -1
+                return 0
+            })
+        }
+        setData(sortedData)
+    }, [sortField, sortDirection])
+
+    useEffect(() => {
         fetchData()
     }, [])
 
