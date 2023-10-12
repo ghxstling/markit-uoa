@@ -40,7 +40,7 @@ export default function CourseTable() {
 
     const fetchData = async () => {
         try {
-            const response = await fetch('/api/courses/with-markers', { method: 'GET', cache: 'no-store' })
+            const response = await fetch('/api/courses/with-markers', { method: 'GET' })
             const jsonData = await response.json()
             setData(jsonData)
         } catch (error) {
