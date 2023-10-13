@@ -1,86 +1,161 @@
-import CourseRepo from "./courseRepo";
-import prisma from "@/libs/prisma";
-import type { Prisma } from "@prisma/client";
+import { courseInputHelper, resetDatabase } from '@/helpers/testHelper'
+import CourseRepo from './courseRepo'
+import UserRepo from './userRepo'
+import SupervisorRepo from './supervisorRepo'
+import prisma from '@/libs/prisma'
 
-const courseInputHelper = (
-    courseCode: string,
-    courseDescription: string
-): Prisma.CourseCreateInput => {
-    return {
-        courseCode,
-        courseDescription,
-        numOfEstimatedStudents: 5,
-        numOfEnrolledStudents: 6,
-        markerHours: 7,
-        needMarkers: true,
-        markersNeeded: 9,
-        semester: "2022S1",
-        markerResponsibilities: "Marker responsibilities",
-    };
-};
+beforeAll(async () => {
+    await resetDatabase()
+})
 
 beforeEach(async () => {
-    await prisma.course.deleteMany();
-});
+    await prisma.course.deleteMany()
+    await prisma.supervisor.deleteMany()
+    await prisma.user.deleteMany()
+})
 
-describe("CourseRepo", () => {
-    it("can create a course", async () => {
-        const courseName = "Compsci101";
-        const courseDescription = "Intro to computer science";
-        const courseInput = courseInputHelper(courseName, courseDescription);
-        const course = await CourseRepo.addCourse(courseInput);
-        expect(course).toMatchObject(courseInput);
-    });
-    it("can get course by id", async () => {
-        const courseName = "Compsci101";
-        const courseDescription = "Intro to computer science";
-        const courseName2 = "Compsci120";
-        const courseDescription2 = "Learn some maths";
+afterAll(async () => {
+    await resetDatabase()
+})
 
-        const courseInput = courseInputHelper(courseName, courseDescription);
-        const courseInput2 = courseInputHelper(courseName2, courseDescription2);
+describe('CourseRepo', () => {
+    it('can create a course', async () => {
+        const courseName = 'Compsci101'
+        const courseDescription = 'Intro to computer science'
+        const courseInput = courseInputHelper(courseName, courseDescription)
+        const course = await CourseRepo.addCourse(courseInput)
+        expect(course).toMatchObject(courseInput)
+    })
+    it('can get course by id', async () => {
+        const courseName = 'Compsci101'
+        const courseDescription = 'Intro to computer science'
+        const courseName2 = 'Compsci120'
+        const courseDescription2 = 'Learn some maths'
 
-        await CourseRepo.addCourse(courseInput);
-        const course2 = await CourseRepo.addCourse(courseInput2);
-        const result = await CourseRepo.getCourseById(course2.id);
-        expect(result).toMatchObject(course2);
-    });
-    it("can get all courses", async () => {
-        const courseName = "Compsci101";
-        const courseDescription = "Intro to computer science";
-        const courseName2 = "Compsci120";
-        const courseDescription2 = "Learn some maths";
+        const courseInput = courseInputHelper(courseName, courseDescription)
+        const courseInput2 = courseInputHelper(courseName2, courseDescription2)
 
-        const courseInput = courseInputHelper(courseName, courseDescription);
-        const courseInput2 = courseInputHelper(courseName2, courseDescription2);
+        await CourseRepo.addCourse(courseInput)
+        const course2 = await CourseRepo.addCourse(courseInput2)
+        const result = await CourseRepo.getCourseById(course2.id)
+        expect(result).toMatchObject(course2)
+    })
+    it('can get all courses', async () => {
+        const courseName = 'Compsci101'
+        const courseDescription = 'Intro to computer science'
+        const courseName2 = 'Compsci120'
+        const courseDescription2 = 'Learn some maths'
 
-        await CourseRepo.addCourse(courseInput);
-        await CourseRepo.addCourse(courseInput2);
-        const result = await CourseRepo.getAllCourses();
-        expect(result).toMatchObject([courseInput, courseInput2]);
-    });
-    it("can update a course", async () => {
-        const courseName = "Compsci101";
-        const courseDescription = "Intro to computer science";
-        const courseInput = courseInputHelper(courseName, courseDescription);
-        const course = await CourseRepo.addCourse(courseInput);
+        const courseInput = courseInputHelper(courseName, courseDescription)
+        const courseInput2 = courseInputHelper(courseName2, courseDescription2)
+
+        await CourseRepo.addCourse(courseInput)
+        await CourseRepo.addCourse(courseInput2)
+        const result = await CourseRepo.getAllCourses()
+        expect(result).toMatchObject([courseInput, courseInput2])
+    })
+    it('can get supervisor courses', async () => {
+        const courseName = 'Compsci101'
+        const courseDescription = 'Intro to computer science'
+        const courseName2 = 'Compsci120'
+        const courseDescription2 = 'Learn some maths'
+        const courseName3 = 'Compsci130'
+        const courseDescription3 = 'More Python'
+
+        const courseInput = courseInputHelper(courseName, courseDescription)
+        const courseInput2 = courseInputHelper(courseName2, courseDescription2)
+        const courseInput3 = courseInputHelper(courseName3, courseDescription3)
+
+        let course1 = await CourseRepo.addCourse(courseInput)
+        let course2 = await CourseRepo.addCourse(courseInput2)
+        let course3 = await CourseRepo.addCourse(courseInput3)
+
+        const email = 'example@gmail.com'
+        const userInput = { email }
+        const user = await UserRepo.createUser(userInput)
+        const supervisorInput = {
+            userId: user.id,
+        }
+        const supervisor = await SupervisorRepo.createSupervisorFromEmail(email, supervisorInput)
+
+        const courseUpdateInput = {
+            supervisorId: supervisor.id
+        }
+        course1 = await CourseRepo.updateCourse(course1.id, courseUpdateInput)
+        course2 = await CourseRepo.updateCourse(course2.id, courseUpdateInput)
+
+        const result = await CourseRepo.getSupervisorCourses(email)
+        expect(result).toMatchObject([course1, course2])
+        expect(course1.supervisorId).toBe(supervisor.id)
+        expect(course2.supervisorId).toBe(supervisor.id)
+        expect(course3.supervisorId).toBe(null)
+
+        const result2 = await CourseRepo.getSupervisorCourses('idontexist@email.com')
+        expect(result2).toBe(null)
+
+        const email2 = 'example2@gmail.com'
+        const userInput2 = { email: email2 }
+        const user2 = await UserRepo.createUser(userInput2)
+        const result3 = await CourseRepo.getSupervisorCourses(email2)
+        expect(result3).toBe(null)
+    })
+    it('can update a course', async () => {
+        const courseName = 'Compsci101'
+        const courseDescription = 'Intro to computer science'
+        const courseInput = courseInputHelper(courseName, courseDescription)
+        const course = await CourseRepo.addCourse(courseInput)
         const updatedCourse = await CourseRepo.updateCourse(course.id, {
-            courseCode: "Compsci102",
-            courseDescription: "Intro to computer science 2",
-        });
+            courseCode: 'Compsci102',
+            courseDescription: 'Intro to computer science 2',
+        })
         expect(updatedCourse).toMatchObject({
             ...courseInput,
-            courseCode: "Compsci102",
-            courseDescription: "Intro to computer science 2",
-        });
-    });
-    it("can delete a course", async () => {
-        const courseName = "Compsci101";
-        const courseDescription = "Intro to computer science";
-        const courseInput = courseInputHelper(courseName, courseDescription);
-        const course = await CourseRepo.addCourse(courseInput);
-        await CourseRepo.deleteCourse(course.id);
-        const result = await CourseRepo.getCourseById(course.id);
-        expect(result).toBeNull();
-    });
-});
+            courseCode: 'Compsci102',
+            courseDescription: 'Intro to computer science 2',
+        })
+    })
+    it('can update multiple courses', async () => {
+        const courseName1 = 'Compsci101'
+        const courseDescription1 = 'Intro to computer science'
+        const courseName2 = 'Compsci120'
+        const courseDescription2 = 'Learn some maths'
+        const courseName3 = 'Compsci130'
+        const courseDescription3 = 'Harder Python'
+
+        const courseInput1 = courseInputHelper(courseName1, courseDescription1)
+        const courseInput2 = courseInputHelper(courseName2, courseDescription2)
+        const courseInput3 = courseInputHelper(courseName3, courseDescription3)
+        
+        const course1 = await CourseRepo.addCourse(courseInput1)
+        const course2 = await CourseRepo.addCourse(courseInput2)
+        const course3 = await CourseRepo.addCourse(courseInput3)
+        expect(course1.semester).toBe('2022S1')
+        expect(course2.semester).toBe('2022S1')
+        expect(course3.semester).toBe('2022S1')
+        
+        const updatedCourse3 = await CourseRepo.updateCourse(course3.id, { semester: '2022S2' })
+        expect(updatedCourse3.semester).toBe('2022S2')
+        
+        const data = {
+            semester: '2030SS',
+            needMarkers: true,
+        }
+        const batchPayload = await CourseRepo.updateCourseSemesters('2022S1', data)
+        expect(batchPayload.count).toBe(2)
+
+        const updatedCourse1 = await CourseRepo.getCourseById(course1.id)
+        const updatedCourse2 = await CourseRepo.getCourseById(course2.id)
+        expect(updatedCourse1!.semester).toBe('2030SS')
+        expect(updatedCourse2!.semester).toBe('2030SS')
+        expect(updatedCourse3.semester).toBe('2022S2')
+    })
+    it('can delete a course', async () => {
+        const courseName = 'Compsci101'
+        const courseDescription = 'Intro to computer science'
+        const courseInput = courseInputHelper(courseName, courseDescription)
+        const course = await CourseRepo.addCourse(courseInput)
+        await CourseRepo.deleteCourse(course.id)
+        const result = await CourseRepo.getCourseById(course.id)
+        expect(result).toBeNull()
+    })
+})

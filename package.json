@@ -4,28 +4,38 @@
     "private": true,
     "scripts": {
         "dev": "next dev",
-        "build": "next build",
+        "build": " prisma generate --schema ./src/prisma/schema.prisma && next build",
         "start": "next start",
         "lint": "next lint",
-        "test": "jest -i"
+        "test": "jest -i",
+        "migrate:dev": "prisma migrate dev --schema ./src/prisma/schema.prisma",
+        "migrate:reset": "prisma migrate reset --schema ./src/prisma/schema.prisma",
+        "studio": "prisma studio --schema ./src/prisma/schema.prisma",
+        "seed": "ts-node ./src/prisma/seed.ts --datasetType constant"
     },
     "dependencies": {
+        "@aws-sdk/client-s3": "^3.410.0",
         "@emotion/react": "^11.11.1",
         "@emotion/styled": "^11.11.0",
         "@mui/icons-material": "^5.14.3",
+        "@mui/lab": "^5.0.0-alpha.148",
         "@mui/material": "^5.14.5",
+        "@mui/x-charts": "^6.0.0-alpha.13",
         "@prisma/client": "^5.1.1",
         "@sendgrid/mail": "^7.7.0",
         "@types/node": "20.4.5",
         "@types/react": "18.2.17",
         "@types/react-dom": "18.2.7",
+        "aws-sdk": "^2.1455.0",
         "bootstrap": "^5.3.1",
         "bootstrap-icons": "^1.10.5",
+        "csv-writer": "^1.6.0",
         "eslint": "8.46.0",
         "eslint-config-next": "13.4.12",
-        "next": "13.4.12",
+        "next": "^13.5.4",
         "next-auth": "^4.23.1",
         "react": "18.2.0",
+        "react-beautiful-dnd": "^13.1.1",
         "react-bootstrap": "^2.8.0",
         "react-bootstrap-icons": "^1.10.3",
         "react-dom": "18.2.0",
@@ -34,11 +44,15 @@
         "zod": "^3.22.2"
     },
     "devDependencies": {
+        "@faker-js/faker": "^8.1.0",
         "@types/jest": "^29.5.3",
+        "@types/node": "^20.7.1",
+        "@types/react-beautiful-dnd": "^13.1.5",
         "@types/validator": "^13.11.1",
         "jest": "^29.6.2",
         "prisma": "^5.1.1",
         "ts-jest": "^29.1.1",
-        "typescript": "^5.1.6"
+        "ts-node": "^10.9.1",
+        "typescript": "^5.2.2"
     }
 }

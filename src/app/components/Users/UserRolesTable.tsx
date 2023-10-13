@@ -16,8 +16,11 @@ import {
     TextField,
     Box,
 } from '@mui/material'
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
 import { Role } from '@/models/role'
 import React, { useEffect, useState } from 'react'
+import { useSession } from 'next-auth/react'
 
 export default function UserRolesTable() {
     interface User {
@@ -27,25 +30,22 @@ export default function UserRolesTable() {
         role: string
     }
 
+    const { data: session } = useSession()
     const [users, setUsers] = useState<User[]>([])
     const [page, setPage] = useState(0)
-    const [rowsPerPage, setRowsPerPage] = useState(5)
+    const [rowsPerPage, setRowsPerPage] = useState(10)
     const [sortConfig, setSortConfig] = useState<{ key: keyof User; direction: 'ascending' | 'descending' } | null>(
         null
     )
-
-    const isClient = typeof window !== 'undefined'
-
-    if (!isClient) {
-        return null
-    }
+    const [searchTerm, setSearchTerm] = useState('')
 
     useEffect(() => {
         async function fetchData() {
             try {
                 const response = await fetch('/api/users', { method: 'GET' })
                 const jsonData = await response.json()
-                setUsers(jsonData)
+                const userData = jsonData.filter((user: User) => user.email !== session?.user?.email)
+                setUsers(userData)
             } catch (error) {
                 console.error('Error fetching data:', error)
             }
@@ -53,6 +53,12 @@ export default function UserRolesTable() {
 
         fetchData()
     }, [])
+
+    const isClient = typeof window !== 'undefined'
+
+    if (!isClient) {
+        return null
+    }
 
     const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
         setPage(newPage)
@@ -108,8 +114,6 @@ export default function UserRolesTable() {
         return 0
     })
 
-    const [searchTerm, setSearchTerm] = useState('')
-
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value)
     }
@@ -122,7 +126,7 @@ export default function UserRolesTable() {
     )
 
     return (
-        <Container style={{ marginTop: 20 }}>
+        <Container style={{ marginTop: 20, width: '100%' }}>
             <Paper elevation={3} style={{ padding: '20px' }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography variant="h4" fontWeight={600} style={{ marginBottom: '20px', fontSize: '1.8rem' }}>
@@ -143,26 +147,38 @@ export default function UserRolesTable() {
                                 <TableCell
                                     style={{
                                         textAlign: 'center',
-                                        minWidth: '250px',
+                                        minWidth: '100px',
                                         fontWeight: 'bold',
                                         cursor: 'pointer',
                                     }}
                                     onClick={() => handleSort('name')}
                                 >
                                     Name
+                                    {sortConfig?.key === 'name' &&
+                                        (sortConfig.direction === 'ascending' ? (
+                                            <ArrowDropUpIcon />
+                                        ) : (
+                                            <ArrowDropDownIcon />
+                                        ))}
                                 </TableCell>
                                 <TableCell
                                     style={{
                                         textAlign: 'center',
-                                        minWidth: '250px',
+                                        minWidth: '70px',
                                         fontWeight: 'bold',
                                         cursor: 'pointer',
                                     }}
                                     onClick={() => handleSort('email')}
                                 >
                                     Email
+                                    {sortConfig?.key === 'email' &&
+                                        (sortConfig.direction === 'ascending' ? (
+                                            <ArrowDropUpIcon />
+                                        ) : (
+                                            <ArrowDropDownIcon />
+                                        ))}
                                 </TableCell>
-                                <TableCell style={{ textAlign: 'center', minWidth: '250px', fontWeight: 'bold' }}>
+                                <TableCell style={{ textAlign: 'center', minWidth: '60px', fontWeight: 'bold' }}>
                                     Role
                                 </TableCell>
                             </TableRow>
@@ -170,14 +186,18 @@ export default function UserRolesTable() {
                         <TableBody>
                             {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user) => (
                                 <TableRow key={user.id}>
-                                    <TableCell style={{ textAlign: 'center' }}>{user.name}</TableCell>
-                                    <TableCell style={{ textAlign: 'center' }}>{user.email}</TableCell>
-                                    <TableCell style={{ textAlign: 'center', width: '150px' }}>
+                                    <TableCell style={{ textAlign: 'center', minWidth: '100px' }}>
+                                        {user.name}
+                                    </TableCell>
+                                    <TableCell style={{ textAlign: 'center', minWidth: '70px' }}>
+                                        {user.email}
+                                    </TableCell>
+                                    <TableCell style={{ textAlign: 'center', minWidth: '60px' }}>
                                         <Select
                                             value={user.role}
                                             onChange={(event) => handleRoleChange(event, user.id)}
                                             displayEmpty
-                                            style={{ width: '100%', fontSize: '0.8rem' }}
+                                            style={{ width: '80%', fontSize: '0.8rem' }}
                                             size="small"
                                         >
                                             <MenuItem value={Role.Student}>Student</MenuItem>
@@ -193,7 +213,7 @@ export default function UserRolesTable() {
                                 <TableCell colSpan={3}>
                                     <TablePagination
                                         component="div"
-                                        rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                        rowsPerPageOptions={[10, 25, 50, 100]}
                                         count={filteredUsers.length}
                                         rowsPerPage={rowsPerPage}
                                         page={page}

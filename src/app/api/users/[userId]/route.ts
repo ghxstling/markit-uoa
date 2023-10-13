@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import UserRepo from '@/data/userRepo';
+import SupervisorRepo from '@/data/supervisorRepo';
 import { Role } from '@/models/role';
 import { getToken } from 'next-auth/jwt';
 
@@ -11,13 +12,19 @@ type Params = {
 
 // GET /api/users/{userId}
 export async function GET(req: NextRequest, { params }: Params) {
-    // Store params.userId into userId for readability
+    const token = await getToken({ req })
+    if (token!.role != Role.Coordinator) {
+        return new NextResponse(
+            JSON.stringify({
+                success: false,
+                message: 'Only coordinators can access this endpoint',
+            }),
+            { status: 403, headers: { 'content-type': 'application/json' } }
+        )
+    }
+    
     const userId = parseInt(params.userId);
-
-    // Get the user from the database by ID
     const user = await UserRepo.getUserById(userId);
-
-    // If it doesn't exist, return status code 404 NOT FOUND
     if (user == null) {
         return NextResponse.json(
             {
@@ -28,7 +35,6 @@ export async function GET(req: NextRequest, { params }: Params) {
         );
     }
 
-    // Return the user details with status code 200 OK
     return NextResponse.json(user, {
         status: 200,
         statusText: 'Found user',
@@ -38,22 +44,18 @@ export async function GET(req: NextRequest, { params }: Params) {
 // PATCH /api/users/{userId}
 export async function PATCH(req: NextRequest, { params }: Params) {
     const token = await getToken({ req });
-    if (token!.role !== Role.Coordinator) {  // Only allow coordinators to change user roles
+    if (token!.role !== Role.Coordinator) {
         return new NextResponse(
             JSON.stringify({
                 success: false,
-                message: 'Only coordinators can update user roles',
+                message: 'Only coordinators can access this endpoint',
             }),
             { status: 403, headers: { 'content-type': 'application/json' } }
         );
     }
 
-    // Store params.userId into userId for readability
     const userId = parseInt(params.userId);
-
-    // Check if user exists in the database
     const user = await UserRepo.getUserById(userId);
-
     if (user == null) {
         return NextResponse.json(
             {
@@ -64,10 +66,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         );
     }
 
-    // Get updated role from the request body
     const { role } = await req.json();
-
-    // Check if the role is valid 
     if (!Object.values(Role).includes(role)) {
         return NextResponse.json(
             {
@@ -78,12 +77,15 @@ export async function PATCH(req: NextRequest, { params }: Params) {
         );
     }
 
-    // Update the user role
-    const updatedUser = await UserRepo.updateUserRole(userId, role);
+    if (role === Role.Supervisor) {
+        // Ensure the user has an entry in the supervisor table
+        await SupervisorRepo.createSupervisorFromEmail(user.email, {});
+    }
 
-    // Return the updated user details with status code 200 OK
+    const updatedUser = await UserRepo.updateUserRole(userId, role);
     return NextResponse.json(updatedUser, {
         status: 200,
-        statusText: 'Updated user role',
+        statusText: 'Updated user role for ID ' + userId,
     });
+
 }

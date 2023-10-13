@@ -1,4 +1,15 @@
-import { Box, Button, FormControlLabel, Grid, MenuItem, Radio, RadioGroup, TextField, Typography } from '@mui/material'
+import {
+    Box,
+    Button,
+    Chip,
+    FormControlLabel,
+    Grid,
+    MenuItem,
+    Radio,
+    RadioGroup,
+    TextField,
+    Typography,
+} from '@mui/material'
 import React, { useState, useEffect } from 'react'
 
 interface Course {
@@ -15,9 +26,12 @@ interface Course {
 }
 
 import { CourseApplicationType } from '@/types/CourseApplicationType'
+import { number } from 'zod'
 
 interface CourseApplicationProps {
     application: CourseApplicationType
+    disableRemove: boolean
+    disableCourseName: boolean
     updateCoursePreference: (updatedApplication: CourseApplicationType) => void
     removeCoursePreference: (id: number) => void
 }
@@ -26,8 +40,20 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
     application,
     updateCoursePreference,
     removeCoursePreference,
+    disableRemove,
+    disableCourseName,
 }) => {
-    const [formData, setFormData] = useState(application.data)
+    let data = {
+        course: application.course,
+        courseName: application.courseName,
+        grade: application.grade,
+        explainNotTaken: application.explainNotTaken,
+        markedPreviously: application.markedPreviously,
+        tutoredPreviously: application.tutoredPreviously,
+        explainNotPrevious: application.explainNotPrevious,
+    }
+
+    const [formData, setFormData] = useState(data)
     const [courseData, setCourseData] = useState<Course[]>([])
 
     useEffect(() => {
@@ -37,7 +63,10 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
     const fetchData = async () => {
         try {
             const response = await fetch('/api/courses', { method: 'GET' })
-            const jsonData = await response.json()
+            let jsonData = await response.json()
+            jsonData = jsonData.sort(
+                (a: any, b: any) => parseInt(a.courseCode.split(' ')[1]) - parseInt(b.courseCode.split(' ')[1])
+            )
             setCourseData(jsonData)
         } catch (error) {
             console.error('Error fetching data:', error)
@@ -51,25 +80,41 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
         const { name, value } = event.target
         setFormData(
             (prevFormData: {
-                course: string
+                course: number | ''
+                courseName: string
                 grade: string
                 explainNotTaken: string
-                markedPreviously: string
-                tutoredPreviously: string
+                markedPreviously: boolean
+                tutoredPreviously: boolean
                 explainNotPrevious: string
             }) => ({
                 ...prevFormData,
                 [name]: value,
+                ...(name === 'course' && {
+                    course: parseInt(value),
+                    courseName: courseData.find((course) => course.id === parseInt(value))?.courseCode,
+                }),
+                ...(name === 'markedPreviously' && {
+                    markedPreviously: value === 'Yes',
+                }),
+                ...(name === 'tutoredPreviously' && {
+                    tutoredPreviously: value === 'Yes',
+                }),
             })
         )
     }
 
     const handleApplicationUpdate = () => {
-        console.log(formData) //remvoe this later
         const updatedApplication: CourseApplicationType = {
             id: thisApplicationId,
+            courseName: formData.courseName,
             prefId: coursePrefId,
-            data: formData,
+            course: formData.course,
+            grade: formData.grade,
+            explainNotTaken: formData.explainNotTaken,
+            markedPreviously: formData.markedPreviously,
+            tutoredPreviously: formData.tutoredPreviously,
+            explainNotPrevious: formData.explainNotPrevious,
         }
         submitFormData(updatedApplication)
     }
@@ -82,8 +127,12 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
         <>
             <Box component="form" noValidate sx={{ mt: 3 }}>
                 <Grid container spacing={3} justifyContent="center" direction="column">
-                    <Grid item>
-                        <Typography variant="h4">Preference {coursePrefId}</Typography>
+                    <Grid container spacing={3} justifyContent="center" alignItems="center" direction="column">
+                        <Grid item xs={12}>
+                            <Typography variant="h4" fontSize="34px">
+                                Preference {coursePrefId}
+                            </Typography>
+                        </Grid>
                     </Grid>
                     <Grid item xs={12}>
                         <TextField
@@ -96,9 +145,12 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
                             value={formData.course}
                             onChange={handleChange}
                             onBlur={handleApplicationUpdate}
+                            disabled={disableCourseName}
                         >
                             {courseData.map((course) => (
-                                <MenuItem value={course.id}>{course.courseCode}</MenuItem>
+                                <MenuItem key={course.id} value={course.id}>
+                                    {course.courseCode}
+                                </MenuItem>
                             ))}
                         </TextField>
                     </Grid>
@@ -162,7 +214,7 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
                                     row
                                     name="markedPreviously"
                                     id="markedPreviously"
-                                    value={formData.markedPreviously}
+                                    value={String(formData.markedPreviously) === 'true' ? 'Yes' : 'No'}
                                     onChange={handleChange}
                                     onBlur={handleApplicationUpdate}
                                 >
@@ -188,7 +240,7 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
                                     row
                                     name="tutoredPreviously"
                                     id="tutoredPreviously"
-                                    value={formData.tutoredPreviously}
+                                    value={String(formData.tutoredPreviously) === 'true' ? 'Yes' : 'No'}
                                     onChange={handleChange}
                                     onBlur={handleApplicationUpdate}
                                 >
@@ -224,7 +276,9 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
                 </Grid>
             </Box>
 
-            <Button onClick={() => removeCoursePreference(thisApplicationId)}>Remove Application</Button>
+            <Button onClick={() => removeCoursePreference(thisApplicationId)} disabled={disableRemove}>
+                Remove Application
+            </Button>
         </>
     )
 }

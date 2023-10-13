@@ -5,64 +5,124 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import DescriptionIcon from '@mui/icons-material/Description'
 import { Button, Grid, Typography, Snackbar } from '@mui/material'
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
+import { ICvAndTranscript } from '@/types/ICvAndTranscript'
+
+interface CvAndTranscriptProps {
+    cvTranscriptName: ICvAndTranscript
+    setCvTranscriptName: React.Dispatch<React.SetStateAction<ICvAndTranscript>>
+}
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
 })
 
-const CVAndTranscript = () => {
-    const [cvFileName, setCvFileName] = useState<string>('No file uploaded...')
-    const [transcriptFileName, setTranscriptFileName] = useState<string>('No file uploaded...')
+const CVAndTranscript: React.FC<CvAndTranscriptProps> = ({ cvTranscriptName, setCvTranscriptName }) => {
+    const [cvFileName, setCvFileName] = useState<string>(
+        cvTranscriptName.CvName ? cvTranscriptName.CvName : 'No file uploaded...',
+    )
+    const [transcriptFileName, setTranscriptFileName] = useState<string>(
+        cvTranscriptName.TranscriptName ? cvTranscriptName.TranscriptName : 'No file uploaded...',
+    )
 
-    const [openSnackBar, setOpenSnackBar] = useState(false)
+    const [failureOpenSnackBar, setFailureOpenSnackBar] = useState(false)
+    const [successOpenSnackBar, setSuccessOpenSnackBar] = useState(false)
+    const [failureSnackbarMessage, setFailureSnackbarMessage] = useState('Please uploade a PDF')
+    const [sucessSnackbarMessage, setSucessSnackbarMessage] = useState('CV Successfully uploaded')
 
-    const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    const handleFailureClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
             return
         }
+        setFailureOpenSnackBar(false)
+    }
 
-        setOpenSnackBar(false)
+    const handleSuccessClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return
+        }
+        setSuccessOpenSnackBar(false)
     }
 
     const handleCvFileDelete = () => {
         setCvFileName('No file uploaded...')
         ;(document.getElementById('cvFileInput') as HTMLInputElement).value = ''
+        setCvTranscriptName({
+            ...cvTranscriptName,
+            CvName: '',
+        })
     }
 
     const handleCvFileEvent = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
             if (event.target.files[0].type !== 'application/pdf') {
-                setOpenSnackBar(true)
+                setFailureOpenSnackBar(true)
                 return
             }
-            setCvFileName(event.target.files[0].name)
-            //handleCvFileUpload(event.target.files[0])
+            handleCvFileUpload(event.target.files[0])
         }
     }
 
-    const handleCvFileUpload = (uploadedFile: File) => {
-        //handle api posting
+    const handleCvFileUpload = async (uploadedFile: File) => {
+        const data = new FormData()
+        data.set('file', uploadedFile)
+        const res = await fetch('/api/students/me/cv', {
+            method: 'POST',
+            body: data,
+        })
+        if (res.ok) {
+            setSucessSnackbarMessage('CV successfully uploaded')
+            setSuccessOpenSnackBar(true)
+            setCvFileName(uploadedFile.name)
+            setCvTranscriptName({
+                ...cvTranscriptName,
+                CvName: uploadedFile.name,
+            })
+        } else {
+            setFailureSnackbarMessage('Failed to upload CV, please try again')
+            setFailureOpenSnackBar(true)
+        }
         return
     }
 
     const handleTranscriptFileDelete = () => {
         setTranscriptFileName('No file uploaded...')
         ;(document.getElementById('transcriptFileInput') as HTMLInputElement).value = ''
+        setCvTranscriptName({
+            ...cvTranscriptName,
+            TranscriptName: '',
+        })
     }
 
     const handleTranscriptFileEvent = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
             if (event.target.files[0].type !== 'application/pdf') {
-                setOpenSnackBar(true)
+                setFailureSnackbarMessage('Please uploade a PDF')
+                setFailureOpenSnackBar(true)
                 return
             }
-            setTranscriptFileName(event.target.files[0].name)
+            handleTranscriptFileUpload(event.target.files[0])
         }
-        //handleTranscriptFileUpload(event.target.files[0])
     }
 
-    const handleTranscriptFileUpload = (uploadedFile: File) => {
-        //handle api posting
+    const handleTranscriptFileUpload = async (uploadedFile: File) => {
+        const data = new FormData()
+        data.set('file', uploadedFile)
+        const res = await fetch('/api/students/me/transcript', {
+            method: 'POST',
+            body: data,
+        })
+        if (res.ok) {
+            setSucessSnackbarMessage('Transcript successfully uploaded')
+            setSuccessOpenSnackBar(true)
+            setTranscriptFileName(uploadedFile.name)
+            setCvTranscriptName({
+                ...cvTranscriptName,
+                TranscriptName: uploadedFile.name,
+            })
+        } else {
+            setFailureSnackbarMessage('Failed to upload transcript, please try again')
+            setFailureOpenSnackBar(true)
+        }
         return
     }
 
@@ -203,12 +263,26 @@ const CVAndTranscript = () => {
                     vertical: 'bottom',
                     horizontal: 'right',
                 }}
-                open={openSnackBar}
+                open={failureOpenSnackBar}
                 autoHideDuration={6000}
-                onClose={handleClose}
+                onClose={handleFailureClose}
             >
-                <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-                    Please upload a PDF File
+                <Alert onClose={handleFailureClose} severity="error" sx={{ width: '100%' }}>
+                    {failureSnackbarMessage}
+                </Alert>
+            </Snackbar>
+
+            <Snackbar
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                }}
+                open={successOpenSnackBar}
+                autoHideDuration={6000}
+                onClose={handleSuccessClose}
+            >
+                <Alert onClose={handleSuccessClose} severity="success" sx={{ width: '100%' }}>
+                    {sucessSnackbarMessage}
                 </Alert>
             </Snackbar>
         </>

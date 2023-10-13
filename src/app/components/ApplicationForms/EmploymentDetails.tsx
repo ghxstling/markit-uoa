@@ -14,6 +14,7 @@ import {
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
 import React, { useState } from 'react'
 import { IFormValues } from '@/types/IFormValues'
+import { DegreeType } from '@/models/degreeType'
 
 interface EmploymentDetailsProps {
     formValues: IFormValues
@@ -68,10 +69,19 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({ formValues, setFo
     }
 
     const handleResidencyChange = (event: any) => {
-        setFormValues({
-            ...formValues,
-            citizenOrPermanentResident: event.target.value,
-        })
+        const newValue = event.target.value
+        if (newValue === 'Yes') {
+            setFormValues({
+                ...formValues,
+                citizenOrPermanentResident: newValue,
+                workVisa: 'Yes', // Sets work visa to 'Yes' if permanent resident is 'Yes'
+            })
+        } else {
+            setFormValues({
+                ...formValues,
+                citizenOrPermanentResident: newValue,
+            })
+        }
     }
 
     const handleOverseasChange = (event: any) => {
@@ -95,8 +105,8 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({ formValues, setFo
 
     const workHoursMarks = [
         {
-            value: 1,
-            label: '1',
+            value: 5,
+            label: '5',
         },
         {
             value: 30,
@@ -210,8 +220,12 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({ formValues, setFo
                             fullWidth
                             required
                         >
-                            <MenuItem value={'Bachelors'}>Bachelors</MenuItem>
-                            <MenuItem value={'Post Graduate'}>Post Graduate</MenuItem>
+                            <MenuItem value={DegreeType.Bachelor}>Bachelor</MenuItem>
+                            <MenuItem value={DegreeType.Honours}>Honours</MenuItem>
+                            <MenuItem value={DegreeType.GraduateCertificate}>Graduate Certificate</MenuItem>
+                            <MenuItem value={DegreeType.GraduateDiploma}>Graduate Diploma</MenuItem>
+                            <MenuItem value={DegreeType.Masters}>Masters</MenuItem>
+                            <MenuItem value={DegreeType.PhD}>PhD</MenuItem>
                         </TextField>
                     </Grid>
 
@@ -269,7 +283,7 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({ formValues, setFo
                                     onChange={handleWorkHoursInputChange}
                                     inputProps={{
                                         step: 1,
-                                        min: 1,
+                                        min: 5,
                                         max: 30,
 
                                         type: 'number',
@@ -283,7 +297,7 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({ formValues, setFo
                                     value={formValues.workHours}
                                     onChange={handleWorkHoursSliderChange}
                                     aria-labelledby="degree-years-slider"
-                                    min={1}
+                                    min={5}
                                     max={30}
                                     sx={{ width: '400px', ml: '15px' }}
                                     marks={workHoursMarks}

@@ -24,6 +24,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications'
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
 import CalendarViewDayIcon from '@mui/icons-material/CalendarViewDay'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import LogoutIcon from '@mui/icons-material/Logout'
 import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
@@ -47,6 +48,7 @@ const icons: Record<string, OverridableComponent<SvgIconTypeMap<{}, 'svg'>>> = {
     ManageAccountsIcon: ManageAccountsIcon,
     CreateNewFolderIcon: CreateNewFolderIcon,
     CalendarViewDayIcon: CalendarViewDayIcon,
+    ContentCopyIcon: ContentCopyIcon,
 }
 
 //Create Sidebar Content
@@ -99,7 +101,8 @@ let content = (
                     </Link>
                 </ListItem>
 
-                <ListItem disablePadding>
+                {/* =============== Notifications are not implemented yet ============= */}
+                {/* <ListItem disablePadding>
                     <Link href="./" passHref style={linkStyle}>
                         <ListItemButton>
                             <ListItemIcon>
@@ -108,10 +111,10 @@ let content = (
                             <ListItemText>Notifications</ListItemText>
                         </ListItemButton>
                     </Link>
-                </ListItem>
+                </ListItem> */}
 
-                {Links.map((link) => (
-                    <ListItem disablePadding>
+                {Links.map((link, index) => (
+                    <ListItem disablePadding key={index}>
                         <Link href={link[1]} passHref style={linkStyle}>
                             <ListItemButton>
                                 <ListItemIcon>{React.createElement(icons[link[2]], { style: IconStyle })}</ListItemIcon>
@@ -185,7 +188,6 @@ const Sidebar = () => {
             session.user.name.slice(session.user.name.lastIndexOf(' '))[1] +
             '.'
         const email: string = session.user.email
-        console.log(session.role)
         switch (session.role) {
             case 'coordinator':
                 sidebarContent = content(
@@ -193,7 +195,8 @@ const Sidebar = () => {
                     email,
                     [
                         ['Create New Course', '/dashboard/courses', 'CreateNewFolderIcon'],
-                        ['View All Courses', '/dashboard/viewAllCoursespage', 'CalendarViewDayIcon'],
+                        ['Import Courses', '/dashboard/importCourses', 'ContentCopyIcon'],
+                        ['View All Courses', '/dashboard/viewAllCourses', 'CalendarViewDayIcon'],
                         ['Manage User Roles', '/dashboard/manageUsers', 'ManageAccountsIcon'],
                     ],
                     open,
@@ -215,7 +218,10 @@ const Sidebar = () => {
                 sidebarContent = content(
                     name,
                     email,
-                    [['Apply Now', '/dashboard/Application', 'ArchiveIcon']],
+                    [
+                        ['View All Courses', '/dashboard/ViewAllCourses', 'CalendarViewDayIcon'],
+                        ['Apply Now', '/dashboard/Application', 'ArchiveIcon'],
+                    ],
                     open,
                     handleClickOpen,
                     handleClose
