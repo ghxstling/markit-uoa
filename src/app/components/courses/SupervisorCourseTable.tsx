@@ -25,6 +25,7 @@ export default function SupervisorCourseTable() {
         markerHours: number
         totalHours: number
         totalMarkers: number
+        assignedMarkers: number
     }
 
     const [data, setData] = useState<Course[]>([])
@@ -147,16 +148,18 @@ export default function SupervisorCourseTable() {
                                         </TableCell>
                                     </>
                                 ) : (
-                                    <TableCell style={{ textAlign: 'center' }}>2/{course.markersNeeded}</TableCell>
+                                    <TableCell style={{ textAlign: 'center' }}>
+                                        {course.assignedMarkers}/{course.markersNeeded}
+                                    </TableCell>
                                 )}
                                 <TableCell style={{ textAlign: 'center' }}>
                                     {course.needMarkers ? (
-                                        <Button variant="contained" color="success" style={{ width: '75%' }}>
-                                            Complete
-                                        </Button>
-                                    ) : (
                                         <Button variant="contained" color="error" style={{ width: '75%' }}>
                                             Incomplete
+                                        </Button>
+                                    ) : (
+                                        <Button variant="contained" color="success" style={{ width: '75%' }}>
+                                            Complete
                                         </Button>
                                     )}
                                 </TableCell>
