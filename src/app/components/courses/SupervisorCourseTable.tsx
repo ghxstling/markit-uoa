@@ -149,6 +149,7 @@ export default function SupervisorCourseTable() {
                                     </>
                                 ) : (
                                     <TableCell style={{ textAlign: 'center' }}>
+                                        {/*TODO add this data {course.assignedMarkers}*/}
                                         {course.assignedMarkers}/{course.markersNeeded}
                                     </TableCell>
                                 )}
