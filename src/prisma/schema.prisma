@@ -15,10 +15,10 @@ model Course {
   courseCode             String
   courseDescription      String
   supervisor             Supervisor?   @relation(fields: [supervisorId], references: [id])
-  supervisorId           Int?          
+  supervisorId           Int?
   numOfEstimatedStudents Int
   numOfEnrolledStudents  Int
-  markerHours            Int
+  markerHours            Float
   markerResponsibilities String
   needMarkers            Boolean       @default(true)
   markersNeeded          Int
@@ -31,21 +31,21 @@ model Course {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  email       String   @unique
-  name        String?
-  role        String   @default("student") // Refer to the role enum in models/role.ts
+  id         Int         @id @default(autoincrement())
+  email      String      @unique
+  name       String?
+  role       String      @default("student") // Refer to the role enum in models/role.ts
   // one to one with Student
-  student     Student?
+  student    Student?
   // one to one with Supervisor
-  supervisor  Supervisor?
+  supervisor Supervisor?
 }
 
 model Supervisor {
-  id        Int       @id @default(autoincrement())
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int       @unique
-  courses   Course[]
+  id      Int      @id @default(autoincrement())
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  Int      @unique
+  courses Course[]
 }
 
 model Student {
@@ -74,7 +74,7 @@ model Student {
 model Application {
   id                      Int     @id @default(autoincrement())
   applicationStatus       String  @default("pending") // refer to the applicationStatus enum in models/applicationStatus.ts
-  allocatedHours          Int     @default(0) // needed if applicationStatus is 'accepted'
+  allocatedHours          Float   @default(0) // needed if applicationStatus is 'accepted'
   preferenceId            Int
   // many to one with Student
   student                 Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
