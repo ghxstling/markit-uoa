@@ -120,7 +120,7 @@ describe('ApplicationRepo', () => {
         const result3 = await ApplicationRepo.getApplicationsByCourse(course3!.id)
 
         expect(result1).toMatchObject([applicationInput1])
-        // expect(result2).toMatchObject([applicationInput2, applicationInput4]) // FIXME: This is failing
+        expect(result2).toMatchObject([applicationInput2, applicationInput4])
         expect(result3).toMatchObject([applicationInput3])
     })
     it('can check if application exists', async () => {
