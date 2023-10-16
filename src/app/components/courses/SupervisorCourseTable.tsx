@@ -26,6 +26,7 @@ export default function SupervisorCourseTable() {
         totalHours: number
         totalMarkers: number
         assignedMarkers: number
+        allocatedHours: number
     }
 
     const [data, setData] = useState<Course[]>([])
@@ -101,18 +102,16 @@ export default function SupervisorCourseTable() {
                             </div>
                         </TableCell>
                         {/*TODO add this collumn<TableCell style={{textAlign:'center'}}><div style={{display:'flex', alignItems: 'center', flexWrap: 'wrap',}}>Number of Applicants <Tooltip title="Applicants"><InfoOutlinedIcon style={{marginLeft:5, verticalAlign:"middle"}}/></Tooltip> <ArrowDownwardIcon style={{marginLeft:5, verticalAlign:"middle"}}/></div></TableCell>*/}
-                        {isCoordinator ? (
-                            <TableCell style={{ textAlign: 'center' }}>
-                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                    Hours Assigned/Needed
-                                    <Tooltip title="number of hours assigned / number of hours needed">
-                                        <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
-                                    </Tooltip>
-                                </div>
-                            </TableCell>
-                        ) : (
-                            <></>
-                        )}
+
+                        <TableCell style={{ textAlign: 'center' }}>
+                            <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                Hours Assigned/Needed
+                                <Tooltip title="number of hours assigned / number of hours needed">
+                                    <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
+                                </Tooltip>
+                            </div>
+                        </TableCell>
+
                         <TableCell style={{ textAlign: 'center' }}>
                             <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
                                 Status{' '}
@@ -137,22 +136,16 @@ export default function SupervisorCourseTable() {
                                         {isCoordinator ? <Button>View</Button> : <Button>Edit</Button>}
                                     </Link>
                                 </TableCell>
-                                {/*TODO add this data<TableCell style={{textAlign:'center'}}>{course.applicants}</TableCell>*/}
-                                {isCoordinator ? (
-                                    <>
-                                        <TableCell style={{ textAlign: 'center' }}>
-                                            {course.totalHours}/{course.markersNeeded}
-                                        </TableCell>
-                                        <TableCell style={{ textAlign: 'center' }}>
-                                            {course.totalMarkers}/{course.markerHours}
-                                        </TableCell>
-                                    </>
-                                ) : (
+
+                                <>
                                     <TableCell style={{ textAlign: 'center' }}>
-                                        {/*TODO add this data {course.assignedMarkers}*/}
                                         {course.assignedMarkers}/{course.markersNeeded}
                                     </TableCell>
-                                )}
+                                    <TableCell style={{ textAlign: 'center' }}>
+                                        {course.allocatedHours === 0 ? 0 : course.allocatedHours}/{course.markerHours}
+                                    </TableCell>
+                                </>
+
                                 <TableCell style={{ textAlign: 'center' }}>
                                     {course.needMarkers ? (
                                         <Button variant="contained" color="error" style={{ width: '75%' }}>
