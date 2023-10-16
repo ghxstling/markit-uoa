@@ -30,6 +30,11 @@ export default class SupervisorRepo {
         })
     }
     
+    static async getSupervisorById(id: number) {
+        return await prisma.supervisor.findUnique({
+            where: { id },
+        })
+    }
 
     static async getSupervisorByUserId(userId: number) {
         return await prisma.supervisor.findUnique({
