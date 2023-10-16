@@ -16,11 +16,11 @@ const DebugPage = () => {
             //     sourceSemester: '2030S1',
             //     targetSemester: '2020S1',
             // }
-            const res = await fetch('/api/courses/170', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+            const res = await fetch('/api/email', {
+                method: 'POST',
+                // headers: {
+                //     'Content-Type': 'application/json',
+                // },
                 // body: JSON.stringify(data)
             })
             setApiResponse(await res.json())
