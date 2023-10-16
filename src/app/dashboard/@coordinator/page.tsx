@@ -81,8 +81,8 @@ export default function CoordinatorDashboard() {
                 setOpenSuccessSnackBar(true)
             } else {
                 setOpenFailureSnackbar(true)
-                setIsLoadingEmail(false)
             }
+            setIsLoadingEmail(false)
         } catch (error) {
             console.error('Error fetching data:', error)
             setIsLoadingEmail(false)
