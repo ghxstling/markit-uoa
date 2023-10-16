@@ -1,36 +1,54 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 import { Role } from '@/models/role'
-import sgMail from '@/app/service/emailService'
+import MarkerService from '@/services/markerService'
+import emailSender from '@/libs/emailSender'
+import ApplicationRepo from '@/data/applicationRepo'
 
-// POST /api/mail
+// POST /api/email
 export async function POST(req: NextRequest) {
-
-    // Check user token for authorised credentials
     const token = await getToken({ req })
     if (token!.role != Role.Coordinator) {
         return new NextResponse(
             JSON.stringify({
                 success: false,
-                message: 'Only coordinators can send automated emails',
+                message: 'Only coordinators can access this endpoint',
             }),
             { status: 403, headers: { 'content-type': 'application/json' } }
         )
     }
 
-    // Wait for supervisor to click the 'Send Email' button
-    /*
-    A msg represents a single email to be sent. emails represent an array of msgs to send to different recipients
-    Usage:
-        msg: object = {
-            to: array[string],  The recipient(s) of the email
-            from: string,       Our verified sender on SendGrid (default: dcho282@aucklanduni.ac.nz)
-            // subject: string,    The subject of the email
-            // text: string,       The body of the email
-            html: string        [OPTIONAL] Any HTML code to include in the email for formatting 
-        }
-        emails: array[objects] = [msg1, msg2, ...]
-    */
-    const data = await req.json()
+    const applications = await ApplicationRepo.getAllApplications()
+    const markers = await MarkerService.getAssignedMarkers(applications)
+    
+    const markerHashMap = await emailSender.createMarkerHashMap(markers)
+    const supervisorHashMap = await emailSender.createSupervisorHashMap(markers)
+    const markerMsgs = await emailSender.createMarkerEmails(markerHashMap)
+    const supervisorMsgs = await emailSender.createSupervisorEmails(supervisorHashMap, markerHashMap)
 
+    const markerResponse = await emailSender.sendEmail(markerMsgs)
+    if (markerResponse == null) {
+        return NextResponse.json(
+            {
+                success: false,
+                message: 'Failed to send emails to markers',
+            }, { status: 400 })
+    }
+    const supervisorResponse = await emailSender.sendEmail(supervisorMsgs)
+    if (supervisorResponse == null) {
+        return NextResponse.json(
+            {
+                success: false,
+                message: 'Failed to send emails to supervisors',
+            }, { status: 400 })
+    }
+
+    return NextResponse.json(
+        {
+            success: true,
+            message: 'Successfully sent emails to markers and supervisors',
+            markerResponse,
+            supervisorResponse,
+        }, { status: 200, statusText: 'Emails sent successfulyl' }
+    )
 }
