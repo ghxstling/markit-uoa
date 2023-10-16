@@ -353,6 +353,7 @@ model Application {
         }[]
         ```
     - Returns:
+        
         - The updated `Student`'s `Application`
 - `GET /api/students/me/applications/[applicationId]`
     - Retrieves a `Student`'s own particular `Application` using its `applicationId`.
@@ -472,7 +473,7 @@ model Supervisor {
     - Retrieves a `Supervisor`'s own `Course`s.
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
     - Returns:
-        - An array of the `Supervisor`'s own `Course`s.
+        - An array of the `Supervisor`'s own `Course`s with `allocatedHours` and `assignedMarkers`
 - `GET /api/supervisors/[supervisorId]`
     - Retrieves a `Student` from the database with the given `supervisorId`.
     - You must be a `Coordinator` to access this endpoint.
