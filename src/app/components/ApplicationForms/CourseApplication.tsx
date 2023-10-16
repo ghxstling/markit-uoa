@@ -168,6 +168,7 @@ const CourseApplication: React.FC<CourseApplicationProps> = ({
                         >
                             <MenuItem value={'A+'}>A+</MenuItem>
                             <MenuItem value={'A'}>A</MenuItem>
+                            <MenuItem value={'A-'}>A-</MenuItem>
                             <MenuItem value={'B+'}>B+</MenuItem>
                             <MenuItem value={'B'}>B</MenuItem>
                             <MenuItem value={'B-'}>B-</MenuItem>
