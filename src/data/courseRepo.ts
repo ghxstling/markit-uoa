@@ -16,13 +16,12 @@ export default class CourseRepo {
             include: {
                 supervisor: {
                     include: {
-                        user: true
-                    }
-                }
-            }
+                        user: true,
+                    },
+                },
+            },
         })
     }
-    
 
     static async getSupervisorCourses(email: string) {
         const user = await prisma.user.findUnique({
@@ -39,6 +38,9 @@ export default class CourseRepo {
         }
         return await prisma.course.findMany({
             where: { supervisorId: supervisor.id },
+            include: {
+                application: true,
+            },
         })
     }
 
@@ -59,9 +61,9 @@ export default class CourseRepo {
         await prisma.application.deleteMany({
             where: {
                 course: {
-                    semester
-                }
-            }
+                    semester,
+                },
+            },
         })
         return await prisma.course.updateMany({
             where: { semester },
