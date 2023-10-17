@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "Application" ALTER COLUMN "allocatedHours" SET DEFAULT 0,
+ALTER COLUMN "allocatedHours" SET DATA TYPE DOUBLE PRECISION;
+
+-- AlterTable
+ALTER TABLE "Course" ALTER COLUMN "markerHours" SET DATA TYPE DOUBLE PRECISION;

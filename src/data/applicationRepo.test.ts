@@ -6,8 +6,8 @@ import StudentRepo from './studentRepo'
 import CourseRepo from './courseRepo'
 import { courseInputHelper, studentInputHelper, resetDatabase } from '@/helpers/testHelper'
 
-let student1: { id: number, upi: string } | null = null
-let student2: { id: number, upi: string } | null = null
+let student1: { id: number; upi: string } | null = null
+let student2: { id: number; upi: string } | null = null
 let course1: { id: number } | null = null
 let course2: { id: number } | null = null
 let course3: { id: number } | null = null
@@ -49,7 +49,7 @@ const createApplicationInput = (studentId: number, courseId: number): Prisma.App
         hasTutoredCourse: true,
         hasMarkedCourse: true,
         notTakenExplanation: 'I have no clue',
-        equivalentQualification: 'I did it in high school'
+        equivalentQualification: 'I did it in high school',
     }
 }
 
@@ -134,7 +134,7 @@ describe('ApplicationRepo', () => {
         const result2 = await ApplicationRepo.doesApplicationExist(student2!.id, course2!.id)
         const result3 = await ApplicationRepo.doesApplicationExist(student1!.id, course2!.id)
         const result4 = await ApplicationRepo.doesApplicationExist(student2!.id, course1!.id)
-    
+
         expect(result1).toEqual(true)
         expect(result2).toEqual(true)
         expect(result3).toEqual(false)
@@ -179,7 +179,7 @@ describe('ApplicationRepo', () => {
             hasTutoredCourse: true,
             hasMarkedCourse: false,
             notTakenExplanation: 'd;osafhiaolfhwfhufhuhfo',
-            equivalentQualification: 'I did it in high school'
+            equivalentQualification: 'I did it in high school',
         }
         const result = await ApplicationRepo.updateApplication(application.id, applicationInput2)
         expect(result).toMatchObject(applicationInput2)
@@ -190,7 +190,7 @@ describe('ApplicationRepo', () => {
         const updatedData = await ApplicationRepo.updateApplicationStatus(data.id, 'accepted')
         expect(updatedData).toMatchObject({
             ...data,
-            applicationStatus: 'accepted'
+            applicationStatus: 'accepted',
         })
     })
     it('can update the course preferences for student application', async () => {
@@ -201,15 +201,15 @@ describe('ApplicationRepo', () => {
         const application1 = await ApplicationRepo.createApplication(applicationInput1)
         const application2 = await ApplicationRepo.createApplication(applicationInput2)
         const application3 = await ApplicationRepo.createApplication(applicationInput3)
-        
+
         expect(application1!.preferenceId).toEqual(1)
         expect(application2!.preferenceId).toEqual(2)
         expect(application3!.preferenceId).toEqual(3)
-        
+
         let updatedApplication1 = await ApplicationRepo.updateCoursePreference(application1!.id, 3)
         let updatedApplication2 = await ApplicationRepo.updateCoursePreference(application2!.id, 1)
         let updatedApplication3 = await ApplicationRepo.updateCoursePreference(application3!.id, 2)
-        
+
         expect(updatedApplication1!.preferenceId).toEqual(3)
         expect(updatedApplication2!.preferenceId).toEqual(1)
         expect(updatedApplication3!.preferenceId).toEqual(2)
@@ -233,7 +233,7 @@ describe('ApplicationRepo', () => {
         const application = await ApplicationRepo.createApplication(applicationInput)
 
         await ApplicationRepo.deleteApplication(application.id)
-        
+
         const deletedApplication = await ApplicationRepo.getApplicationById(application.id)
         expect(deletedApplication).toEqual(null)
     })

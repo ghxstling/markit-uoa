@@ -18,8 +18,9 @@ Made by Dylan Choy (the One Man Army)
     - `/api/courses/[courseId]/markers`
 5. Supervisors
     - `/api/supervisors`
-5. Users
+5. Coordinator (Admin)
     - `/api/users`
+    - `/api/email`
 6. Changelog
 
 ### Courses
@@ -353,6 +354,7 @@ model Application {
         }[]
         ```
     - Returns:
+        
         - The updated `Student`'s `Application`
 - `GET /api/students/me/applications/[applicationId]`
     - Retrieves a `Student`'s own particular `Application` using its `applicationId`.
@@ -472,7 +474,7 @@ model Supervisor {
     - Retrieves a `Supervisor`'s own `Course`s.
     - You must be a `Supervisor` or `Coordinator` to access this endpoint.
     - Returns:
-        - An array of the `Supervisor`'s own `Course`s.
+        - An array of the `Supervisor`'s own `Course`s with `allocatedHours` and `assignedMarkers`
 - `GET /api/supervisors/[supervisorId]`
     - Retrieves a `Student` from the database with the given `supervisorId`.
     - You must be a `Coordinator` to access this endpoint.
@@ -492,7 +494,9 @@ Similar to `Student` endpoints, there are two different groups of endpoints for 
 
 Although there is limited information to show for a `Supervisor`, a `Supervisor` should not be allowed access to other `Supervisor`s' information, and should only be allowed to view their own, should these endpoints be used in the future. Whereas, `Coordinator`s have the ability to see each `Supervisor`'s information, hence the protected `/api/supervisors/[supervisorId]` endpoint.
 
-### Users
+### Coordinator (Admin)
+
+This section defines a list of API endpoints that are intended to be used for administrative purposes only. These endpoints are protected and can only be accessed by the `Coordinator`.
 
 **Schema:**
 ```prisma
@@ -532,6 +536,12 @@ model User {
     - Returns:
       
         - The updated `User` for a given `userId`.
+- `POST /api/email`
+    - Sends multiple notificaiton emails to all `Marker`s and `Supervisor`s at once
+    - You must be a `Coordinator` to access this endpoint.
+    - **No Data Required**
+    - Returns:
+        - Nothing of use for you :P
 
 ### Changelog
 
@@ -560,18 +570,23 @@ model User {
 - v1.1.1
     - Updated `Applications` section:
         - Added `PATCH /api/students/[studentUpi]/applications/[applicationId]` endpoint
-- v1.1.2
+- v1.2.0
     - Updated `Applications` section:
         - Updated `PATCH /api/students/[studentUpi]/applications/[applicationId]` endpoint
             - Changed `Data Required` to `isQualified: boolean` only
         - Added `PATCH /api/students/me/applications/[applicationId]` endpoint
-- v1.1.3
+- v1.3.0
     - Updated `Applications` section:
         - Added `GET /api/applications/csv` endpoint
         - Removed `PATCH /api/students/me/applications/[applicationId]` endpoint
         - Added `PATCH /api/students/me/applications` endpoint
     - Updated `Courses` section:
         - Added `GET /api/courses/with-markers` endpoint
-- v1.1.4
+- v1.3.1
     - Updated `Courses` section:
         - Added `DELETE /api/courses/[courseId]` endpoint
+- v1.2.2
+    - Updated `Users` section:
+        - Renamed `Users` to `Coordinators (Admin)`
+        - Added description
+        - Added `POST /api/email` endpoint
