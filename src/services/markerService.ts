@@ -16,7 +16,7 @@ export default class MarkerService {
     static async assignMarkers(applications: Application[]) {
         try {
             const course = await CourseRepo.getCourseById(applications[0]!.courseId)
-            const defaultAllocatedHours = Math.floor(course!.markerHours / course!.markersNeeded)
+            const defaultAllocatedHours = course!.markerHours / course!.markersNeeded
             let updatedApplications = new Array<Application>()
             for (const app of applications) {
                 await ApplicationRepo.updateApplicationStatus(app.id, ApplicationStatus.Approved)
