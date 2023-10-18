@@ -91,8 +91,7 @@ export default class MarkerService {
     static async _hasMetRequirements(course: Course) {
         const applications = await ApplicationRepo.getApplicationsByCourse(course!.id)
         const totalHours = await this.getAllocatedHours(applications)
-        const totalMarkers = await this.getAssignedMarkers(applications).then((markers) => markers.length)
-        if (totalHours >= course.markerHours && totalMarkers >= course.markersNeeded) return true
+        if (totalHours >= course.markerHours) return true
         else return false
     }
 }
