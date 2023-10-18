@@ -346,7 +346,7 @@ export default function EditCourseDetails({ courseId }: EditCourseDetailsProps) 
             markersNeeded: markersNeeded.slider,
             semester: `${selectedYear}${selectedSemester}`,
             markerResponsibilities: description,
-            supervisorId: getSupervisorId(selectedSupervisor),
+            supervisorId: supervisorId,
         }
         try {
             const response = await fetch(`/api/courses/${courseId}`, {
