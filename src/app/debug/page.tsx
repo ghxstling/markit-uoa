@@ -11,6 +11,7 @@ const DebugPage = () => {
     const [file, setFile] = useState<File>()
 
     const makeApiCall = async () => {
+        setApiResponse('Waiting for response...')
         try {
             // const data = {
             //     sourceSemester: '2030S1',
