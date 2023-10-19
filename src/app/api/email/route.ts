@@ -27,19 +27,12 @@ export async function POST(req: NextRequest) {
     const supervisorMsgs = await emailSender.createSupervisorEmails(supervisorHashMap, markerHashMap)
 
     const markerResponse = await emailSender.sendEmail(markerMsgs)
-    if (markerResponse == null) {
-        return NextResponse.json(
-            {
-                success: false,
-                message: 'Failed to send emails to markers',
-            }, { status: 400 })
-    }
     const supervisorResponse = await emailSender.sendEmail(supervisorMsgs)
-    if (supervisorResponse == null) {
+    if (markerResponse == null || supervisorResponse == null) {
         return NextResponse.json(
             {
                 success: false,
-                message: 'Failed to send emails to supervisors',
+                message: 'Failed to send emails, please check console',
             }, { status: 400 })
     }
 
@@ -49,6 +42,6 @@ export async function POST(req: NextRequest) {
             message: 'Successfully sent emails to markers and supervisors',
             markerResponse,
             supervisorResponse,
-        }, { status: 200, statusText: 'Emails sent successfulyl' }
+        }, { status: 200, statusText: 'Emails sent successfully' }
     )
 }
