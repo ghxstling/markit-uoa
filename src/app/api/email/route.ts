@@ -26,22 +26,44 @@ export async function POST(req: NextRequest) {
     const markerMsgs = await emailSender.createMarkerEmails(markerHashMap)
     const supervisorMsgs = await emailSender.createSupervisorEmails(supervisorHashMap, markerHashMap)
 
-    const markerResponse = await emailSender.sendEmail(markerMsgs)
-    const supervisorResponse = await emailSender.sendEmail(supervisorMsgs)
-    if (markerResponse == null || supervisorResponse == null) {
-        return NextResponse.json(
-            {
-                success: false,
-                message: 'Failed to send emails, please check console',
-            }, { status: 400 })
+    let markerRes
+    let supervisorRes
+    for (const msg of markerMsgs) {
+        const res = await emailSender.sendEmail(msg)
+        if (res == null || res[0].statusCode != 202) {
+            console.log(res)
+            return NextResponse.json(res,
+                {
+                    status: 400,
+                    statusText: 'Failed to send marker emails',
+                }
+            )
+        } else {
+            markerRes = res
+        }
+    }
+
+    for (const msg of supervisorMsgs) {
+        const res = await emailSender.sendEmail(msg)
+        if (res == null || res[0].statusCode != 202) {
+            console.log(res)
+            return NextResponse.json(res,
+                {
+                    status: 400,
+                    statusText: 'Failed to send supervisor emails',
+                }
+            )
+        } else {
+            supervisorRes = res
+        }
     }
 
     return NextResponse.json(
         {
             success: true,
             message: 'Successfully sent emails to markers and supervisors',
-            markerResponse,
-            supervisorResponse,
+            markerRes,
+            supervisorRes,
         }, { status: 200, statusText: 'Emails sent successfully' }
     )
 }

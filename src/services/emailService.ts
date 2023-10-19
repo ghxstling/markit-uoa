@@ -126,8 +126,10 @@ async createMarkerHashMap(markers: Application[]) {
     async createMarkerEmails(markerHashMap: Map<number, MarkerDataValue[]>) {        
         console.log('Creating Marker Emails...')
 
+        let markerMsgs = []
         let personalizations = []
         for (const [courseId, markerDataValues] of markerHashMap) {
+
             const course = await CourseRepo.getCourseById(courseId)
             for (const m of markerDataValues) {
                 const data = {
@@ -142,6 +144,19 @@ async createMarkerHashMap(markers: Application[]) {
                     }
                 }
                 personalizations.push(data)
+
+                if (personalizations.length == 1000) {
+                    const markerMsg: Message = {
+                        from: {
+                            email: EmailData.SenderEmail,
+                            name: EmailData.SenderName
+                        },
+                        personalizations,
+                        templateId: EmailData.MarkerTemplate,
+                    }
+                    markerMsgs.push(markerMsg)
+                    personalizations = []
+                }
             }
         }
 
@@ -153,12 +168,14 @@ async createMarkerHashMap(markers: Application[]) {
             personalizations,
             templateId: EmailData.MarkerTemplate,
         }
-        return markerMsg
+        markerMsgs.push(markerMsg)
+        return markerMsgs
     }
 
     async createSupervisorEmails(supervisorHashMap: Map<number, SupervisorDataValue>, markerHashMap: Map<number, MarkerDataValue[]>) {
         console.log('Creating Supervisor Emails...')
 
+        let supervisorMsgs = []
         let personalizations = []
         for (const [courseId, supervisorData] of supervisorHashMap) {
             const course = await CourseRepo.getCourseById(courseId)
@@ -185,6 +202,19 @@ async createMarkerHashMap(markers: Application[]) {
                 }
             }
             personalizations.push(data)
+
+            if (personalizations.length == 1000) {
+                const markerMsg: Message = {
+                    from: {
+                        email: EmailData.SenderEmail,
+                        name: EmailData.SenderName
+                    },
+                    personalizations,
+                    templateId: EmailData.MarkerTemplate,
+                }
+                supervisorMsgs.push(markerMsg)
+                personalizations = []
+            }
         }
 
         const supervisorMsg: Message = {
@@ -195,17 +225,18 @@ async createMarkerHashMap(markers: Application[]) {
             personalizations,
             templateId: EmailData.SupervisorTemplate,
         }
-        return supervisorMsg
+        supervisorMsgs.push(supervisorMsg)
+        return supervisorMsgs
     }
 
     async sendEmail(msg: Message) {
         try {
             console.log('Sending email to: ' + msg.personalizations.map((p) => p.to.email) + ' ...');
             const res = await sgMail.send(msg);
-            console.log('Email sent successfully!');
+            console.log('Emails sent successfully!');
             return res
-        } catch (error) {
-            console.error('Error: ' + error);
+        } catch (err) {
+            console.log('Error:' + err)
             return null
         }
     }
