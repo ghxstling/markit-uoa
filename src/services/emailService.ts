@@ -62,6 +62,8 @@ export default class EmailService {
 async createMarkerHashMap(markers: Application[]) {
         // key: courseId, value: { studentName, studentEmail, hours }
         const markerHashMap = new Map<number, MarkerDataValue[]>()
+
+        console.log('Generating markerHashMap...')
         for (const m of markers) {
             const course = await CourseRepo.getCourseById(m.courseId)
             if (!markerHashMap.has(course!.id)) {
@@ -82,22 +84,29 @@ async createMarkerHashMap(markers: Application[]) {
                 markerHashMap.set(course!.id, markersForCourse!)
             }
         }
-        markerHashMap.forEach((value, key) => console.log(key, value))
-        return markerHashMap
+        const sortedMarkerMap = new Map([...markerHashMap.entries()].sort((a, b) => a[0] - b[0]))
+        console.log(sortedMarkerMap)
+        return sortedMarkerMap
     }
 
     async createSupervisorHashMap(markers: Application[]) {
         // key: courseId, value: { studentName, studentEmail, hours }
         const supervisorHashMap = new Map<number, SupervisorDataValue>()
 
+        console.log('Generating supervisorHashMap...')
         for (const m of markers) {
             const course = await CourseRepo.getCourseById(m.courseId)
-            if (!supervisorHashMap.has(course!.id)) {
-                supervisorHashMap.set(course!.id, null)
+
+            if (!course!.supervisorId) {
+                console.log('courseId ' + course!.id + ' has no supervisor ID!')
+                continue
             }
-            
-            if (supervisorHashMap.get(course!.id) != null) continue
-            if (!course!.supervisorId) continue
+            if (!supervisorHashMap.has(course!.id)) supervisorHashMap.set(course!.id, null)
+            if (supervisorHashMap.get(course!.id) != null) {
+                console.log('courseId ' + course!.id + ' has value ' + JSON.stringify(supervisorHashMap.get(course!.id) ))
+                continue
+            }
+
             const supervisor = await SupervisorRepo.getSupervisorById(course!.supervisorId)
             const user = await UserRepo.getUserById(supervisor!.userId)
             const supervisorData = {
@@ -108,13 +117,19 @@ async createMarkerHashMap(markers: Application[]) {
 
             supervisorHashMap.set(course!.id, supervisorData!)
         }
-        supervisorHashMap.forEach((value, key) => console.log(key, value))
-        return supervisorHashMap
+
+        const sortedSupervisorMap = new Map([...supervisorHashMap.entries()].sort((a, b) => a[0] - b[0]))
+        console.log(sortedSupervisorMap)
+        return sortedSupervisorMap
     }
 
     async createMarkerEmails(markerHashMap: Map<number, MarkerDataValue[]>) {        
+        console.log('Creating Marker Emails...')
+
+        let markerMsgs = []
         let personalizations = []
         for (const [courseId, markerDataValues] of markerHashMap) {
+
             const course = await CourseRepo.getCourseById(courseId)
             for (const m of markerDataValues) {
                 const data = {
@@ -129,6 +144,19 @@ async createMarkerHashMap(markers: Application[]) {
                     }
                 }
                 personalizations.push(data)
+
+                if (personalizations.length == 1000) {
+                    const markerMsg: Message = {
+                        from: {
+                            email: EmailData.SenderEmail,
+                            name: EmailData.SenderName
+                        },
+                        personalizations,
+                        templateId: EmailData.MarkerTemplate,
+                    }
+                    markerMsgs.push(markerMsg)
+                    personalizations = []
+                }
             }
         }
 
@@ -140,10 +168,14 @@ async createMarkerHashMap(markers: Application[]) {
             personalizations,
             templateId: EmailData.MarkerTemplate,
         }
-        return markerMsg
+        markerMsgs.push(markerMsg)
+        return markerMsgs
     }
 
     async createSupervisorEmails(supervisorHashMap: Map<number, SupervisorDataValue>, markerHashMap: Map<number, MarkerDataValue[]>) {
+        console.log('Creating Supervisor Emails...')
+
+        let supervisorMsgs = []
         let personalizations = []
         for (const [courseId, supervisorData] of supervisorHashMap) {
             const course = await CourseRepo.getCourseById(courseId)
@@ -170,6 +202,19 @@ async createMarkerHashMap(markers: Application[]) {
                 }
             }
             personalizations.push(data)
+
+            if (personalizations.length == 1000) {
+                const markerMsg: Message = {
+                    from: {
+                        email: EmailData.SenderEmail,
+                        name: EmailData.SenderName
+                    },
+                    personalizations,
+                    templateId: EmailData.MarkerTemplate,
+                }
+                supervisorMsgs.push(markerMsg)
+                personalizations = []
+            }
         }
 
         const supervisorMsg: Message = {
@@ -180,17 +225,18 @@ async createMarkerHashMap(markers: Application[]) {
             personalizations,
             templateId: EmailData.SupervisorTemplate,
         }
-        return supervisorMsg
+        supervisorMsgs.push(supervisorMsg)
+        return supervisorMsgs
     }
 
     async sendEmail(msg: Message) {
         try {
             console.log('Sending email to: ' + msg.personalizations.map((p) => p.to.email) + ' ...');
             const res = await sgMail.send(msg);
-            console.log('Email sent successfully!');
+            console.log('Emails sent successfully!');
             return res
-        } catch (error) {
-            console.error('Error: ' + error);
+        } catch (err) {
+            console.log('Error:' + err)
             return null
         }
     }
