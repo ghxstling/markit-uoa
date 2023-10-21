@@ -78,7 +78,7 @@ npm run dev
 
 ### Deploying database
 
-Before deploying the application ensure that the production database has the latest migrations applied. This can be acheived by running `npm run migrate:dev` when the `DATABASE_URL` is pointed at the production PostgreSQL.
+Before deploying the application ensure that the production database has the latest migrations applied. This can be achieved by running `npm run migrate:dev` when the `DATABASE_URL` is pointed at the production PostgreSQL.
 
 ### Deploying application to AWS Amplify
 
@@ -164,7 +164,21 @@ Ensure that your `next.config.js` is configured to `output: 'standalone'` to avo
 
 `npm run seed` - populates dummy data into the database. **_NOTE: it creates 4000 students, 100 supervisors and 18000 applications._**
 
-## Usage Examples
+## Usage
+
+Below are some examples of how you can use the web app:
+
+**Apply for marking**
+
+![image-20231021214715630](README.assets/image-20231021214715630.png)
+
+**View student's application details** and approving applications
+
+![image-20231021215351328](README.assets/image-20231021215351328.png)
+
+**Email markers and students about changes and downloading applications for offline use**
+
+![image-20231021215641487](README.assets/image-20231021215641487.png)
 
 ## Future Plans
 
@@ -173,4 +187,4 @@ Ensure that your `next.config.js` is configured to `output: 'standalone'` to avo
 -   [ ] Write end-to-end to ensure that existing features are behaving as expected even when add new features
 -   [ ] Update import courses functionality to not delete existing information
 -   [ ] Prevent students from applying to courses in the past
--   [ ] Allow course supevisor to select which students are "qualified"
+-   [ ] Allow course supervisor to select which students are "qualified"
