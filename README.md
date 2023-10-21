@@ -172,7 +172,7 @@ Below are some examples of how you can use the web app:
 
 ![image-20231021214715630](README.assets/image-20231021214715630.png)
 
-**View student's application details** and approving applications
+**View student's application details and approving applications**
 
 ![image-20231021215351328](README.assets/image-20231021215351328.png)
 
