@@ -26,29 +26,44 @@ export async function POST(req: NextRequest) {
     const markerMsgs = await emailSender.createMarkerEmails(markerHashMap)
     const supervisorMsgs = await emailSender.createSupervisorEmails(supervisorHashMap, markerHashMap)
 
-    const markerResponse = await emailSender.sendEmail(markerMsgs)
-    if (markerResponse == null) {
-        return NextResponse.json(
-            {
-                success: false,
-                message: 'Failed to send emails to markers',
-            }, { status: 400 })
+    let markerRes
+    let supervisorRes
+    for (const msg of markerMsgs) {
+        const res = await emailSender.sendEmail(msg)
+        if (res == null || res[0].statusCode != 202) {
+            console.log(res)
+            return NextResponse.json(res,
+                {
+                    status: 400,
+                    statusText: 'Failed to send marker emails',
+                }
+            )
+        } else {
+            markerRes = res
+        }
     }
-    const supervisorResponse = await emailSender.sendEmail(supervisorMsgs)
-    if (supervisorResponse == null) {
-        return NextResponse.json(
-            {
-                success: false,
-                message: 'Failed to send emails to supervisors',
-            }, { status: 400 })
+
+    for (const msg of supervisorMsgs) {
+        const res = await emailSender.sendEmail(msg)
+        if (res == null || res[0].statusCode != 202) {
+            console.log(res)
+            return NextResponse.json(res,
+                {
+                    status: 400,
+                    statusText: 'Failed to send supervisor emails',
+                }
+            )
+        } else {
+            supervisorRes = res
+        }
     }
 
     return NextResponse.json(
         {
             success: true,
             message: 'Successfully sent emails to markers and supervisors',
-            markerResponse,
-            supervisorResponse,
-        }, { status: 200, statusText: 'Emails sent successfulyl' }
+            markerRes,
+            supervisorRes,
+        }, { status: 200, statusText: 'Emails sent successfully' }
     )
 }
