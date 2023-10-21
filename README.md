@@ -150,6 +150,27 @@ Ensure that your `next.config.js` is configured to `output: 'standalone'` to avo
 
 ## Scripts
 
+`npm run build` - builds the application for production. Run `npm start` to start production server
+
+`npm run lint` - run ESLint to check for any linting errors
+
+`npm run test` - runs backend integration / unit test. **_WARNING: running these test will delete all the data in the database you are connected to._**
+
+`npm run migrate:dev` - applies migration / schema changes to the database you are connected to
+
+`npm run migrate:reset` - resets the database and then applies migration
+
+`npm run studio` - run Prisma Studio to easily interface with your database
+
+`npm run seed` - populates dummy data into the database. **_NOTE: it creates 4000 students, 100 supervisors and 18000 applications._**
+
 ## Usage Examples
 
 ## Future Plans
+
+-   [ ] Automatic marker assignment based on variables such as: student grades, work hours and past marking experiences
+-   [ ] Update user interface to be more responsive, so that it is mobile friendly
+-   [ ] Write end-to-end to ensure that existing features are behaving as expected even when add new features
+-   [ ] Update import courses functionality to not delete existing information
+-   [ ] Prevent students from applying to courses in the past
+-   [ ] Allow course supevisor to select which students are "qualified"
