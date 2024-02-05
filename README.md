@@ -6,6 +6,10 @@
 
 MarkIt UOA is a web-based tool specifically crafted to streamline the marker selection process and facilitate students' marking applications. This application is tailored for marker supervisors and coordinators, making it effortless for them to evaluate and promptly respond to applicants. You can see the deployed application [here](https://www.markituoa.xyz/).
 
+### NOTE:
+
+As of November 1st 2023, the original Markit-UOA repository will **no longer be maintained** by OCE Unicorn development team as its purpose was to exist for the COMPSCI 399: Capstone paper. This repo is a forked version of the original, which will continue to be developed and maintained solely by Dylan Choy (@ghxstling) as per request from our client who is interested in adopting the tool for their perusal. All rights are reserved to the current and previous developers. You can find the original repository [here](https://github.com/uoa-compsci399-s2-2023/capstone-project-team-6).
+
 ## About
 
 Our team used [Jira](https://www.atlassian.com/software/jira) to keep manage our project timeline, as well as for documenting and allocating tickets.
@@ -17,13 +21,13 @@ Our backend API documentations can be found [here](https://github.com/uoa-compsc
 1. Clone this repository:
 
 ```
-git clone https://github.com/uoa-compsci399-s2-2023/capstone-project-team-6.git
+git clone https://github.com/ghxstling/markit-uoa.git
 ```
 
 2. Navigate to the repository directory:
 
 ```
-cd capstone-project-team-6
+cd markit-uoa
 ```
 
 3. Create a `.env` file in the root directory with the following:
