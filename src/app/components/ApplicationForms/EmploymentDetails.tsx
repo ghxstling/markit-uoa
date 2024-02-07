@@ -210,23 +210,25 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({ formValues, setFo
                     )}
 
                     <Grid item xs={12}>
-                        <TextField
-                            name="degree"
-                            id="degree"
-                            label="Degree"
-                            select
-                            value={formValues.degree}
-                            onChange={handleDegreeChange}
-                            fullWidth
-                            required
-                        >
-                            <MenuItem value={DegreeType.Bachelor}>Bachelor</MenuItem>
-                            <MenuItem value={DegreeType.Honours}>Honours</MenuItem>
-                            <MenuItem value={DegreeType.GraduateCertificate}>Graduate Certificate</MenuItem>
-                            <MenuItem value={DegreeType.GraduateDiploma}>Graduate Diploma</MenuItem>
-                            <MenuItem value={DegreeType.Masters}>Masters</MenuItem>
-                            <MenuItem value={DegreeType.PhD}>PhD</MenuItem>
-                        </TextField>
+                        <Grid container direction="column" spacing={0} justifyContent="center" alignItems="center">
+                            <TextField
+                                name="degree"
+                                id="degree"
+                                label="Degree"
+                                select
+                                value={formValues.degree}
+                                onChange={handleDegreeChange}
+                                sx={{ width: '50%' }}
+                                required
+                            >
+                                <MenuItem value={DegreeType.Bachelor}>Bachelor</MenuItem>
+                                <MenuItem value={DegreeType.Honours}>Honours</MenuItem>
+                                <MenuItem value={DegreeType.GraduateCertificate}>Graduate Certificate</MenuItem>
+                                <MenuItem value={DegreeType.GraduateDiploma}>Graduate Diploma</MenuItem>
+                                <MenuItem value={DegreeType.Masters}>Masters</MenuItem>
+                                <MenuItem value={DegreeType.PhD}>PhD</MenuItem>
+                            </TextField>
+                        </Grid>
                     </Grid>
 
                     <Grid item xs={12}>
@@ -249,7 +251,10 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({ formValues, setFo
                                         type: 'number',
                                         'aria-labelledby': 'input-slider',
                                     }}
-                                    sx={{ ml: '20px' }}
+                                    sx={{
+                                        width: '60px',
+                                        ml: '20px',
+                                    }}
                                 />
                             </Grid>
 
@@ -289,7 +294,10 @@ const EmploymentDetails: React.FC<EmploymentDetailsProps> = ({ formValues, setFo
                                         type: 'number',
                                         'aria-labelledby': 'input-slider',
                                     }}
-                                    sx={{ ml: '20px' }}
+                                    sx={{
+                                        width: '60px',
+                                        ml: '20px',
+                                    }}
                                 />
                             </Grid>
                             <Grid item>
