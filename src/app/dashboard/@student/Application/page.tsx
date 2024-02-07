@@ -169,12 +169,10 @@ const Application = () => {
                     workHours: jsonData2.maxWorkHours,
                     coursePreferences: currentCoursePreferences,
                 })
-                setCvTranscriptName(
-                    {
-                        CvName: jsonData2.CV,
-                        TranscriptName: jsonData2.academicTranscript,
-                    }
-                )
+                setCvTranscriptName({
+                    CvName: jsonData2.CV,
+                    TranscriptName: jsonData2.academicTranscript,
+                })
             } else if (response1.ok && !response2.ok) {
                 let jsonData1 = await response1.json()
                 const currentIds: number[] = []
@@ -372,6 +370,16 @@ const Application = () => {
                                     <Typography variant="h5" gutterBottom>
                                         Thank you for your application.
                                     </Typography>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            justifyContent: 'flex-end',
+                                        }}
+                                    >
+                                        <Button variant="contained" href="/dashboard">
+                                            Back to Dashboard
+                                        </Button>
+                                    </Box>
                                 </>
                             ) : (
                                 <>
