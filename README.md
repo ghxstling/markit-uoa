@@ -14,7 +14,7 @@ As of November 1st 2023, the original Markit-UOA repository will **no longer be 
 
 Our team used [Jira](https://www.atlassian.com/software/jira) to keep manage our project timeline, as well as for documenting and allocating tickets.
 
-Our backend API documentations can be found [here](https://github.com/uoa-compsci399-s2-2023/capstone-project-team-6/blob/master/docs/API_DOCS.md).
+Our backend API documentations can be found [here](https://github.com/ghxstling/markit-uoa/blob/master/docs/API_DOCS.md).
 
 ## Installation
 
