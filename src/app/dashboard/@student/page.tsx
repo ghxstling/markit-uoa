@@ -156,19 +156,35 @@ const StudentHomepage = () => {
                             <Typography variant="h5" fontWeight="bold">
                                 Current Applications
                             </Typography>
-                            <Button
-                                variant="contained"
-                                size="small"
-                                onClick={openPreferenceDialog}
-                                sx={{
-                                    backgroundColor: 'white',
-                                    color: '#00467F',
-                                    border: '1px solid #00467F',
-                                    ml: 3,
-                                }}
-                            >
-                                Edit Order of Preference
-                            </Button>
+                            {applications.length === 0 ? (
+                                <Button
+                                    disabled
+                                    variant={'contained'}
+                                    size="small"
+                                    sx={{
+                                        backgroundColor: 'white',
+                                        color: '#00467F',
+                                        border: '1px solid #636363',
+                                        ml: 3,
+                                    }}
+                                >
+                                    Edit Order of Preference
+                                </Button>
+                            ) : (
+                                <Button
+                                    variant={'contained'}
+                                    size="small"
+                                    onClick={openPreferenceDialog}
+                                    sx={{
+                                        backgroundColor: 'white',
+                                        color: '#00467F',
+                                        border: '1px solid #00467F',
+                                        ml: 3,
+                                    }}
+                                >
+                                    Edit Order of Preference
+                                </Button>
+                            )}
                         </Box>
                         <TableContainer>
                             <Table sx={{ minWidth: '887px' }} stickyHeader>
@@ -182,6 +198,21 @@ const StudentHomepage = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
+                                    {/* if there are no applications, display a message */}
+                                    {applications.length === 0 && (
+                                        <Box
+                                            sx={{
+                                                position: 'absolute',
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                top: '65%',
+                                                left: '50%',
+                                            }}
+                                        >
+                                            <Typography>No Applications Found</Typography>
+                                        </Box>
+                                    )}
                                     {/* map each row to a table row and slice the number of rows based on rows per page */}
                                     {(rowPerPage > 0
                                         ? applications.slice(page * rowPerPage, page * rowPerPage + rowPerPage)
