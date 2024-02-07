@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 import {
     TableBody,
@@ -14,9 +14,17 @@ import {
     Button,
     Snackbar,
     Alert,
+    Dialog,
+    Grid,
 } from '@mui/material'
 
-export default function ChangePreferenceOrder() {
+export default function ChangePreferenceOrder({
+    open,
+    setOpen,
+}: {
+    open: boolean
+    setOpen: Dispatch<SetStateAction<boolean>>
+}) {
     interface Application {
         id: number
         preferenceId: number
@@ -31,12 +39,12 @@ export default function ChangePreferenceOrder() {
 
     const [applications, setApplications] = useState<Application[]>([])
     const [courseInfo, setCourseInfo] = useState<Courses[]>([])
+    const [openSnackBarSuccess, setOpenSnackBarSuccess] = useState(false)
+    const [openSnackBarFailure, setOpenSnackBarFailure] = useState(false)
+    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('New preferences submitted successfully!')
     const [snackbarFailureMessage, setSnackbarFailureMessage] = useState(
         'Failure submitting new preferences, please try again later.'
     )
-    const [openSnackBarFailure, setOpenSnackBarFailure] = useState(false)
-    const [openSnackBarSuccess, setOpenSnackBarSuccess] = useState(false)
-    const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState('New preferences submitted successfully!')
 
     const handleCloseFailure = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
@@ -121,99 +129,114 @@ export default function ChangePreferenceOrder() {
         }
     }
 
+    const handleDialogClose = () => {
+        setOpen(false)
+    }
+
     return (
-        <Container style={{ marginTop: 20 }}>
-            <Paper elevation={3} style={{ padding: '20px' }}>
-                <Box display="flex" justifyContent="center" alignItems="center">
-                    <Typography variant="h4" fontWeight={600} style={{ marginBottom: '20px', fontSize: '1.8rem' }}>
-                        Manage Application Order of Preference
-                    </Typography>
-                </Box>
-                <TableContainer component={Paper} style={{ marginTop: 20 }}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell style={{ textAlign: 'center', fontWeight: 'bold' }}>Preference</TableCell>
-                                <TableCell style={{ textAlign: 'center', fontWeight: 'bold' }}>Course</TableCell>
-                                <TableCell style={{ textAlign: 'center', fontWeight: 'bold' }}>Semester</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <DragDropContext onDragEnd={handleOnDragEnd}>
-                            <Droppable droppableId="preferences">
-                                {(provided) => (
-                                    <TableBody {...provided.droppableProps} ref={provided.innerRef}>
-                                        {applications.map((application, index) => (
-                                            <Draggable
-                                                key={application.id}
-                                                draggableId={String(application.id)}
-                                                index={index}
-                                            >
-                                                {(provided) => (
-                                                    <TableRow
-                                                        ref={provided.innerRef}
-                                                        {...provided.draggableProps}
-                                                        {...provided.dragHandleProps}
-                                                    >
-                                                        <TableCell style={{ textAlign: 'center' }}>
-                                                            {application.preferenceId}
-                                                        </TableCell>
-                                                        <TableCell style={{ textAlign: 'center' }}>
-                                                            {
-                                                                courseInfo.find(
-                                                                    (course) => course.id === application.courseId
-                                                                )?.courseCode
-                                                            }
-                                                        </TableCell>
-                                                        <TableCell style={{ textAlign: 'center' }}>
-                                                            {
-                                                                courseInfo.find(
-                                                                    (course) => course.id === application.courseId
-                                                                )?.semester
-                                                            }
-                                                        </TableCell>
-                                                    </TableRow>
-                                                )}
-                                            </Draggable>
-                                        ))}
-                                        {provided.placeholder}
-                                    </TableBody>
-                                )}
-                            </Droppable>
-                        </DragDropContext>
-                    </Table>
-                </TableContainer>
-            </Paper>
-            <Box display="flex" justifyContent="flex-start">
-                <Button variant="outlined" color="primary" sx={{ mt: 3 }} onClick={submitPreferences}>
-                    Submit New Preferences
-                </Button>
-            </Box>
-            <Snackbar
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                }}
-                open={openSnackBarFailure}
-                autoHideDuration={6000}
-                onClose={handleCloseFailure}
-            >
-                <Alert onClose={handleCloseFailure} severity="error" sx={{ width: '100%' }}>
-                    {snackbarFailureMessage}
-                </Alert>
-            </Snackbar>
-            <Snackbar
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                }}
-                open={openSnackBarSuccess}
-                autoHideDuration={6000}
-                onClose={handleCloseSuccess}
-            >
-                <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
-                    {snackbarSuccessMessage}
-                </Alert>
-            </Snackbar>
-        </Container>
+        <Dialog open={open} onClose={handleDialogClose} maxWidth="sm" fullWidth>
+            <Container style={{ marginTop: 20 }}>
+                <Paper elevation={3} style={{ padding: '20px' }}>
+                    <Box display="flex" justifyContent="center" alignItems="center">
+                        <Typography variant="h4" fontWeight={600} style={{ marginBottom: '20px', fontSize: '1.5rem' }}>
+                            Manage Application Preference Order
+                        </Typography>
+                    </Box>
+                    <TableContainer component={Paper} sx={{ outline: 'lightgrey solid 0.1px', pb: '5px' }}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell style={{ textAlign: 'center', fontWeight: 'bold' }}>
+                                        Preference
+                                    </TableCell>
+                                    <TableCell style={{ textAlign: 'center', fontWeight: 'bold' }}>Course</TableCell>
+                                    <TableCell style={{ textAlign: 'center', fontWeight: 'bold' }}>Semester</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <DragDropContext onDragEnd={handleOnDragEnd}>
+                                <Droppable droppableId="preferences">
+                                    {(provided) => (
+                                        <TableBody {...provided.droppableProps} ref={provided.innerRef}>
+                                            {applications.map((application, index) => (
+                                                <Draggable
+                                                    key={application.id}
+                                                    draggableId={String(application.id)}
+                                                    index={index}
+                                                >
+                                                    {(provided) => (
+                                                        <TableRow
+                                                            ref={provided.innerRef}
+                                                            {...provided.draggableProps}
+                                                            {...provided.dragHandleProps}
+                                                        >
+                                                            <TableCell style={{ textAlign: 'center' }}>
+                                                                {application.preferenceId}
+                                                            </TableCell>
+                                                            <TableCell style={{ textAlign: 'center' }}>
+                                                                {
+                                                                    courseInfo.find(
+                                                                        (course) => course.id === application.courseId
+                                                                    )?.courseCode
+                                                                }
+                                                            </TableCell>
+                                                            <TableCell style={{ textAlign: 'center' }}>
+                                                                {
+                                                                    courseInfo.find(
+                                                                        (course) => course.id === application.courseId
+                                                                    )?.semester
+                                                                }
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    )}
+                                                </Draggable>
+                                            ))}
+                                            {provided.placeholder}
+                                        </TableBody>
+                                    )}
+                                </Droppable>
+                            </DragDropContext>
+                        </Table>
+                    </TableContainer>
+                </Paper>
+                <Grid container spacing={3} sx={{ pt: 3, pb: 3, justifyContent: 'end' }}>
+                    <Grid item>
+                        <Button variant="text" onClick={handleDialogClose}>
+                            Close
+                        </Button>
+                    </Grid>
+                    <Grid item>
+                        <Button variant="contained" onClick={submitPreferences}>
+                            Submit
+                        </Button>
+                    </Grid>
+                </Grid>
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                    }}
+                    open={openSnackBarFailure}
+                    autoHideDuration={6000}
+                    onClose={handleCloseFailure}
+                >
+                    <Alert onClose={handleCloseFailure} severity="error" sx={{ width: '100%' }}>
+                        {snackbarFailureMessage}
+                    </Alert>
+                </Snackbar>
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                    }}
+                    open={openSnackBarSuccess}
+                    autoHideDuration={6000}
+                    onClose={handleCloseSuccess}
+                >
+                    <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
+                        {snackbarSuccessMessage}
+                    </Alert>
+                </Snackbar>
+            </Container>
+        </Dialog>
     )
 }
