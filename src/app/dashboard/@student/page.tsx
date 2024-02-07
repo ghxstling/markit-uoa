@@ -143,15 +143,15 @@ const StudentHomepage = () => {
                             variant="contained"
                             sx={{
                                 backgroundColor: '#00467F',
-                                mt: '53px',
-                                mb: '58px',
+                                mt: '23px',
+                                mb: '28px',
                             }}
                         >
                             Apply Now
                         </Button>
                     </Link>
                     {/* create table */}
-                    <Card sx={{ p: '20px' }}>
+                    <Card variant="outlined" sx={{ p: '20px', maxWidth: '1200px' }}>
                         <Box display="flex">
                             <Typography variant="h5" fontWeight="bold">
                                 Current Applications
@@ -187,7 +187,7 @@ const StudentHomepage = () => {
                             )}
                         </Box>
                         <TableContainer>
-                            <Table sx={{ minWidth: '887px' }} stickyHeader>
+                            <Table sx={{ minWidth: '600px' }} stickyHeader>
                                 <TableHead>
                                     <TableRow>
                                         {columns.map((column, index) => (
@@ -238,7 +238,9 @@ const StudentHomepage = () => {
                                                     color={
                                                         application.applicationStatus === 'pending'
                                                             ? 'secondary'
-                                                            : 'primary'
+                                                            : application.applicationStatus === 'approved'
+                                                            ? 'primary'
+                                                            : 'error'
                                                     }
                                                     label={application.applicationStatus}
                                                 />
@@ -262,15 +264,8 @@ const StudentHomepage = () => {
                             page={page}
                             onPageChange={handPageChange}
                             onRowsPerPageChange={handleRowsPerPage}
-                        ></TablePagination>
-                        <Dialog open={preferenceDialogOpen} onClose={closePreferenceDialog} maxWidth="md" fullWidth>
-                            <ChangePreferenceOrder />
-                            <Box p={3} display="flex" justifyContent="flex-start">
-                                <Button variant="outlined" color="primary" onClick={closePreferenceDialog}>
-                                    Close
-                                </Button>
-                            </Box>
-                        </Dialog>
+                        />
+                        <ChangePreferenceOrder open={preferenceDialogOpen} setOpen={setPreferenceDialogOpen} />
                     </Card>
                 </Box>
             </Box>
