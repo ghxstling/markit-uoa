@@ -20,7 +20,6 @@ import React, { useState } from 'react'
 
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import ArchiveIcon from '@mui/icons-material/Archive'
-import NotificationsIcon from '@mui/icons-material/Notifications'
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
 import CalendarViewDayIcon from '@mui/icons-material/CalendarViewDay'
@@ -56,7 +55,6 @@ let content = (
     username: string,
     email: string,
     Links: string[][],
-    // redirectToDashboard: string,
     open: boolean,
     handleClickOpen: () => void,
     handleClose: () => void
@@ -100,18 +98,6 @@ let content = (
                         </ListItemButton>
                     </Link>
                 </ListItem>
-
-                {/* =============== Notifications are not implemented yet ============= */}
-                {/* <ListItem disablePadding>
-                    <Link href="./" passHref style={linkStyle}>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <NotificationsIcon style={IconStyle} />
-                            </ListItemIcon>
-                            <ListItemText>Notifications</ListItemText>
-                        </ListItemButton>
-                    </Link>
-                </ListItem> */}
 
                 {Links.map((link, index) => (
                     <ListItem disablePadding key={index}>
