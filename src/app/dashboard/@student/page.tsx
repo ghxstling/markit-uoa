@@ -15,6 +15,7 @@ import {
     TablePagination,
     Chip,
     Dialog,
+    Container,
 } from '@mui/material'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
@@ -96,6 +97,12 @@ const StudentHomepage = () => {
         }
     }
 
+    // styling
+    const contentMargin = {
+        ml: { sm: '20vw', md: '12.5vw', lg: '6.5vw' },
+        mr: { sm: '20vw', md: '12.5vw', lg: '6.5vw' },
+    }
+
     //initialise columns
     const columns = [
         { id: 'name', name: 'Course' },
@@ -120,22 +127,20 @@ const StudentHomepage = () => {
             <Sidebar />
             <Box
                 sx={{
-                    height: '100vh',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'safe center',
-                    ml: '240px',
+                    ml: '12.5vw',
                 }}
             >
                 <Box
                     sx={{
-                        mt: '20px',
-                        ml: { sm: '60px', lg: '120px' },
-                        mr: { sm: '60px', lg: '120px' },
-                        mb: '20px',
+                        ...contentMargin,
+                        mt: '10vh',
+                        mb: '5vh',
                     }}
                 >
-                    <Typography sx={{ mt: '28px' }} variant="h4" fontWeight="bold">
+                    <Typography variant="h4" fontWeight="bold">
                         Welcome, {firstName}
                     </Typography>
                     <Link href="./dashboard/Application" passHref>
@@ -143,15 +148,29 @@ const StudentHomepage = () => {
                             variant="contained"
                             sx={{
                                 backgroundColor: '#00467F',
-                                mt: '23px',
-                                mb: '28px',
+                                m: '1.5vw 0 1.5vw 0',
                             }}
                         >
                             Apply Now
                         </Button>
                     </Link>
+                </Box>
+                <Container
+                    maxWidth={'md'}
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignContent: 'center',
+                    }}
+                >
                     {/* create table */}
-                    <Card variant="outlined" sx={{ p: '20px', maxWidth: '1200px' }}>
+                    <Card
+                        variant="outlined"
+                        sx={{
+                            p: '20px 20px 0px 20px',
+                        }}
+                    >
                         <Box display="flex">
                             <Typography variant="h5" fontWeight="bold">
                                 Current Applications
@@ -187,30 +206,34 @@ const StudentHomepage = () => {
                             )}
                         </Box>
                         <TableContainer>
-                            <Table sx={{ minWidth: '600px' }} stickyHeader>
+                            <Table stickyHeader>
                                 <TableHead>
                                     <TableRow>
                                         {columns.map((column, index) => (
-                                            <TableCell key={index} style={{ textAlign: 'center' }}>
+                                            <TableCell key={index} style={{ textAlign: 'center', fontSize: '1rem' }}>
                                                 {column.name}
                                             </TableCell>
                                         ))}
                                     </TableRow>
                                 </TableHead>
-                                <TableBody>
+                                <TableBody
+                                    sx={{
+                                        position: 'relative',
+                                    }}
+                                >
                                     {/* if there are no applications, display a message */}
                                     {applications.length === 0 && (
                                         <Box
+                                            component="center"
                                             sx={{
                                                 position: 'absolute',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                top: '65%',
-                                                left: '50%',
+                                                top: '25%',
+                                                left: '35%',
                                             }}
                                         >
-                                            <Typography>No Applications Found</Typography>
+                                            <Typography variant="overline" fontSize={'1rem'} color={'darkgray'}>
+                                                No Current Applications
+                                            </Typography>
                                         </Box>
                                     )}
                                     {/* map each row to a table row and slice the number of rows based on rows per page */}
@@ -267,7 +290,7 @@ const StudentHomepage = () => {
                         />
                         <ChangePreferenceOrder open={preferenceDialogOpen} setOpen={setPreferenceDialogOpen} />
                     </Card>
-                </Box>
+                </Container>
             </Box>
         </ThemeProvider>
     )
