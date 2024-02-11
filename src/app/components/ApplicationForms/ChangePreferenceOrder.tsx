@@ -136,22 +136,29 @@ export default function ChangePreferenceOrder({
     return (
         <Dialog open={open} onClose={handleDialogClose} maxWidth="sm" fullWidth>
             <Container style={{ marginTop: 20 }}>
-                <Paper elevation={3} style={{ padding: '20px' }}>
-                    <Box display="flex" justifyContent="center" alignItems="center">
-                        <Typography variant="h4" fontWeight={600} style={{ marginBottom: '20px', fontSize: '1.5rem' }}>
-                            Manage Application Preference Order
+                <Paper elevation={0} style={{ outline: 'lightgrey solid 0.1px', padding: '20px' }}>
+                    <Box>
+                        <Typography
+                            variant="h4"
+                            fontWeight={600}
+                            textAlign={'center'}
+                            style={{ marginBottom: '20px', fontSize: '1.35rem' }}
+                        >
+                            Manage Application Preferences
                         </Typography>
                     </Box>
-                    <TableContainer component={Paper} sx={{ outline: 'lightgrey solid 0.1px', pb: '5px' }}>
+                    <TableContainer component={Paper} elevation={0} sx={{ pb: '5px' }}>
                         <Table>
                             <TableHead>
-                                <TableRow>
-                                    <TableCell style={{ textAlign: 'center', fontWeight: 'bold' }}>
-                                        Preference
-                                    </TableCell>
-                                    <TableCell style={{ textAlign: 'center', fontWeight: 'bold' }}>Course</TableCell>
-                                    <TableCell style={{ textAlign: 'center', fontWeight: 'bold' }}>Semester</TableCell>
-                                </TableRow>
+                                <TableCell width={'10%'} style={{ textAlign: 'center', fontWeight: 'bold' }}>
+                                    Preference
+                                </TableCell>
+                                <TableCell width={'70%'} style={{ textAlign: 'center', fontWeight: 'bold' }}>
+                                    Course
+                                </TableCell>
+                                <TableCell width={'20%'} style={{ textAlign: 'center', fontWeight: 'bold' }}>
+                                    Semester
+                                </TableCell>
                             </TableHead>
                             <DragDropContext onDragEnd={handleOnDragEnd}>
                                 <Droppable droppableId="preferences">
