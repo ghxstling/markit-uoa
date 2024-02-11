@@ -97,10 +97,12 @@ const StudentHomepage = () => {
         }
     }
 
-    // styling
-    const contentMargin = {
-        ml: { sm: '20vw', md: '12.5vw', lg: '6.5vw' },
-        mr: { sm: '20vw', md: '12.5vw', lg: '6.5vw' },
+    // button styling
+    const buttonStyle = {
+        backgroundColor: 'white',
+        color: '#00467F',
+        border: '1px solid #636363',
+        ml: 3,
     }
 
     //initialise columns
@@ -135,7 +137,7 @@ const StudentHomepage = () => {
             >
                 <Box
                     sx={{
-                        ...contentMargin,
+                        ml: { sm: '20vw', md: '12.5vw', lg: '8.5vw', xl: '6.5vw' },
                         mt: '10vh',
                         mb: '5vh',
                     }}
@@ -156,19 +158,21 @@ const StudentHomepage = () => {
                     </Link>
                 </Box>
                 <Container
-                    maxWidth={'md'}
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'center',
                         alignContent: 'center',
+                        width: '50vw',
+                        minWidth: '35vw',
                     }}
                 >
                     {/* create table */}
                     <Card
                         variant="outlined"
                         sx={{
-                            p: '20px 20px 0px 20px',
+                            p: '30px 30px 0px 30px',
+                            borderColor: 'lightgray',
                         }}
                     >
                         <Box display="flex">
@@ -176,30 +180,15 @@ const StudentHomepage = () => {
                                 Current Applications
                             </Typography>
                             {applications.length === 0 ? (
-                                <Button
-                                    disabled
-                                    variant={'contained'}
-                                    size="small"
-                                    sx={{
-                                        backgroundColor: 'white',
-                                        color: '#00467F',
-                                        border: '1px solid #636363',
-                                        ml: 3,
-                                    }}
-                                >
+                                <Button disabled variant={'outlined'} size="small" sx={buttonStyle}>
                                     Edit Order of Preference
                                 </Button>
                             ) : (
                                 <Button
-                                    variant={'contained'}
+                                    variant={'outlined'}
                                     size="small"
                                     onClick={openPreferenceDialog}
-                                    sx={{
-                                        backgroundColor: 'white',
-                                        color: '#00467F',
-                                        border: '1px solid #00467F',
-                                        ml: 3,
-                                    }}
+                                    sx={buttonStyle}
                                 >
                                     Edit Order of Preference
                                 </Button>
