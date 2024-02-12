@@ -71,8 +71,9 @@ const DynamicBreadcrumb = () => {
                                 component={NextLink}
                                 href={breadcrumb.href}
                                 underline="none"
-                                fontSize={'15px'}
-                                color={'#000000'}
+                                fontSize={'1rem'}
+                                fontWeight={500}
+                                color={'black'}
                             >
                                 {breadcrumb.label}
                             </Link>
