@@ -1,6 +1,6 @@
 'use client'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
-import { Box, TableBody, TableSortLabel } from '@mui/material'
+import { Box, Container, TableBody, TableSortLabel } from '@mui/material'
 import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
@@ -100,49 +100,72 @@ export default function StudentViewAllCourses() {
     return (
         <ThemeProvider theme={CustomTheme}>
             <Sidebar />
-
-            <Sidebar />
             <Box
                 sx={{
-                    height: '100vh',
+                    // height: '100vh',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'safe center',
-                    ml: '240px',
+                    ml: '12.5vw',
                 }}
             >
                 <Box
                     sx={{
-                        mt: '20px',
-                        ml: { xs: '5px', lg: '100px', xl: '200px' },
+                        mt: '12.5vh',
+                        ml: { sm: '20vw', md: '12.5vw', lg: '7.5vw', xl: '5vw' },
                     }}
                 >
                     <DynamicBreadcrumb />
                 </Box>
-                <Box
+                <Container
                     sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignContent: 'center',
+                        width: '50vw',
+                        minWidth: '35vw',
+
                         mt: '50px',
-                        ml: { xs: '5px', lg: '150px', xl: '250px' },
-                        mr: { xs: '5px', lg: '150px', xl: '250px' },
+                        ml: { xs: '10px', lg: '200px', xl: '400px' },
+                        mr: { xs: '10px', lg: '150px', xl: '200px' },
                         mb: '100px',
                     }}
                 >
-                    <TableContainer component={Paper} style={{ marginTop: 20 }}>
-                        <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ p: 2 }}>
-                            <h2>Course View</h2>
+                    <TableContainer
+                        component={Paper}
+                        elevation={0}
+                        variant="outlined"
+                        style={{
+                            marginTop: 20,
+                        }}
+                    >
+                        <Box
+                            display="flex"
+                            justifyContent="space-between"
+                            alignItems="center"
+                            sx={{
+                                pt: 1,
+                                pl: 4,
+                                pr: 3,
+                            }}
+                        >
+                            <Typography variant="h5" fontWeight="bold">
+                                Course List
+                            </Typography>
                             <TextField
                                 variant="outlined"
                                 margin="normal"
                                 id="search"
-                                label="Search by Course or Semester"
+                                label="Search by Course/Semester"
                                 name="search"
                                 size="medium"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                style={{ width: '260px' }}
+                                style={{ width: '235px' }}
                             />
                         </Box>
-                        <Table style={{ paddingTop: 40 }}>
+                        <Table>
                             <TableHead>
                                 <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
                                     <TableCell />
@@ -152,7 +175,7 @@ export default function StudentViewAllCourses() {
                                             active={sortField === 'courseCode'}
                                             direction={sortField === 'courseCode' ? sortDirection : 'asc'}
                                         >
-                                            Course
+                                            <Typography fontWeight={600}>Course</Typography>
                                         </TableSortLabel>
                                     </TableCell>
                                     <TableCell style={{ textAlign: 'center' }} onClick={() => handleSort('semester')}>
@@ -161,7 +184,7 @@ export default function StudentViewAllCourses() {
                                             active={sortField === 'semester'}
                                             direction={sortField === 'semester' ? sortDirection : 'asc'}
                                         >
-                                            Semester
+                                            <Typography fontWeight={600}>Semester</Typography>
                                         </TableSortLabel>
                                     </TableCell>
                                     <TableCell
@@ -173,12 +196,11 @@ export default function StudentViewAllCourses() {
                                             active={sortField === 'markersNeeded'}
                                             direction={sortField === 'markersNeeded' ? sortDirection : 'asc'}
                                         >
-                                            Markers Needed
+                                            <Typography fontWeight={600}>Markers Needed</Typography>
                                             <Tooltip title="Markers needed for the course">
-                                                <InfoOutlinedIcon style={{ marginLeft: 5, verticalAlign: 'middle' }} />
+                                                <InfoOutlinedIcon style={{ marginLeft: 10, verticalAlign: 'middle' }} />
                                             </Tooltip>
                                         </TableSortLabel>
-                                        <div style={{ alignItems: 'center', flexWrap: 'wrap' }}></div>
                                     </TableCell>
                                 </TableRow>
                             </TableHead>
@@ -254,27 +276,28 @@ export default function StudentViewAllCourses() {
                                 )}
                             </TableBody>
                         </Table>
-                        <TablePagination
-                            component="div"
-                            sx={{ width: '100%' }}
-                            rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
-                            colSpan={3}
-                            count={
-                                data.filter(
-                                    (course) =>
-                                        course.courseCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                        course.semester.toLowerCase().includes(searchTerm.toLowerCase())
-                                ).length
-                            }
-                            rowsPerPage={rowsPerPage}
-                            page={page}
-                            onPageChange={handleChangePage}
-                            onRowsPerPageChange={handleChangeRowsPerPage}
-                            showFirstButton={true}
-                            showLastButton={true}
-                        />
                     </TableContainer>
-                </Box>
+
+                    <TablePagination
+                        component="div"
+                        sx={{ width: '100%' }}
+                        rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                        colSpan={3}
+                        count={
+                            data.filter(
+                                (course) =>
+                                    course.courseCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                    course.semester.toLowerCase().includes(searchTerm.toLowerCase())
+                            ).length
+                        }
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                        showFirstButton={true}
+                        showLastButton={true}
+                    />
+                </Container>
             </Box>
         </ThemeProvider>
     )
