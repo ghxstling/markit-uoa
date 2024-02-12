@@ -137,9 +137,9 @@ const StudentHomepage = () => {
             >
                 <Box
                     sx={{
-                        ml: { sm: '20vw', md: '12.5vw', lg: '8.5vw', xl: '6.5vw' },
-                        mt: '10vh',
-                        mb: '5vh',
+                        ml: { sm: '20vw', md: '12.5vw', lg: '7.5vw', xl: '5vw' },
+                        mt: '8vh',
+                        mb: '8vh',
                     }}
                 >
                     <Typography variant="h4" fontWeight="bold">
@@ -150,7 +150,7 @@ const StudentHomepage = () => {
                             variant="contained"
                             sx={{
                                 backgroundColor: '#00467F',
-                                m: '1.5vw 0 1.5vw 0',
+                                m: '1vw 0 1vw 0',
                             }}
                         >
                             Apply Now
