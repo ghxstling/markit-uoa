@@ -1,16 +1,12 @@
 'use client'
 
-import Sidebar from '../../../components/Sidebar'
 import DynamicBreadcrumb from '../../../components/DynamicBreadcrumb'
 import UserRolesTable from '../../../components/Users/UserRolesTable'
 import { Box } from '@mui/material'
-import CustomTheme from '@/app/CustomTheme'
-import { ThemeProvider } from '@mui/material/styles'
 
 export default function ManageUsersPage() {
     return (
-        <ThemeProvider theme={CustomTheme}>
-            <Sidebar />
+        <>
             <Box
                 sx={{
                     height: '100vh',
@@ -39,6 +35,6 @@ export default function ManageUsersPage() {
                     <UserRolesTable />
                 </Box>
             </Box>
-        </ThemeProvider>
+        </>
     )
 }

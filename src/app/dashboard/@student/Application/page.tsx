@@ -11,9 +11,6 @@ import MuiAlert, { AlertProps } from '@mui/material/Alert'
 import CoursePreferences from '@/app/components/ApplicationForms/CoursePreferences'
 import { useSession } from 'next-auth/react'
 import type { Prisma } from '@prisma/client'
-import CustomTheme from '@/app/CustomTheme'
-import { ThemeProvider } from '@mui/material/styles'
-import Sidebar from '@/app/components/Sidebar'
 import { ICvAndTranscript } from '@/types/ICvAndTranscript'
 
 const steps = ['Personal Details', 'Employment Details', 'CV and Academic Transcript Upload', 'Course Preferences']
@@ -333,8 +330,7 @@ const Application = () => {
     }
 
     return (
-        <ThemeProvider theme={CustomTheme}>
-            <Sidebar />
+        <>
             <Box
                 sx={{
                     height: '100vh',
@@ -458,7 +454,7 @@ const Application = () => {
                     </Container>
                 </Box>
             </Box>
-        </ThemeProvider>
+        </>
     )
 }
 

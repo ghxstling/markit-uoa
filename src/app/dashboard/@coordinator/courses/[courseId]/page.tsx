@@ -1,11 +1,8 @@
 'use client'
 
-import Sidebar from '../../../../components/Sidebar'
 import DynamicBreadcrumb from '@/app/components/DynamicBreadcrumb'
 import { usePathname } from 'next/navigation'
-import { ThemeProvider } from '@mui/material/styles'
-import CustomTheme from '@/app/CustomTheme'
-import { Box, Stack } from '@mui/material'
+import { Box } from '@mui/material'
 import CourseInformation from '@/app/components/courses/CourseInformation'
 
 export default function CreateCoursePage() {
@@ -13,8 +10,7 @@ export default function CreateCoursePage() {
     const courseId = pathname.split('/').pop() || ''
 
     return (
-        <ThemeProvider theme={CustomTheme}>
-            <Sidebar />
+        <>
             <Box
                 sx={{
                     height: '100vh',
@@ -43,6 +39,6 @@ export default function CreateCoursePage() {
                     <CourseInformation courseId={courseId} />
                 </Box>
             </Box>
-        </ThemeProvider>
+        </>
     )
 }

@@ -1,16 +1,12 @@
 'use client'
 
 import CourseDetails from '@/app/components/courses/CourseDetails'
-import Sidebar from '../../../components/Sidebar'
 import DynamicBreadcrumb from '@/app/components/DynamicBreadcrumb'
 import { Box } from '@mui/material'
-import CustomTheme from '@/app/CustomTheme'
-import { ThemeProvider } from '@mui/material/styles'
 
 export default function CreateCoursePage() {
     return (
-        <ThemeProvider theme={CustomTheme}>
-            <Sidebar />
+        <>
             <Box
                 sx={{
                     height: '100vh',
@@ -39,6 +35,6 @@ export default function CreateCoursePage() {
                     <CourseDetails />
                 </Box>
             </Box>
-        </ThemeProvider>
+        </>
     )
 }

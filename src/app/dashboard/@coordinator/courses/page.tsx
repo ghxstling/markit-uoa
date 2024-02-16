@@ -9,8 +9,7 @@ import { ThemeProvider } from '@mui/material/styles'
 
 export default function CreateCoursePage() {
     return (
-        <ThemeProvider theme={CustomTheme}>
-            <Sidebar />
+        <>
             <Box
                 sx={{
                     height: '100vh',
@@ -39,6 +38,6 @@ export default function CreateCoursePage() {
                     <CourseDetails />
                 </Box>
             </Box>
-        </ThemeProvider>
+        </>
     )
 }

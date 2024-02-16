@@ -1,16 +1,12 @@
 'use client'
 
 import DynamicBreadcrumb from '@/app/components/DynamicBreadcrumb'
-import Sidebar from '@/app/components/Sidebar'
 import CourseTable from '@/app/components/courses/CourseTable'
-import { Box, Stack } from '@mui/material'
-import CustomTheme from '@/app/CustomTheme'
-import { ThemeProvider } from '@mui/material/styles'
+import { Box } from '@mui/material'
 
 export default function AllCourseView() {
     return (
-        <ThemeProvider theme={CustomTheme}>
-            <Sidebar />
+        <>
             <Box
                 sx={{
                     height: '100vh',
@@ -39,6 +35,6 @@ export default function AllCourseView() {
                     <CourseTable />
                 </Box>
             </Box>
-        </ThemeProvider>
+        </>
     )
 }

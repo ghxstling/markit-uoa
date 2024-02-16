@@ -1,7 +1,6 @@
 'use client'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { Box, Container, TableBody, TableSortLabel } from '@mui/material'
-import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableCell from '@mui/material/TableCell'
@@ -12,16 +11,12 @@ import TableRow from '@mui/material/TableRow'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'
-import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import DynamicBreadcrumb from '@/app/components/DynamicBreadcrumb'
-import Sidebar from '@/app/components/Sidebar'
 import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
-import CustomTheme from '@/app/CustomTheme'
-import { ThemeProvider } from '@mui/material/styles'
 
 export default function StudentViewAllCourses() {
     interface Course {
@@ -98,8 +93,7 @@ export default function StudentViewAllCourses() {
     }
 
     return (
-        <ThemeProvider theme={CustomTheme}>
-            <Sidebar />
+        <>
             <Box
                 sx={{
                     // height: '100vh',
@@ -299,6 +293,6 @@ export default function StudentViewAllCourses() {
                     />
                 </Container>
             </Box>
-        </ThemeProvider>
+        </>
     )
 }

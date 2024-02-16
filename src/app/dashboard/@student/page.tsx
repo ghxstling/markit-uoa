@@ -14,14 +14,10 @@ import {
     Typography,
     TablePagination,
     Chip,
-    Dialog,
     Container,
 } from '@mui/material'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import Sidebar from '@/app/components/Sidebar'
-import CustomTheme from '@/app/CustomTheme'
-import { ThemeProvider } from '@mui/material/styles'
 import ChangePreferenceOrder from '@/app/components/ApplicationForms/ChangePreferenceOrder'
 
 const StudentHomepage = () => {
@@ -125,8 +121,7 @@ const StudentHomepage = () => {
     const emptyRows = page >= 0 ? Math.max(0, (1 + page) * rowPerPage - applications.length) : 0
 
     return (
-        <ThemeProvider theme={CustomTheme}>
-            <Sidebar />
+        <>
             <Box
                 sx={{
                     display: 'flex',
@@ -281,7 +276,7 @@ const StudentHomepage = () => {
                     </Card>
                 </Container>
             </Box>
-        </ThemeProvider>
+        </>
     )
 }
 

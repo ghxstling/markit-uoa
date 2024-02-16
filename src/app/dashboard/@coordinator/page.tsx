@@ -9,7 +9,6 @@ import Link from 'next/link'
 import {
     Alert,
     Box,
-    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -17,11 +16,6 @@ import {
     DialogTitle,
     Snackbar,
 } from '@mui/material'
-import Sidebar from '@/app/components/Sidebar'
-import CoursePieChart from '@/app/components/CoordinatorDashboardData/CoursePieChart'
-import CustomTheme from '@/app/CustomTheme'
-import { ThemeProvider } from '@mui/material/styles'
-import GradeBarChart from '@/app/components/CoordinatorDashboardData/GradeBarChart'
 import ChartsContainer from '@/app/components/CoordinatorDashboardData/ChartsContainer'
 import { LoadingButton } from '@mui/lab'
 import SaveIcon from '@mui/icons-material/Save'
@@ -104,8 +98,7 @@ export default function CoordinatorDashboard() {
     }
 
     return (
-        <ThemeProvider theme={CustomTheme}>
-            <Sidebar />
+        <>
             <Box
                 sx={{
                     height: '100vh',
@@ -225,6 +218,6 @@ export default function CoordinatorDashboard() {
                     </Alert>
                 </Snackbar>
             </Box>
-        </ThemeProvider>
+        </>
     )
 }

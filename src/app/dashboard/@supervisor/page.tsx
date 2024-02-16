@@ -6,9 +6,6 @@ import Typography from '@mui/material/Typography'
 import { useSession } from 'next-auth/react'
 import SupervisorCourseTable from '@/app/components/courses/SupervisorCourseTable'
 import React from 'react'
-import CustomTheme from '@/app/CustomTheme'
-import { ThemeProvider } from '@mui/material/styles'
-import Sidebar from '@/app/components/Sidebar'
 
 export default function CSHomepage() {
     const { data: session } = useSession()
@@ -20,8 +17,7 @@ export default function CSHomepage() {
     }
 
     return (
-        <ThemeProvider theme={CustomTheme}>
-            <Sidebar />
+        <>
             <Box
                 sx={{
                     height: '100vh',
@@ -52,6 +48,6 @@ export default function CSHomepage() {
                     <SupervisorCourseTable />
                 </Box>
             </Box>
-        </ThemeProvider>
+        </>
     )
 }

@@ -1,5 +1,8 @@
 'use client'
 import { useSession } from 'next-auth/react'
+import { ThemeProvider } from 'react-bootstrap'
+import CustomTheme from '../CustomTheme'
+import Sidebar from '../components/Sidebar'
 
 export default function DashboardLayout(props: {
     children: React.ReactNode
@@ -9,13 +12,17 @@ export default function DashboardLayout(props: {
 }) {
     const { data: session } = useSession()
     if (session) {
-        switch (session.role) {
-            case 'coordinator':
-                return <>{props.coordinator}</>
-            case 'supervisor':
-                return <>{props.supervisor}</>
-            case 'student':
-                return <>{props.student}</>
-        }
+        return (
+            <ThemeProvider theme={CustomTheme}>
+                <Sidebar />
+                {session.role === 'coordinator' ? (
+                    <>{props.coordinator}</>
+                ) : session.role === 'supervisor' ? (
+                    <>{props.supervisor}</>
+                ) : (
+                    <>{props.student}</>
+                )}
+            </ThemeProvider>
+        )
     }
 }
